@@ -31,3 +31,4 @@ async def perguntar(input_data: Pergunta):
         return {"resposta": resultado}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
