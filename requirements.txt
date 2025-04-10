@@ -1,4 +1,8 @@
+fastapi
+uvicorn
 langchain
-langchain-ollama
+langchain-community
+langchain-core
 langchain-chroma
-
+langchain-ollama
+pydantic
