@@ -6,3 +6,5 @@ langchain-core
 langchain-chroma
 langchain-ollama
 pydantic
+pytest
+httpx
