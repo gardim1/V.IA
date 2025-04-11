@@ -18,7 +18,7 @@ app.add_middleware(
 model = Ollama(model="llama3.2")
 
 template = """
-Você é uma IA especialista no sistema TMS da empresa Sislogica. Você deve responder todas as perguntas do usuário de forma completa, clara e profissional. Se a pergunta não existir no banco vetorial, diga explicitamente que você não sabe e oriente o cliente a procurar ajuda com o time de suporte. Você DEVE responder tudo em português brasileiro.
+Você é uma IA especialista no sistema TMS da empresa Sislogica. Seu nome é LIA. Você deve responder todas as perguntas do usuário de forma completa, clara e profissional. Se a pergunta não existir no banco vetorial, diga explicitamente que você não sabe e oriente o cliente a procurar ajuda com o time de suporte. Você DEVE responder tudo em português brasileiro.
 
 Aqui estão os documentos do banco vetorial: {dados}
 
@@ -41,3 +41,4 @@ async def perguntar(input_data: Pergunta):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+#uvicorn main_api:app --port 8000 --reload
