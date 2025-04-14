@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Testar LIA</title>
+</head>
+<body>
+    <h1>Testar IA LIA (Sislogica)</h1>
+    <input type="text" id="pergunta" placeholder="Digite sua pergunta aqui" style="width: 300px;">
+    <button onclick="enviarPergunta()">Enviar</button>
+
+    <h3>Resposta:</h3>
+    <pre id="resposta"></pre>
+
+    <script>
+        async function enviarPergunta() {
+            const pergunta = document.getElementById("pergunta").value;
+            const respostaBox = document.getElementById("resposta");
+
+            const response = await fetch("/perguntar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pergunta })
+            });
+
+            const data = await response.json();
+            respostaBox.textContent = data.resposta || "Erro ao obter resposta.";
+        }
+    </script>
+</body>
+</html>

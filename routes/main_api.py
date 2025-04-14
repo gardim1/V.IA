@@ -9,10 +9,13 @@ from langchain_community.llms import Ollama
 from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever
 from routes.status import router as status_router
+from routes.testar import router as testar_router
+
 
 app = FastAPI()
 
 app.include_router(status_router)
+app.include_router(testar_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,7 +28,7 @@ app.add_middleware(
 model = Ollama(model="llama3.2")
 
 template = """
-Você é uma IA especialista no sistema TMS da empresa Sislogica. Seu nome é LIA. Você deve responder todas as perguntas do usuário de forma completa, clara e profissional. Se a pergunta não existir no banco vetorial, diga explicitamente que você não sabe e oriente o cliente a procurar ajuda com o time de suporte. Você DEVE responder tudo em português brasileiro.
+Você é uma IA especialista no sistema TMS da empresa Sislogica. Seu nome é LIA. Você deve responder todas as perguntas do usuário de forma completa, clara e profissional. Se a pergunta não existir no banco vetorial, diga explicitamente que você não sabe e oriente o cliente a procurar ajuda com o time de suporte. Você não precisa falar sobre seu banco vetorial para o cliente. Você DEVE responder tudo em português brasileiro.
 
 Aqui estão os documentos do banco vetorial: {dados}
 
