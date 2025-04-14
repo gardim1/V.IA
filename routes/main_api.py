@@ -1,11 +1,18 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain_community.llms import Ollama
 from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever
+from routes.status import router as status_router
 
 app = FastAPI()
+
+app.include_router(status_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -42,3 +49,4 @@ async def perguntar(input_data: Pergunta):
         raise HTTPException(status_code=500, detail=str(e))
 
 #uvicorn main_api:app --port 8000 --reload
+#uvicorn routes.main_api:app --port 8000 --reload
