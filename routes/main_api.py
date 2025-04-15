@@ -64,7 +64,18 @@ chat_chain = RunnableWithMessageHistory(
 class Pergunta(BaseModel):
     pergunta: str
 
-@app.post("/perguntar")
+    class Config:
+        schema_extra = {
+            "example": {
+                "pergunta": "Como cadastrar motoristas?"
+            }
+        }
+
+@app.post("/perguntar",
+          summary = "Enviar pergunta para a IA LIA",
+          description = "Enviar uma pergunta para a IA LIA e receber uma resposta com base no banco de dados vetorial.",
+          response_model=dict,
+          tags=["IA LIA"])
 async def perguntar(input_data: Pergunta):
     try:
         retriever = get_retriever()
