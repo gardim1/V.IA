@@ -20,7 +20,6 @@ env/
 *.bak
 *.swp
 
-chroma_langchain_db/
 
 ollama/
 
