@@ -1,4 +1,4 @@
-# 🤖 API LIA (Sislogica)
+# 🤖 API LIA 
 
 Esta é uma API para a assistente virtual **LIA (Logistics Intelligence Assistant)**, desenvolvida para responder dúvidas sobre o sistema TMS da Sislogica.  
 A IA utiliza **RAG (Retrieval-Augmented Generation)** com base vetorial via **ChromaDB** e **LLMs locais com Ollama**.
