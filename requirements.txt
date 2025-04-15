@@ -8,3 +8,4 @@ langchain-ollama
 pydantic
 pytest
 httpx
+jinja2
