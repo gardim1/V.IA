@@ -28,6 +28,7 @@ uvicorn routes.main_api:app --reload --port 8000
 
 ```
 ├── .gitignore
+├── chroma_langchain_db
 ├── delete.py
 ├── main.py
 ├── requirements.txt
