@@ -1,6 +1,8 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+os.makedirs("feedbacks", exist_ok=True)
+
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -39,7 +41,7 @@ model = OllamaLLM(model="llama3.2")
 template = """
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa e profissional.
 
-Se não encontrar a resposta nos documentos fornecidos, diga que não sabe e oriente o cliente a procurar o time de suporte. **Nunca mencione o banco vetorial**.
+Se não encontrar a resposta nos documentos fornecidos, diga que não sabe e oriente o cliente a procurar o time de suporte.Você pode dizer "Não sei a resposta para essa pergunta" no meio de sua resposta. **Nunca mencione o banco vetorial**. 
 
 Apresente-se apenas na primeira resposta da sessão. Em outras interações, use saudações amigáveis se for pertinente.
 
@@ -93,6 +95,26 @@ async def perguntar(input_data: Pergunta):
             config={"configurable": {"session_id": "sessao-usuario"}}
         )
 
+        resposta_lower = resposta.lower()
+        if(
+            "não sei a resposta para essa pergunta" in resposta_lower or
+            "não tenho certeza" in resposta_lower or
+            "não sei" in resposta_lower or
+            "não posso ajudar" in resposta_lower or
+            "não tenho essa informação" in resposta_lower or
+            "não sei a resposta" in resposta_lower or
+            "não tenho certeza sobre isso" in resposta_lower or
+            "não posso responder isso" in resposta_lower or
+            "não tenho certeza se posso ajudar com isso" in resposta_lower or
+            "desculpe pela confusão anterior" in resposta_lower or
+            "desculpe pela confusão" in resposta_lower or
+            "desculpe, não tenho certeza" in resposta_lower or
+            "não tenho certeza, mas" in resposta_lower
+        ):
+            with open("feedbacks/perguntas_nao_respondidas.txt", "a", encoding="utf-8") as f:
+                f.write(input_data.pergunta.strip() + "\n")
+            
         return {"resposta": resposta}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
