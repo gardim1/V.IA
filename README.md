@@ -10,6 +10,7 @@ A IA utiliza **RAG (Retrieval-Augmented Generation)** com base vetorial via **Ch
 - Python 3.11+
 - Ambiente virtual (recomendado)
 - Dependências do projeto
+- Compilador C++/C#
 
 Instale com:
 
@@ -50,5 +51,5 @@ uvicorn routes.main_api:app --reload --port 8000
 | `/status`    | GET        | Verifica se a API está ativa                        |
 | `/perguntar` | POST       | Envia pergunta em JSON e retorna resposta da IA     |
 | `/testar`    | GET        | Abre página web para testar a IA no navegador       |
-| `/docs`      | GET        | Documentação Swagger gerada automaticamente         |
+| `/docs`      | GET        | Documentação Swagger                                |
 
