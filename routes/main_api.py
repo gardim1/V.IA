@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever
 from routes.status import router as status_router
@@ -34,23 +34,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = Ollama(model="llama3.2")
+model = OllamaLLM(model="llama3.2")
 
 template = """
-Você é uma IA especialista no sistema TMS da empresa Sislogica. Seu nome é LIA. Você deve responder todas as perguntas do usuário de forma completa, clara e profissional. Se a pergunta não existir no banco vetorial, diga explicitamente que você não sabe e oriente o cliente a procurar ajuda com o time de suporte. Você não precisa falar sobre seu banco vetorial para o cliente. Você DEVE responder tudo em português brasileiro.
+Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa e profissional.
 
-Aqui está o histórico da conversa. Use esse histórico para entender perguntas que estejam incompletas ou dependam de contexto anterior:{chat_history}
+Se não encontrar a resposta nos documentos fornecidos, diga que não sabe e oriente o cliente a procurar o time de suporte. **Nunca mencione o banco vetorial**.
 
-Mesmo se existirem diversas versões do TMS, responda o que está no banco de dados vetorial.
-Exemplo: "Como cadastrar motoristas?"
-Após sua resposta, se o cliente perguntar por exemplo:
-"E veiculos?", você deve responder como se a pergunta fosse "Como cadastrar veiculos?"
+Apresente-se apenas na primeira resposta da sessão. Em outras interações, use saudações amigáveis se for pertinente.
 
-Aqui estão os documentos do banco vetorial: {dados}
+Utilize o histórico da conversa para entender perguntas incompletas ou com dependência de contexto:
+{chat_history}
 
-Aqui está a pergunta para responder: {pergunta}
+Sempre considere as informações dos documentos abaixo, mesmo que existam diferentes versões do sistema:
+{dados}
 
+Pergunta do usuário:
+{pergunta}
 """
+
 
 prompt = ChatPromptTemplate.from_template(template)
 
@@ -65,7 +67,7 @@ class Pergunta(BaseModel):
     pergunta: str
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "pergunta": "Como cadastrar motoristas?"
             }
