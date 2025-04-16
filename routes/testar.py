@@ -7,6 +7,11 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory=os.path.abspath("templates"))
 
-@router.get("/testar", response_class=HTMLResponse)
+@router.get("/testar", 
+            summary="Interface de teste da LIA na web",
+            description="Página HTML para testar a IA diretamente no navegador",
+            tags=["Teste Web"],
+            response_class=HTMLResponse
+            )
 async def testar(request: Request):
     return templates.TemplateResponse("test_interface.html", {"request": request})
