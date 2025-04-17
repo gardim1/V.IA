@@ -59,6 +59,7 @@ Pergunta do usuário:
 {pergunta}
 """
 
+#fazer o Ollama ver sua propria resposta e usa-la pra verificar se a pergunta está boa e/ou bem formatada.
 
 prompt = ChatPromptTemplate.from_template(template)
 
