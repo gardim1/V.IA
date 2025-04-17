@@ -2,7 +2,7 @@ import os
 from vector_utils import load_and_split_documents, embed_documents
 from langchain.vectorstores import Chroma
 
-PASTA_BASE_TXT = "conteudos_novos"
+PASTA_BASE_TXT = "conteudos_novos_2"
 CHROMA_PATH = "chroma_langchain_db"
 
 def listar_txts(pasta):
