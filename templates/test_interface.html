@@ -1,31 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Testar LIA</title>
+  <meta charset="UTF-8">
+  <title>Testar LIA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+    :root {
+      --bg-page: #f5f5f5;
+      --bg-card: #ffffff;
+      --shadow-light: rgba(255,255,255,0.8);
+      --shadow-dark: rgba(0,0,0,0.1);
+      --text-dark: #333333;
+      --accent: #FFC107;
+    }
+
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      background: var(--bg-page);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow:
+        8px 8px 16px var(--shadow-dark),
+        -8px -8px 16px var(--shadow-light);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
+      margin-bottom: 15px;
+      color: var(--text-dark);
+    }
+    input[type="text"]::placeholder {
+      color: #999999;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      margin-bottom: 30px;
+    }
+    button:active {
+      transform: translateY(2px);
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    #resposta {
+      background: var(--bg-card);
+      border-radius: 8px;
+      box-shadow:
+        inset 4px 4px 8px var(--shadow-dark),
+        inset -4px -4px 8px var(--shadow-light);
+      padding: 20px;
+      min-height: 120px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      display: none;
+      color: var(--text-dark);
+    }
+
+    /* Loader neumorphic */
+    .loader {
+      --dim: 3rem;
+      width: var(--dim);
+      height: var(--dim);
+      position: relative;
+      margin: 20px auto;
+      animation: spin 2s linear infinite;
+    }
+    .loader .circle {
+      --loader-color: var(--accent);
+      --dim: 1.2rem;
+      width: var(--dim);
+      height: var(--dim);
+      background: var(--loader-color);
+      border-radius: 50%;
+      position: absolute;
+    }
+    .loader .circle:nth-child(1) { top: 0; left: 0; }
+    .loader .circle:nth-child(2) { top: 0; right: 0; }
+    .loader .circle:nth-child(3) { bottom: 0; left: 0; }
+    .loader .circle:nth-child(4) { bottom: 0; right: 0; }
+    @keyframes spin {
+      0%    { transform: scale(1) rotate(0); }
+      20%,25% { transform: scale(1.3) rotate(90deg); }
+      45%,50% { transform: scale(1) rotate(180deg); }
+      70%,75% { transform: scale(1.3) rotate(270deg); }
+      95%,100%{ transform: scale(1) rotate(360deg); }
+    }
+    #loader {
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
     <h1>Testar IA LIA (Sislogica)</h1>
-    <input type="text" id="pergunta" placeholder="Digite sua pergunta aqui" style="width: 300px;">
-    <button onclick="enviarPergunta()">Enviar</button>
+    <input type="text" id="pergunta" placeholder="Digite sua pergunta aqui">
+    <button id="btnEnviar" onclick="enviarPergunta()">Enviar</button>
+
+    <div id="loader" class="loader">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
 
     <h3>Resposta:</h3>
-    <pre id="resposta"></pre>
+    <pre id="resposta">Aguardando pergunta...</pre>
+  </div>
 
-    <script>
-        async function enviarPergunta() {
-            const pergunta = document.getElementById("pergunta").value;
-            const respostaBox = document.getElementById("resposta");
+  <script>
+    async function enviarPergunta() {
+      const perguntaInput = document.getElementById("pergunta");
+      const respostaBox   = document.getElementById("resposta");
+      const loader        = document.getElementById("loader");
+      const btn           = document.getElementById("btnEnviar");
 
-            const response = await fetch("/perguntar", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ pergunta })
-            });
+      respostaBox.style.display = "none";
+      loader.style.display      = "block";
+      btn.disabled              = true;
+      perguntaInput.disabled    = true;
 
-            const data = await response.json();
-            respostaBox.textContent = data.resposta || "Erro ao obter resposta.";
-        }
-    </script>
+      try {
+        const res  = await fetch("/perguntar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pergunta: perguntaInput.value })
+        });
+        const data = await res.json();
+        respostaBox.textContent = data.resposta || "Erro ao obter resposta.";
+      } catch {
+        respostaBox.textContent = "Erro ao conectar com o servidor.";
+      } finally {
+        loader.style.display      = "none";
+        respostaBox.style.display = "block";
+        btn.disabled              = false;
+        perguntaInput.disabled    = false;
+      }
+    }
+  </script>
 </body>
 </html>
