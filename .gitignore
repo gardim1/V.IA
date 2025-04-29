@@ -39,8 +39,10 @@ node_modules/
 dist/
 build/
 
-/conteudos
+/conteudos*
 /conteudos_novos
 /conteudos_novos_1
 /conteudos_novos_2
 /feedbacks 
+/meu_venv
+merda.py

@@ -2,6 +2,7 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
+from langchain_text_splitters import CharacterTextSplitter
 import os
 
 def get_retriever():
@@ -14,7 +15,10 @@ def get_retriever():
         embedding_function=embeddings,
     )
 
-    retriever = vector_store.as_retriever(search_kwargs={"k": 5})
+    retriever = vector_store.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 10}
+)
     return retriever
 
 def load_and_split_documents(file_paths):
@@ -23,15 +27,26 @@ def load_and_split_documents(file_paths):
     for path in file_paths:
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
-            documents.append(Document(page_content=content, metadata={"source": os.path.basename(path)}))
+
+            
+            sections = content.split('\n\n')
+            for idx, section in enumerate(sections):
+                section = section.strip()
+                if section:
+                    documents.append(Document(
+                        page_content=section,
+                        metadata={
+                            "source": os.path.basename(path),
+                            "section": idx  
+                        }
+                    ))
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=100,
+        separators=[r"\n=====.*=====\n"],
+        keep_separator=True,
     )
 
     split_docs = splitter.split_documents(documents)
-
 
     for i, doc in enumerate(split_docs):
         doc.metadata["id"] = f"{doc.metadata['source']}_{i}"
