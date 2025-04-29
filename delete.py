@@ -2,12 +2,8 @@ from langchain.vectorstores import Chroma
 
 db = Chroma(persist_directory="chroma_langchain_db", collection_name="ajuda_sislogica")
 
+ids_para_deletar = ['7c3b5553-9494-4c0a-a34b-030c2e179302', '0e015ac5-c26a-4109-94cb-9517afff8b46', '1364de1d-2ed2-4a38-a383-4dfb8c95dccf', 'cdfe6633-d18c-467b-8966-0c7710296edf', '0a466507-31fb-4304-93c0-8cd04551eff6', 'bb2c2a42-1c2f-4392-96f6-7f4586671ed3', '62817180-9995-4c22-9849-c805f857f9dd', 'c4fa26c1-8b52-4b73-ae5e-5a943beafc0a', '212e63ad-586d-48b0-af96-b96fb798df97', '7118f317-ef4d-43ff-abcf-dc87149955d6', '1bed014b-2a90-4ecc-ab90-d3c91cfa290b', 'ee9f6c1c-c50f-4cf1-9bfc-8413f597ec0f', '4feee0db-bf61-4d8a-9cc0-44e011d80c19', '3427f582-4698-4747-817e-595a83f0946e', '3bb71548-529b-4308-bcb4-dab4f4c023dc', '94603ad2-b92b-4efd-982d-3610cc795fb5', '78d1f418-bb59-4d5b-b207-14a97d3ecd9a', 'aabf10cf-6a8f-4482-a32f-cb5fb2c2716c', '259e1397-2978-42f2-a129-cff2938550b5', 'b94a6d9a-4977-43c4-9b86-7e18b71208a6', '4d9432e9-22d1-4607-ab67-325d620ad571', 'd6b8db14-5ffa-4485-92e6-2a3fe552260f', 'cc4f4688-4da2-45f1-b55b-e7670f3635c8', 'd2170f90-04d8-4d65-bb0e-7c168a111cd8', 'a8ef54d4-a57a-42c2-a188-5cba063ef774', 'bd3a854e-6d23-4340-8a16-fd144b282750', '9f1bf79d-b144-4c92-8ec2-982c86f917f0', '9a15ff5b-220a-4c7d-9a3d-c96c4875fda7', '308f5ac8-4bee-4e5d-94ed-e5338173fac5', '5cb9c2f2-43e6-444b-a7cc-53e7217d65c7', 'a19c8daf-a40a-4ac4-9811-2bb8198eea71', '9a07afe5-0116-4997-ada7-dfd112f2b405', 'ce464a69-9e62-41cf-a382-55c9f7bb2339', '88dc224b-86dd-467d-97af-b9cbd24de7b2', 'c9f78bf9-3c33-4b0f-bc4b-dbe0079aade3', '23d54d2b-fb52-48e3-9c1e-3a12c00bf64e', '52b4969a-0c2e-40ab-a6da-5c243461740f', '0744012a-add7-4f8f-afe2-3557dc8fb407', 'f7cbfc79-3632-4e86-8135-f2cf58399bdb', 'cf95768d-67ff-43db-9076-80fd6bdaf058', '6065fc8a-77c2-4b73-95ae-638cf43cf9f7', '542b402e-696d-460f-a4a4-bc2af999ae82', 'fe0ccf3e-bf2b-46d6-8923-471b20d9409f', '390e8d40-af01-4aa8-995c-5ea75104470e', '51e7d3be-6b26-423a-8894-9c7380405913', 'ff06ae2c-ff58-4d22-9281-e1c05a0a2aca', '2de5e815-602a-4338-b9e7-c98f491093eb', '6db7070a-e627-4870-9d25-507d281486c8', 'c7e71670-52db-4779-8a82-d2a70cf7e601', 'd467eb0b-031e-4cc4-9ad7-90fea6d21ce7', 'c9b9f885-d786-494c-8cf9-19b88e020180', 'e94db094-ae61-45fd-a171-ce2ea0402cba', '4723508d-ef60-42c9-b216-2861a86bc7e4', '5423c6ba-a7b4-4d43-8536-3e4d74608f42', 'bd9c3fdd-97f4-4170-a47c-bbe977a69f62', 'f75f1d05-d21f-4720-9204-be9724a38def', '088d887e-ea08-4512-846f-1b479bca1f72', '8dfcf4a2-8fc7-4e9d-8e3d-1f2cef423b9e', '0bfeb43c-616d-4234-86b6-bbf52825a1fc', 'c7444907-b4eb-49c2-a417-8c0f6b1c2fa5', 'a45e8f73-decf-4494-9dd2-19339519d4b7', 'e2835462-2492-4fff-b7ba-3ad12ce05e1b', '8b0966d2-e4ec-446d-a5ca-4d3e08be0000', '88043282-b917-4773-ab22-ac99cd4dd649', '98726233-aa44-457c-8e88-3fb32d0d4f64', '411f2147-1cd1-470b-ab36-a6d2cf3a9b60', '2bdd7931-331f-45d7-a8dd-802dbb206d9d']
 
-# doc_id = "id_do_documento"  
+db._collection.delete(ids=ids_para_deletar)
 
-# db._collection.delete([doc_id]) 
-# print(f"Documento {doc_id} removido com sucesso.")
-
-
-for doc in db._collection.peek():  
-    print(doc)
+print(f"Deletados {len(ids_para_deletar)} documentos com sucesso!")

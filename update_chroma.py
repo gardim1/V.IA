@@ -1,8 +1,8 @@
 import os
 from vector_utils import load_and_split_documents, embed_documents
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 
-PASTA_BASE_TXT = "conteudos_novos_2"
+PASTA_BASE_TXT = "conteudos_novos_7"
 CHROMA_PATH = "chroma_langchain_db"
 
 def listar_txts(pasta):
@@ -14,7 +14,7 @@ def validar_arquivo(caminho):
     with open(caminho, 'r', encoding='utf-8') as f:
         conteudo = f.read()
         valido = len(conteudo.strip()) > 10
-        print(f"Arquivo {caminho} {'é válido' if valido else 'é inválido'}.")
+        print(f"Arquivo {caminho} {'é válido' if valido else 'não é válido'}.")
         return valido
 
 def main():
