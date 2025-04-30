@@ -118,7 +118,17 @@ async def perguntar(input_data: Pergunta):
         docs = retriever.invoke(input_data.pergunta)
         dados = "\n".join([doc.page_content for doc in docs]) if docs else "Nenhum conteúdo relevante encontrado."
 
-        print(f"Dados encontrados: {dados}")
+        print("\n=== DOCUMENTOS RETORNADOS ===\n")
+        print(dados)
+        print("\n=== FIM DOS DOCUMENTOS ===\n")
+
+        historico = get_history("sessao-usuario").messages
+        pergunta_anterior = "Sem pergunta anterior."
+        if historico:
+            for msg in reversed(historico):
+                if msg.type == "human":
+                    pergunta_anterior = msg.content
+                    break
 
         resposta = chat_chain.invoke(
             {
@@ -143,10 +153,15 @@ async def perguntar(input_data: Pergunta):
             "desculpe pela confusão" in resposta_lower or
             "desculpe, não tenho certeza" in resposta_lower or
             "não tenho certeza, mas" in resposta_lower or
-            "não encontrei" in resposta_lower 
+            "não encontrei" in resposta_lower or 
+            "não consegui encontrar" in resposta_lower or
+            "não consegui" in resposta_lower 
         ):
+            
             with open("feedbacks/perguntas_nao_respondidas.txt", "a", encoding="utf-8") as f:
-                f.write(input_data.pergunta.strip() + "\n")
+                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
+                f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
+                f.write("---------------------\n")
             
         return {"resposta": resposta}
 
