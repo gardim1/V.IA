@@ -5,8 +5,13 @@ from langchain.docstore.document import Document
 from langchain_text_splitters import CharacterTextSplitter
 import os
 
+
+def get_embedding_function():
+    return OllamaEmbeddings(
+        model="mxbai-embed-large")
+
 def get_retriever():
-    embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+    embeddings = get_embedding_function()
     db_location = "./chroma_langchain_db"
 
     vector_store = Chroma(
@@ -16,9 +21,9 @@ def get_retriever():
     )
 
     retriever = vector_store.as_retriever(
-    search_type="mmr",
-    search_kwargs={"k": 10}
-)
+        search_type="mmr",
+        search_kwargs={"k": 10}
+    )
     return retriever
 
 def load_and_split_documents(file_paths):
@@ -28,7 +33,6 @@ def load_and_split_documents(file_paths):
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
 
-            
             sections = content.split('\n\n')
             for idx, section in enumerate(sections):
                 section = section.strip()
@@ -37,7 +41,7 @@ def load_and_split_documents(file_paths):
                         page_content=section,
                         metadata={
                             "source": os.path.basename(path),
-                            "section": idx  
+                            "section": idx
                         }
                     ))
 
@@ -54,11 +58,11 @@ def load_and_split_documents(file_paths):
     return split_docs
 
 def embed_documents(documents):
-    embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+    embeddings = get_embedding_function()
     return embeddings.embed_documents([doc.page_content for doc in documents]), embeddings
 
 def save_to_chroma(documents):
-    embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+    embeddings = get_embedding_function()
     db_location = "./chroma_langchain_db"
 
     vector_store = Chroma(
@@ -66,7 +70,6 @@ def save_to_chroma(documents):
         persist_directory=db_location,
         embedding_function=embeddings,
     )
-
 
     existing_ids = set(vector_store.get()["ids"])
     new_docs = [doc for doc in documents if doc.metadata["id"] not in existing_ids]
