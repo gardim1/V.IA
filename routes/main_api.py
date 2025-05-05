@@ -12,21 +12,29 @@ from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever
 from routes.status import router as status_router
 from routes.testar import router as testar_router
+from routes.limpar import router as limpar_router
+from routes.ver_historico import router as ver_historico_router
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_community.chat_message_histories import RedisChatMessageHistory
+from dotenv import load_dotenv
 
+load_dotenv()
 
 session_history = {}
 
 def get_history(session_id):
-    if session_id not in session_history:
-        session_history[session_id] = InMemoryChatMessageHistory()
-    return session_history[session_id]
+    return RedisChatMessageHistory(
+        session_id=session_id,
+        url="redis://localhost:6379"
+    )
 
 app = FastAPI()
 
 app.include_router(status_router)
 app.include_router(testar_router)
+app.include_router(limpar_router)
+app.include_router(ver_historico_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,8 +43,32 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# import time
+# import httpx
 
-model = OllamaLLM(model="llama3.2")
+# # Espera o Ollama responder antes de seguir
+# def esperar_ollama():
+#     url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+#     for _ in range(10):
+#         try:
+#             r = httpx.get(url, timeout=2)
+#             if r.status_code == 200 and "Ollama" in r.text:
+#                 print("Ollama está pronto")
+#                 return
+#         except:
+#             pass
+#         print("Aguardando Ollama...")
+#         time.sleep(2)
+#     raise RuntimeError("Não foi possível conectar ao Ollama em {url}")
+
+# esperar_ollama()
+
+
+model = OllamaLLM(
+    model="llama3.2:latest"
+)
+
+ 
 
 template = """
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa, precisa e profissional.
@@ -98,11 +130,13 @@ chat_chain = RunnableWithMessageHistory(
 
 class Pergunta(BaseModel):
     pergunta: str
+    user_id: str
 
     class Config:
         json_schema_extra = {
             "example": {
-                "pergunta": "Como cadastrar motoristas?"
+                "pergunta": "Como cadastrar motoristas?",
+                "user_id": "usuario123"
             }
         }
 
@@ -135,7 +169,7 @@ async def perguntar(input_data: Pergunta):
                 "dados": dados,
                 "pergunta": input_data.pergunta
             },
-            config={"configurable": {"session_id": "sessao-usuario"}}
+            config={"configurable": {"session_id": input_data.user_id}}
         )
 
         resposta_lower = resposta.lower()
@@ -159,6 +193,7 @@ async def perguntar(input_data: Pergunta):
         ):
             
             with open("feedbacks/perguntas_nao_respondidas.txt", "a", encoding="utf-8") as f:
+                f.write(f"[Usuario]: {input_data.user_id}\n")
                 f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
                 f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
                 f.write("---------------------\n")
@@ -166,6 +201,8 @@ async def perguntar(input_data: Pergunta):
         return {"resposta": resposta}
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/",
