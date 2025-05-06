@@ -14,20 +14,13 @@ from routes.status import router as status_router
 from routes.testar import router as testar_router
 from routes.limpar import router as limpar_router
 from routes.ver_historico import router as ver_historico_router
+from utils.history import get_history
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from dotenv import load_dotenv
 
 load_dotenv()
-
-session_history = {}
-
-def get_history(session_id):
-    return RedisChatMessageHistory(
-        session_id=session_id,
-        url="redis://localhost:6379"
-    )
 
 app = FastAPI()
 
