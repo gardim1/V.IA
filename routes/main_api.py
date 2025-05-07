@@ -20,6 +20,28 @@ from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from dotenv import load_dotenv
 
+import re
+
+def pergunta_dinamica(pergunta: str) -> bool:
+    pergunta = pergunta.lower()
+
+    padroes_sensiveis = [
+        r"\bj[aá] foi\b",
+        r"\bfoi (entregue|processado|atualizado)\b",
+        r"\bfaltam\b",
+        r"\bquantas?\b",
+        r"\bo relat[óo]rio (foi|est[áa])\b",
+        r"\bj[aá] saiu\b",
+        r"\bconfirmar\b.*\b(entrega|processo|status)\b",
+        r"\bstatus\b.*\b(atual|entrega|pedido)\b",
+        r"\bentreg[ae]s? (pendentes|em aberto|atrasadas?)\b"
+    ]
+
+    for padrao in padroes_sensiveis:
+        if re.search(padrao, pergunta):
+            return True
+    return False
+
 load_dotenv()
 
 app = FastAPI()
@@ -140,6 +162,38 @@ class Pergunta(BaseModel):
           tags=["IA LIA"])
 async def perguntar(input_data: Pergunta):
     try:
+        if pergunta_dinamica(input_data.pergunta):
+            resposta_dinamica = (
+                "Essa pergunta depende de informações específicas que variam com o tempo, "
+                "como datas ou códigos de relatórios. Por favor, me envie os dados que deseja consultar "
+                "(ex: período, tipo de relatório ou outro detalhe relevante)."
+            )
+
+            
+            history = RedisChatMessageHistory(
+                session_id=input_data.user_id,
+                url="redis://localhost:6379"
+            )
+            history.add_user_message(input_data.pergunta)
+            history.add_ai_message(resposta_dinamica)
+
+            historico = get_history("sessao-usuario").messages
+            pergunta_anterior = "Sem pergunta anterior."
+            if historico:
+                for msg in reversed(historico):
+                    if msg.type == "human":
+                        pergunta_anterior = msg.content
+                        break
+
+            with open("feedbacks/perguntas_nao_respondidas.txt", "a", encoding="utf-8") as f:
+                f.write(f"[Usuario]: {input_data.user_id}\n")
+                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
+                f.write(f"[Pergunta dinâmica detectada]: {input_data.pergunta.strip()}\n")
+                f.write("---------------------\n")
+
+            return {"resposta": resposta_dinamica}
+
+        
         retriever = get_retriever()
 
         docs = retriever.invoke(input_data.pergunta)
