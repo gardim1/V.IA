@@ -19,8 +19,29 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from dotenv import load_dotenv
-
 import re
+from typing import Dict, List
+
+def extrair_parametros(pergunta:str) -> Dict[str, List[str]]:
+    parametros ={
+        "datas": [],
+        "termos_relevantes": []
+    }
+
+    regex_datas = r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b"
+    parametros["datas"] = re.findall(regex_datas, pergunta)
+
+    termos_alvo = [
+        "relatório", "status", "pendente", "em aberto",
+        "entregue", "processado", "falta", "atualizado", "confirmar", "entregas"
+    ]
+
+    for termo in termos_alvo:
+        if termo in pergunta.lower():
+            parametros["termos_relevantes"].append(termo)
+    
+    return parametros
+
 
 def pergunta_dinamica(pergunta: str) -> bool:
     pergunta = pergunta.lower()
@@ -191,7 +212,26 @@ async def perguntar(input_data: Pergunta):
                 f.write(f"[Pergunta dinâmica detectada]: {input_data.pergunta.strip()}\n")
                 f.write("---------------------\n")
 
+            params = extrair_parametros(input_data.pergunta)
+            
+            respostas_pendentes = []
+            if not params["datas"]:
+                respostas_pendentes.append("o período (datas)")
+            if not params["termos_relevantes"]:
+                respostas_pendentes.append("o tipo de informação (ex: rotas, status...)")
+
+            if respostas_pendentes:
+                resposta_dinamica = (
+                    "Para responder essa pergunta, preciso que você me informe: "
+                    + ", e também ".join(respostas_pendentes) + "."
+                )
+            else:
+                resposta_dinamica = (
+                    "Entendido! Já tenho informações suficientes para consultar no banco. "
+                    "Em breve vou trazer a resposta 😉 (simulação por enquanto)"
+                )
             return {"resposta": resposta_dinamica}
+        
 
         
         retriever = get_retriever()
