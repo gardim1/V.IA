@@ -12,7 +12,7 @@
       --shadow-light: rgba(255,255,255,0.8);
       --shadow-dark: rgba(0,0,0,0.1);
       --text-dark: #333333;
-      --accent: #FFC107;
+      --accent: #ffc107;
     }
 
     * {
@@ -106,7 +106,6 @@
       color: var(--text-dark);
     }
 
-    /* Loader neumorphic */
     .loader {
       --dim: 3rem;
       width: var(--dim);
@@ -156,10 +155,11 @@
     <h3>Resposta:</h3>
     <pre id="resposta">Aguardando pergunta...</pre>
   </div>
-
+  <input type="hidden" id="userId" value="web_teste">
   <script>
     async function enviarPergunta() {
       const perguntaInput = document.getElementById("pergunta");
+      const userIdInput   = document.getElementById("userId");
       const respostaBox   = document.getElementById("resposta");
       const loader        = document.getElementById("loader");
       const btn           = document.getElementById("btnEnviar");
@@ -173,10 +173,12 @@
         const res  = await fetch("/perguntar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pergunta: perguntaInput.value })
+          body: JSON.stringify({ pergunta: perguntaInput.value,
+            user_id: userIdInput.value || "web"  
+           })
         });
         const data = await res.json();
-        respostaBox.textContent = data.resposta || "Erro ao obter resposta.";
+        respostaBox.textContent = data.resposta ?? "Erro ao obter resposta.";
       } catch {
         respostaBox.textContent = "Erro ao conectar com o servidor.";
       } finally {
