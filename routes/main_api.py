@@ -135,10 +135,44 @@ async def perguntar(input_data: Pergunta):
 
         dados = f"{contexto_sql}\n\n{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
 
+
+        historico = get_history("sessao-usuario").messages
+        pergunta_anterior = "Sem pergunta anterior."
+        if historico:
+            for msg in reversed(historico):
+                if msg.type == "human":
+                    pergunta_anterior = msg.content
+                    break
+
         resposta = chat_chain.invoke(
             {"dados": dados, "pergunta": input_data.pergunta},
             config={"configurable": {"session_id": input_data.user_id}},
         )
+        resposta_lower = resposta.lower()
+        if(
+            "não sei a resposta para essa pergunta" in resposta_lower or
+            "não tenho certeza" in resposta_lower or
+            "não sei" in resposta_lower or
+            "não posso ajudar" in resposta_lower or
+            "não tenho essa informação" in resposta_lower or
+            "não sei a resposta" in resposta_lower or
+            "não tenho certeza sobre isso" in resposta_lower or
+            "não posso responder isso" in resposta_lower or
+            "não tenho certeza se posso ajudar com isso" in resposta_lower or
+            "desculpe pela confusão anterior" in resposta_lower or
+            "desculpe pela confusão" in resposta_lower or
+            "desculpe, não tenho certeza" in resposta_lower or
+            "não tenho certeza, mas" in resposta_lower or
+            "não encontrei" in resposta_lower or 
+            "não consegui encontrar" in resposta_lower or
+            "não consegui" in resposta_lower
+        ):
+            with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
+                f.write(f"[Usuario]: {input_data.user_id}\n")
+                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
+                f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
+                f.write("=========================================================================\n")
+                
         return {"resposta": resposta}
 
     except Exception as e:
