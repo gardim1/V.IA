@@ -3,7 +3,6 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 os.makedirs("feedbacks", exist_ok=True)
 
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -16,14 +15,17 @@ from routes.limpar import router as limpar_router
 from routes.ver_historico import router as ver_historico_router
 from utils.history import get_history
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_core.chat_history import InMemoryChatMessageHistory
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from dotenv import load_dotenv
+from datetime import datetime
+import re
+from typing import Dict, List
+
+from db_utils import listar_tabelas_colunas, gerar_contexto_tabelas
 
 load_dotenv()
 
 app = FastAPI()
-
 app.include_router(status_router)
 app.include_router(testar_router)
 app.include_router(limpar_router)
@@ -31,37 +33,13 @@ app.include_router(ver_historico_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# import time
-# import httpx
 
-# # Espera o Ollama responder antes de seguir
-# def esperar_ollama():
-#     url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-#     for _ in range(10):
-#         try:
-#             r = httpx.get(url, timeout=2)
-#             if r.status_code == 200 and "Ollama" in r.text:
-#                 print("Ollama está pronto")
-#                 return
-#         except:
-#             pass
-#         print("Aguardando Ollama...")
-#         time.sleep(2)
-#     raise RuntimeError("Não foi possível conectar ao Ollama em {url}")
-
-# esperar_ollama()
-
-
-model = OllamaLLM(
-    model="llama3.2:latest"
-)
-
- 
+model = OllamaLLM(model="llama3.2:latest")
 
 template = """
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa, precisa e profissional.
@@ -72,7 +50,8 @@ Regras gerais:
 - Nunca mencione o banco vetorial, embeddings ou base de dados.
 - Não crie suposições, não invente respostas e não preencha lacunas por conta própria.
 - Filtre informações irrelevantes e foque no que é mais importante para resolver a dúvida.
-- Se a pergunta for dinamica, ou seja, se ela envolver datas, numero específico ou informações que podem mudar, diga que não sabe e oriente o cliente a contatar o suporte.
+- Se a pergunta envolver dados dinâmicos (como datas, códigos, quantidades ou status que mudam com o tempo), utilize os resultados da consulta ao banco de dados se eles estiverem disponíveis.
+- Caso a consulta ao banco não retorne dados suficientes, diga que não sabe e oriente o cliente a contatar o suporte.
 
 Estilo de resposta:
 - Responda de forma concisa se a pergunta for objetiva. Seja mais detalhado se a pergunta exigir explicação.
@@ -106,11 +85,7 @@ Instrução final:
 
 Pergunta do usuário:
 {pergunta}
-
 """
-
-
-#fazer o Ollama ver sua propria resposta e usa-la pra verificar se a pergunta está boa e/ou bem formatada.
 
 prompt = ChatPromptTemplate.from_template(template)
 
@@ -118,8 +93,26 @@ chat_chain = RunnableWithMessageHistory(
     runnable=prompt | model,
     get_session_history=get_history,
     input_messages_key="pergunta",
-    history_messages_key="chat_history"
+    history_messages_key="chat_history",
 )
+
+def pergunta_dinamica(pergunta: str) -> bool:
+    padroes = [
+        r"\bj[aá] foi\b", r"\bfoi (entregue|processado|atualizado)\b",
+        r"\bfaltam\b", r"\bquantas?\b",
+        r"\bo relat[óo]rio (foi|est[áa])\b", r"\bj[aá] saiu\b",
+        r"\bconfirmar\b.*\b(entrega|processo|status)\b",
+        r"\bstatus\b.*\b(atual|entrega|pedido)\b",
+        r"\bentreg[ae]s? (pendentes|em aberto|atrasadas?)\b",
+    ]
+    return any(re.search(p, pergunta.lower()) for p in padroes)
+
+def extrair_parametros(pergunta: str) -> Dict[str, List[str]]:
+    params = {"datas": [], "termos": []}
+    params["datas"] = re.findall(r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b", pergunta)
+    termos = ["rotas", "relatório", "status", "entregas"]
+    params["termos"] = [t for t in termos if t in pergunta.lower()]
+    return params
 
 class Pergunta(BaseModel):
     pergunta: str
@@ -127,27 +120,21 @@ class Pergunta(BaseModel):
 
     class Config:
         json_schema_extra = {
-            "example": {
-                "pergunta": "Como cadastrar motoristas?",
-                "user_id": "usuario123"
-            }
+            "example": {"pergunta": "O relatório de rotas de 07/04/2024 foi processado?", "user_id": "u123"}
         }
 
-@app.post("/perguntar",
-          summary = "Enviar pergunta para a IA LIA",
-          description = "Enviar uma pergunta para a IA LIA e receber uma resposta com base no banco de dados vetorial.",
-          response_model=dict,
-          tags=["IA LIA"])
+@app.post("/perguntar", tags=["IA LIA"], response_model=dict)
 async def perguntar(input_data: Pergunta):
     try:
         retriever = get_retriever()
-
         docs = retriever.invoke(input_data.pergunta)
-        dados = "\n".join([doc.page_content for doc in docs]) if docs else "Nenhum conteúdo relevante encontrado."
+        dados_retrieved = "\n".join([d.page_content for d in docs]) if docs else ""
 
-        print("\n=== DOCUMENTOS RETORNADOS ===\n")
-        print(dados)
-        print("\n=== FIM DOS DOCUMENTOS ===\n")
+        tabelas = listar_tabelas_colunas()
+        contexto_sql = gerar_contexto_tabelas(tabelas)
+
+        dados = f"{contexto_sql}\n\n{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
+
 
         historico = get_history("sessao-usuario").messages
         pergunta_anterior = "Sem pergunta anterior."
@@ -158,13 +145,9 @@ async def perguntar(input_data: Pergunta):
                     break
 
         resposta = chat_chain.invoke(
-            {
-                "dados": dados,
-                "pergunta": input_data.pergunta
-            },
-            config={"configurable": {"session_id": input_data.user_id}}
+            {"dados": dados, "pergunta": input_data.pergunta},
+            config={"configurable": {"session_id": input_data.user_id}},
         )
-
         resposta_lower = resposta.lower()
         if(
             "não sei a resposta para essa pergunta" in resposta_lower or
@@ -182,15 +165,14 @@ async def perguntar(input_data: Pergunta):
             "não tenho certeza, mas" in resposta_lower or
             "não encontrei" in resposta_lower or 
             "não consegui encontrar" in resposta_lower or
-            "não consegui" in resposta_lower 
+            "não consegui" in resposta_lower
         ):
-            
-            with open("feedbacks/perguntas_nao_respondidas.txt", "a", encoding="utf-8") as f:
+            with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
                 f.write(f"[Usuario]: {input_data.user_id}\n")
                 f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
                 f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
-                f.write("---------------------\n")
-            
+                f.write("=========================================================================\n")
+                
         return {"resposta": resposta}
 
     except Exception as e:
@@ -198,8 +180,6 @@ async def perguntar(input_data: Pergunta):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/",
-         tags=["Root"],
-         summary="Root endpoint",)
+@app.get("/")
 async def root():
-    return {"resposta": "API de Perguntas e Respostas com IA LIA. Acesse /docs para ver a documentação da API."}
+    return {"resposta": "API de Perguntas e Respostas com IA LIA. Acesse /docs."}
