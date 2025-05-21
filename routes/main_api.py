@@ -21,7 +21,7 @@ from datetime import datetime
 import re
 from typing import Dict, List
 
-from db_utils import listar_tabelas_colunas, gerar_contexto_tabelas
+#from db_utils import listar_tabelas_colunas, gerar_contexto_tabelas
 
 load_dotenv()
 
@@ -39,7 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = OllamaLLM(model="llama3.2:latest")
+model = OllamaLLM(model="llama2:latest")
 
 template = """
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa, precisa e profissional.
@@ -52,6 +52,8 @@ Regras gerais:
 - Filtre informações irrelevantes e foque no que é mais importante para resolver a dúvida.
 - Se a pergunta envolver dados dinâmicos (como datas, códigos, quantidades ou status que mudam com o tempo), utilize os resultados da consulta ao banco de dados se eles estiverem disponíveis.
 - Caso a consulta ao banco não retorne dados suficientes, diga que não sabe e oriente o cliente a contatar o suporte.
+- Se a pergunta envolver informações sobre sua identidade (como quem te desenvolveu, qual é o seu nome, ou sua função), use as informações contidas nos documentos mesmo que estejam em formato de descrição ou metadados.
+
 
 Estilo de resposta:
 - Responda de forma concisa se a pergunta for objetiva. Seja mais detalhado se a pergunta exigir explicação.
@@ -96,23 +98,23 @@ chat_chain = RunnableWithMessageHistory(
     history_messages_key="chat_history",
 )
 
-def pergunta_dinamica(pergunta: str) -> bool:
-    padroes = [
-        r"\bj[aá] foi\b", r"\bfoi (entregue|processado|atualizado)\b",
-        r"\bfaltam\b", r"\bquantas?\b",
-        r"\bo relat[óo]rio (foi|est[áa])\b", r"\bj[aá] saiu\b",
-        r"\bconfirmar\b.*\b(entrega|processo|status)\b",
-        r"\bstatus\b.*\b(atual|entrega|pedido)\b",
-        r"\bentreg[ae]s? (pendentes|em aberto|atrasadas?)\b",
-    ]
-    return any(re.search(p, pergunta.lower()) for p in padroes)
+# def pergunta_dinamica(pergunta: str) -> bool:
+#     padroes = [
+#         r"\bj[aá] foi\b", r"\bfoi (entregue|processado|atualizado)\b",
+#         r"\bfaltam\b", r"\bquantas?\b",
+#         r"\bo relat[óo]rio (foi|est[áa])\b", r"\bj[aá] saiu\b",
+#         r"\bconfirmar\b.*\b(entrega|processo|status)\b",
+#         r"\bstatus\b.*\b(atual|entrega|pedido)\b",
+#         r"\bentreg[ae]s? (pendentes|em aberto|atrasadas?)\b",
+#     ]
+#     return any(re.search(p, pergunta.lower()) for p in padroes)
 
-def extrair_parametros(pergunta: str) -> Dict[str, List[str]]:
-    params = {"datas": [], "termos": []}
-    params["datas"] = re.findall(r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b", pergunta)
-    termos = ["rotas", "relatório", "status", "entregas"]
-    params["termos"] = [t for t in termos if t in pergunta.lower()]
-    return params
+# def extrair_parametros(pergunta: str) -> Dict[str, List[str]]:
+#     params = {"datas": [], "termos": []}
+#     params["datas"] = re.findall(r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b", pergunta)
+#     termos = ["rotas", "relatório", "status", "entregas"]
+#     params["termos"] = [t for t in termos if t in pergunta.lower()]
+#     return params
 
 class Pergunta(BaseModel):
     pergunta: str
@@ -130,10 +132,16 @@ async def perguntar(input_data: Pergunta):
         docs = retriever.invoke(input_data.pergunta)
         dados_retrieved = "\n".join([d.page_content for d in docs]) if docs else ""
 
-        tabelas = listar_tabelas_colunas()
-        contexto_sql = gerar_contexto_tabelas(tabelas)
+        print("Documentos usados pra responder")
+        print(dados_retrieved)
+        if not dados_retrieved:
+            raise HTTPException(status_code=404, detail="Nenhum documento encontrado.")
 
-        dados = f"{contexto_sql}\n\n{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
+        #tabelas = listar_tabelas_colunas()
+        #contexto_sql = gerar_contexto_tabelas(tabelas)
+
+        #dados = f"{contexto_sql}\n\n{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
+        dados = f"{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
 
 
         historico = get_history("sessao-usuario").messages
