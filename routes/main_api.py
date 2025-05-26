@@ -134,17 +134,17 @@ async def perguntar(input_data: Pergunta):
 
         print("Documentos usados pra responder")
         print(dados_retrieved)
+
         if not dados_retrieved:
             raise HTTPException(status_code=404, detail="Nenhum documento encontrado.")
 
-        #tabelas = listar_tabelas_colunas()
-        #contexto_sql = gerar_contexto_tabelas(tabelas)
+        historico = get_history(input_data.user_id).messages
 
-        #dados = f"{contexto_sql}\n\n{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
-        dados = f"{dados_retrieved}".strip() or "Nenhum conteúdo relevante encontrado."
+        if not historico or all(not msg.content.strip() for msg in historico):
+            pass
+        else:
+            pass
 
-
-        historico = get_history("sessao-usuario").messages
         pergunta_anterior = "Sem pergunta anterior."
         if historico:
             for msg in reversed(historico):
@@ -153,11 +153,12 @@ async def perguntar(input_data: Pergunta):
                     break
 
         resposta = chat_chain.invoke(
-            {"dados": dados, "pergunta": input_data.pergunta},
+            {"dados": dados_retrieved, "pergunta": input_data.pergunta},
             config={"configurable": {"session_id": input_data.user_id}},
         )
+
         resposta_lower = resposta.lower()
-        if(
+        if (
             "não sei a resposta para essa pergunta" in resposta_lower or
             "não tenho certeza" in resposta_lower or
             "não sei" in resposta_lower or
