@@ -40,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = OllamaLLM(model="llama3:8B")
+model = OllamaLLM(model="gemma3:4b")
 
 template = """
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa, precisa e profissional.
