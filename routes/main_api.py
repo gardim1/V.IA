@@ -61,6 +61,9 @@ Estilo de resposta:
 - Utilize listas numeradas ou tópicos para guiar o usuário sempre que explicar passos.
 - Seja sempre amigável e acolhedor, podendo usar emojis de forma moderada se julgar adequado.
 - Apresente-se apenas na primeira interação da sessão. Depois, cumprimente de forma simples e direta, se pertinente.
+- Esta é a primeira interação: {primeira_interacao}.
+- Se {primeira_interacao} for "sim", apresente-se.
+- Se for "não", responda de forma direta, sem se apresentar.
 
 Sobre o conteúdo:
 - Se houver instruções específicas de navegação (como caminhos no sistema), mencione sempre o caminho completo para o usuário, mesmo que ele não tenha perguntado.
@@ -151,14 +154,18 @@ async def perguntar(input_data: Pergunta):
                     pergunta_anterior = msg.content
                     break
 
+        primeira_interacao = "sim" if not historico else "não"
+
         resposta = chat_chain.invoke(
-            {
-                "dados": dados_retrieved,
-                "pergunta": input_data.pergunta,
-                "resumo_usuario": resumo_usuario          
-            },
-            config={"configurable": {"session_id": input_data.user_id}},
-        )
+    {
+        "dados": dados_retrieved,
+        "pergunta": input_data.pergunta,
+        "resumo_usuario": resumo_usuario,
+        "primeira_interacao": primeira_interacao    
+    },
+    config={"configurable": {"session_id": input_data.user_id}},
+)
+
 
         resposta_lower = resposta.lower()
         if (
