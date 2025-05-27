@@ -1,5 +1,4 @@
-import sys
-import os
+import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 os.makedirs("feedbacks", exist_ok=True)
 
@@ -20,8 +19,9 @@ from dotenv import load_dotenv
 from datetime import datetime
 import re
 from typing import Dict, List
-
-#from db_utils import listar_tabelas_colunas, gerar_contexto_tabelas
+from keybert import KeyBERT
+from stop_words import get_stop_words
+from routes.resumo_usuario import router as resumo_router, gerar_resumo_keybert
 
 load_dotenv()
 
@@ -30,6 +30,7 @@ app.include_router(status_router)
 app.include_router(testar_router)
 app.include_router(limpar_router)
 app.include_router(ver_historico_router)
+app.include_router(resumo_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -42,6 +43,9 @@ app.add_middleware(
 model = OllamaLLM(model="llama3:8B")
 
 template = """
+Resumo sobre o usuário:
+{resumo_usuario}
+
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa, precisa e profissional.
 
 Regras gerais:
@@ -58,7 +62,7 @@ Regras gerais:
 Estilo de resposta:
 - Responda de forma concisa se a pergunta for objetiva. Seja mais detalhado se a pergunta exigir explicação.
 - Utilize listas numeradas ou tópicos para guiar o usuário sempre que explicar passos.
-- Seja sempre amigável e acolhedor, podendo usar emojis de forma moderada se julgar adequado.
+- Seja sempre amigável e acolhedor, use emojis de forma moderada se julgar adequado, com o objetivo de parecer mais humano e gentil.
 - Apresente-se apenas na primeira interação da sessão. Depois, cumprimente de forma simples e direta, se pertinente.
 
 Sobre o conteúdo:
@@ -140,6 +144,8 @@ async def perguntar(input_data: Pergunta):
 
         historico = get_history(input_data.user_id).messages
 
+        resumo_usuario = gerar_resumo_keybert(historico)
+
         if not historico or all(not msg.content.strip() for msg in historico):
             pass
         else:
@@ -153,7 +159,11 @@ async def perguntar(input_data: Pergunta):
                     break
 
         resposta = chat_chain.invoke(
-            {"dados": dados_retrieved, "pergunta": input_data.pergunta},
+            {
+                "dados": dados_retrieved,
+                "pergunta": input_data.pergunta,
+                "resumo_usuario": resumo_usuario          
+            },
             config={"configurable": {"session_id": input_data.user_id}},
         )
 
