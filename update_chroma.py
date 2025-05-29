@@ -1,8 +1,8 @@
 import os
-from vector_utils import load_and_split_documents, embed_documents
+from vector_utils import load_and_split_documents, get_embedding_function
 from langchain_chroma import Chroma
 
-PASTA_BASE_TXT = "conteudos_novos_7"
+PASTA_BASE_TXT = "conteudos_novos_8"
 CHROMA_PATH = "chroma_langchain_db"
 
 def listar_txts(pasta):
@@ -29,7 +29,8 @@ def main():
     docs = load_and_split_documents(arquivos_validos)
     print(f"{len(docs)} documentos carregados e divididos.")
 
-    _, embeddings = embed_documents(docs) 
+    embeddings = get_embedding_function()
+
 
     db = Chroma(
         persist_directory=CHROMA_PATH,
