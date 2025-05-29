@@ -1,30 +1,13 @@
-from langchain_ollama import OllamaEmbeddings
-from langchain_chroma import Chroma
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
-from langchain_text_splitters import CharacterTextSplitter
 import os
+import re
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+from langchain.docstore.document import Document
 
 
 def get_embedding_function():
-    return OllamaEmbeddings(
-        model="mxbai-embed-large")
+    return HuggingFaceEmbeddings(model_name="intfloat/e5-large-v2")
 
-def get_retriever():
-    embeddings = get_embedding_function()
-    db_location = "./chroma_langchain_db"
-
-    vector_store = Chroma(
-        collection_name="ajuda_sislogica",
-        persist_directory=db_location,
-        embedding_function=embeddings,
-    )
-
-    retriever = vector_store.as_retriever(
-        search_type="mmr",
-        search_kwargs={"k": 10}
-    )
-    return retriever
 
 def load_and_split_documents(file_paths):
     documents = []
@@ -33,33 +16,26 @@ def load_and_split_documents(file_paths):
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
 
-            sections = content.split('\n\n')
-            for idx, section in enumerate(sections):
-                section = section.strip()
-                if section:
-                    documents.append(Document(
-                        page_content=section,
+            partes = re.split(r"(=====.*?=====)", content)
+
+            for i in range(1, len(partes), 2):
+                titulo = partes[i].strip()
+                corpo = partes[i + 1].strip() if i + 1 < len(partes) else ""
+
+                if len(corpo) > 30:
+                    texto_final = f"passage: {titulo}\n{corpo}"
+                    doc = Document(
+                        page_content=texto_final,
                         metadata={
                             "source": os.path.basename(path),
-                            "section": idx
+                            "titulo": titulo.replace("=", "").strip(),
+                            "id": f"{os.path.basename(path)}_{i}"
                         }
-                    ))
+                    )
+                    documents.append(doc)
 
-    splitter = RecursiveCharacterTextSplitter(
-        separators=[r"\n=====.*=====\n"],
-        keep_separator=True,
-    )
-
-    split_docs = splitter.split_documents(documents)
-
-    for i, doc in enumerate(split_docs):
-        doc.metadata["id"] = f"{doc.metadata['source']}_{i}"
-
-    return split_docs
-
-def embed_documents(documents):
-    embeddings = get_embedding_function()
-    return embeddings.embed_documents([doc.page_content for doc in documents]), embeddings
+    print(f"{len(documents)} documentos parseados com sucesso.")
+    return documents
 
 def save_to_chroma(documents):
     embeddings = get_embedding_function()
@@ -78,5 +54,24 @@ def save_to_chroma(documents):
     if new_docs:
         vector_store.add_documents(documents=new_docs, ids=new_ids)
         vector_store.persist()
+        print(f"{len(new_docs)} novos documentos adicionados.")
+    else:
+        print("Nenhum documento novo para adicionar.")
 
     return vector_store
+
+def get_retriever():
+    embeddings = get_embedding_function()
+    db_location = "./chroma_langchain_db"
+
+    vector_store = Chroma(
+        collection_name="ajuda_sislogica",
+        persist_directory=db_location,
+        embedding_function=embeddings,
+    )
+
+    retriever = vector_store.as_retriever(
+        search_type="similarity",
+        search_kwargs={"k": 5}
+    )
+    return retriever

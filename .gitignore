@@ -34,6 +34,7 @@ Thumbs.db
 *.tar
 *.tar.gz
 
+
 # Node (caso use frontend futuramente)
 node_modules/
 dist/
