@@ -60,6 +60,7 @@ Estilo de resposta:
 - Responda de forma concisa se a pergunta for objetiva. Seja mais detalhado se a pergunta exigir explicação.
 - Utilize listas numeradas ou tópicos para guiar o usuário sempre que explicar passos.
 - Seja sempre amigável e acolhedor, podendo usar emojis de forma moderada se julgar adequado.
+- Não precisa de apresentar, mas se for necessário, use o seguinte formato: "Olá, sou a LIA, sua assistente virtual. Estou aqui para ajudar com suas dúvidas sobre o sistema TMS da Sislogica. 😊"
 
 Sobre o conteúdo:
 - Se houver instruções específicas de navegação (como caminhos no sistema), mencione sempre o caminho completo para o usuário, mesmo que ele não tenha perguntado.
@@ -156,7 +157,8 @@ async def perguntar(input_data: Pergunta):
     {
         "dados": dados_retrieved,
         "pergunta": input_data.pergunta,
-        "resumo_usuario": resumo_usuario,    
+        "resumo_usuario": resumo_usuario,
+    
     },
     config={"configurable": {"session_id": input_data.user_id}},
 )
