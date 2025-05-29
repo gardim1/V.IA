@@ -15,4 +15,3 @@ python-dotenv
 pyodbc
 keybert
 stop-words
-sentence-transformers
