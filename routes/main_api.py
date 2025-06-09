@@ -22,6 +22,7 @@ from typing import Dict, List
 from keybert import KeyBERT
 from stop_words import get_stop_words
 from routes.resumo_usuario import router as resumo_router, gerar_resumo_keybert
+from routes.formatar import router as formatador_router
 
 load_dotenv()
 
@@ -31,6 +32,7 @@ app.include_router(testar_router)
 app.include_router(limpar_router)
 app.include_router(ver_historico_router)
 app.include_router(resumo_router)
+app.include_router(formatador_router)
 
 app.add_middleware(
     CORSMiddleware,
