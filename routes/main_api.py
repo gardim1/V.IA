@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, requests
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 os.makedirs("feedbacks", exist_ok=True)
 
@@ -89,7 +89,6 @@ Pergunta do usuário:
 {pergunta}
 """
 
-
 prompt = ChatPromptTemplate.from_template(template)
 
 chat_chain = RunnableWithMessageHistory(
@@ -98,24 +97,6 @@ chat_chain = RunnableWithMessageHistory(
     input_messages_key="pergunta",
     history_messages_key="chat_history",
 )
-
-# def pergunta_dinamica(pergunta: str) -> bool:
-#     padroes = [
-#         r"\bj[aá] foi\b", r"\bfoi (entregue|processado|atualizado)\b",
-#         r"\bfaltam\b", r"\bquantas?\b",
-#         r"\bo relat[óo]rio (foi|est[áa])\b", r"\bj[aá] saiu\b",
-#         r"\bconfirmar\b.*\b(entrega|processo|status)\b",
-#         r"\bstatus\b.*\b(atual|entrega|pedido)\b",
-#         r"\bentreg[ae]s? (pendentes|em aberto|atrasadas?)\b",
-#     ]
-#     return any(re.search(p, pergunta.lower()) for p in padroes)
-
-# def extrair_parametros(pergunta: str) -> Dict[str, List[str]]:
-#     params = {"datas": [], "termos": []}
-#     params["datas"] = re.findall(r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b", pergunta)
-#     termos = ["rotas", "relatório", "status", "entregas"]
-#     params["termos"] = [t for t in termos if t in pergunta.lower()]
-#     return params
 
 class Pergunta(BaseModel):
     pergunta: str
@@ -143,11 +124,6 @@ async def perguntar(input_data: Pergunta):
 
         resumo_usuario = gerar_resumo_keybert(historico)
 
-        if not historico or all(not msg.content.strip() for msg in historico):
-            pass
-        else:
-            pass
-
         pergunta_anterior = "Sem pergunta anterior."
         if historico:
             for msg in reversed(historico):
@@ -155,47 +131,70 @@ async def perguntar(input_data: Pergunta):
                     pergunta_anterior = msg.content
                     break
 
-
         resposta = chat_chain.invoke(
-    {
-        "dados": dados_retrieved,
-        "pergunta": input_data.pergunta,
-        "resumo_usuario": resumo_usuario,
-    
-    },
-    config={"configurable": {"session_id": input_data.user_id}},
-)
-
+            {
+                "dados": dados_retrieved,
+                "pergunta": input_data.pergunta,
+                "resumo_usuario": resumo_usuario,
+            },
+            config={"configurable": {"session_id": input_data.user_id}},
+        )
 
         resposta_lower = resposta.lower()
         if (
-            "não sei a resposta para essa pergunta" in resposta_lower or
-            "não tenho certeza" in resposta_lower or
-            "não sei" in resposta_lower or
-            "não posso ajudar" in resposta_lower or
-            "não tenho essa informação" in resposta_lower or
-            "não sei a resposta" in resposta_lower or
-            "não tenho certeza sobre isso" in resposta_lower or
-            "não posso responder isso" in resposta_lower or
-            "não tenho certeza se posso ajudar com isso" in resposta_lower or
-            "desculpe pela confusão anterior" in resposta_lower or
-            "desculpe pela confusão" in resposta_lower or
-            "desculpe, não tenho certeza" in resposta_lower or
-            "não tenho certeza, mas" in resposta_lower or
-            "não encontrei" in resposta_lower or 
-            "não consegui encontrar" in resposta_lower or
-            "não consegui" in resposta_lower
+            "não sei a resposta para essa pergunta" in resposta_lower
+            or "não tenho certeza" in resposta_lower
+            or "não sei" in resposta_lower
+            or "não posso ajudar" in resposta_lower
+            or "não tenho essa informação" in resposta_lower
+            or "não sei a resposta" in resposta_lower
+            or "não tenho certeza sobre isso" in resposta_lower
+            or "não posso responder isso" in resposta_lower
+            or "não tenho certeza se posso ajudar com isso" in resposta_lower
+            or "desculpe pela confusão anterior" in resposta_lower
+            or "desculpe pela confusão" in resposta_lower
+            or "desculpe, não tenho certeza" in resposta_lower
+            or "não tenho certeza, mas" in resposta_lower
+            or "não encontrei" in resposta_lower
+            or "não consegui encontrar" in resposta_lower
+            or "não consegui" in resposta_lower
         ):
             with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
                 f.write(f"[Usuario]: {input_data.user_id}\n")
                 f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
                 f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
                 f.write("=========================================================================\n")
-                
-        return {"resposta": resposta}
+
+        try:
+            payload = {
+                "pergunta_anterior": pergunta_anterior,
+                "pergunta_atual": input_data.pergunta,
+                "dados_retrieved": dados_retrieved,
+                "resposta_gerada": resposta,
+            }
+
+            revisao_response = requests.post(
+                "http://localhost:8000/revisar_resposta", json=payload
+            )
+
+            if revisao_response.status_code == 200:
+                resposta_revisada = revisao_response.json().get("resposta_revisada", "")
+                print("Resposta revisada:", resposta_revisada)
+            else:
+                print(
+                    f"Falha na revisão da resposta. Status code: {revisao_response.status_code}"
+                )
+                resposta_revisada = resposta
+
+        except Exception as e:
+            print("Erro ao revisar resposta:", str(e))
+            resposta_revisada = resposta
+
+        return {"resposta": resposta_revisada}
 
     except Exception as e:
         import traceback
+
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
