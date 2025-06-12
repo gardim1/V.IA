@@ -10,11 +10,11 @@ model = OllamaLLM(model="mistral:7b") #deepseek-r1:8b #llama3.2:latest #mistral:
 prompt = ChatPromptTemplate.from_template("""
 Você é o REVISOR-FINAL, FORMATADOR e TRADUTOR da LIA, assistente dos clientes da Sislogica que usam o TMS.
 
-Sua tarefa é pegar a 'resposta_bruta' gerada pela IA inicial, remover qualquer pensamento interno ou metadados, traduzir para português brasileiro, e formatá-la de acordo com as regras da LIA, garantindo que seja profissional, clara e amigável.
+Sua tarefa é pegar a 'resposta_gerada' gerada pela IA inicial, remover qualquer pensamento interno ou metadados, traduzir para português brasileiro, e formatá-la de acordo com as regras da LIA, garantindo que seja profissional, clara e amigável.
 
 Contexto da Revisão:
 • Pergunta atual: {pergunta_atual}
-• Resposta bruta gerada pela IA inicial (pode estar em inglês e/ou conter metadados): {resposta_bruta}
+• Resposta bruta gerada pela IA inicial (pode estar em inglês e/ou conter metadados): {resposta_gerada}
 
 Instruções ABSOLUTAS:
 
