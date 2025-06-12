@@ -1,4 +1,4 @@
-import sys, os, requests
+import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 os.makedirs("feedbacks", exist_ok=True)
 
@@ -24,6 +24,7 @@ from stop_words import get_stop_words
 from routes.resumo_usuario import router as resumo_router, gerar_resumo_keybert
 from routes.formatar import router as formatador_router
 from routes.revisor import router as revisor_router
+from routes.revisor import revisor_chain
 
 load_dotenv()
 
@@ -121,7 +122,6 @@ async def perguntar(input_data: Pergunta):
             raise HTTPException(status_code=404, detail="Nenhum documento encontrado.")
 
         historico = get_history(input_data.user_id).messages
-
         resumo_usuario = gerar_resumo_keybert(historico)
 
         pergunta_anterior = "Sem pergunta anterior."
@@ -165,27 +165,15 @@ async def perguntar(input_data: Pergunta):
                 f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
                 f.write("=========================================================================\n")
 
+        payload = {
+            "pergunta_anterior": pergunta_anterior,
+            "pergunta_atual":   input_data.pergunta,
+            "dados_retrieved":  dados_retrieved,
+            "resposta_gerada":  resposta,
+        }
+
         try:
-            payload = {
-                "pergunta_anterior": pergunta_anterior,
-                "pergunta_atual": input_data.pergunta,
-                "dados_retrieved": dados_retrieved,
-                "resposta_gerada": resposta,
-            }
-
-            revisao_response = requests.post(
-                "http://localhost:8000/revisar_resposta", json=payload
-            )
-
-            if revisao_response.status_code == 200:
-                resposta_revisada = revisao_response.json().get("resposta_revisada", "")
-                print("Resposta revisada:", resposta_revisada)
-            else:
-                print(
-                    f"Falha na revisão da resposta. Status code: {revisao_response.status_code}"
-                )
-                resposta_revisada = resposta
-
+            resposta_revisada = revisor_chain.invoke(payload)
         except Exception as e:
             print("Erro ao revisar resposta:", str(e))
             resposta_revisada = resposta
@@ -194,7 +182,6 @@ async def perguntar(input_data: Pergunta):
 
     except Exception as e:
         import traceback
-
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
