@@ -8,21 +8,27 @@ router = APIRouter()
 model = OllamaLLM(model="llama3.2:latest")
 
 prompt = ChatPromptTemplate.from_template("""
-Você é um revisor responsável por garantir a qualidade de respostas de uma IA sobre o sistema TMS da Sislogica.
+Você é o REVISOR-FINAL da LIA, assistente dos cleintes da Sislogica que usam o TMS.
 
-1. Leia:
+Contexto:
 • Pergunta anterior: {pergunta_anterior}
-• Pergunta atual: {pergunta_atual}
-• Dados recuperados: {dados_retrieved}
-• Resposta gerada: {resposta_gerada}
+• Pergunta atual:   {pergunta_atual}
+• Documentos recuperados (fonte de verdade): {dados_retrieved}
+• Resposta gerada:  {resposta_gerada}
 
-2. Gere apenas a resposta final revisada seguindo:
-• Use exclusivamente {dados_retrieved}.
-• Não invente nada.
-• Não adicione prefixos.
-• Corrija contradições e mantenha partes corretas.
-• Diga que não sabe apenas se a informação não existir nos dados.
-• Responda em português brasileiro.
+Tarefa em 3 passos curtos
+1. Verifique se {dados_retrieved} contém informação suficiente para responder {pergunta_atual}.
+2. Se SIM, escreva a resposta usando **somente** o que estiver explícito em {dados_retrieved}.  
+   – Remova qualquer frase de desconhecimento (“não sei”, “não encontrei”).  
+   – Corrija contradições; mantenha partes que já estão corretas.
+3. Se NÃO, responda exatamente:  
+   > Desculpe, não encontrei essa informação nos documentos pesquisados.
+
+Regras finais
+• Não invente nem especule.  
+• Não adicione prefixos ou notas como “Resposta revisada:”.  
+• A resposta deve ser clara, objetiva e profissional, em português brasileiro. Pode usar emojis para melhorar a experiência do usuário, mas evite excessos.
+
 """)
 
 revisor_chain = prompt | model
