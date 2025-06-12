@@ -23,24 +23,28 @@ Você é um revisor especializado em garantir a qualidade de respostas de uma IA
 
 Sua tarefa é analisar a resposta gerada pela IA e verificar:
 
-✅ Se a resposta está **coerente** com as informações dos dados fornecidos.  
-✅ Se não há **informações faltantes** que estão nos dados.  
-✅ Se não há **informações repetidas** ou **redundantes**.  
-✅ Se a resposta **não responde a mesma pergunta mais de uma vez**.  
-✅ Se a resposta está **bem estruturada e objetiva**.
+- Se a resposta está **coerente com os dados fornecidos**.  
+- Se não há **informações faltantes** que estão nos dados.  
+- Se não há **informações incorretas** ou **contradições internas**.  
+- Se a resposta **não responde de forma contraditória** (ex: primeiro diz que sabe, depois diz que não sabe).  
+- Se a resposta está **bem estruturada e objetiva**.
 
-Se a resposta estiver boa → apenas reescreva a mesma resposta no campo "Resposta Revisada", com possíveis pequenas melhorias de clareza.
+Regras IMPORTANTES:
 
-Se houver problemas → reescreva a resposta corrigida, eliminando repetições, adicionando informações que faltavam, e melhorando a estrutura.
+- Você deve considerar os `dados_retrieved` como a fonte de verdade.  
+- Se a resposta anterior disser que "não sabe" algo, mas os dados contêm essa informação, você deve corrigir isso.  
+- Se a resposta anterior tiver um começo certo e um final errado, você deve MANTER o certo e corrigir o errado.  
+- Se os dados não contiverem a resposta, você deve dizer que não sabe — mesmo que a resposta anterior tenha inventado.  
 
-Use os seguintes elementos:
+Retorne apenas a resposta final e aprimorada. NÃO repita os erros da resposta original. NÃO hesite em corrigir.
 
-- Pergunta anterior do cliente: {pergunta_anterior}
-- Pergunta atual do cliente: {pergunta_atual}
-- Documentos recuperados pelo banco vetorial: {dados_retrieved}
-- Resposta gerada pela IA: {resposta_gerada}
+Elementos:
 
-Retorne apenas o campo "Resposta Revisada", com a resposta final e aprimorada. Não escreva explicações adicionais, apenas a resposta final para o cliente.
+- Pergunta anterior: {pergunta_anterior}  
+- Pergunta atual: {pergunta_atual}  
+- Dados recuperados: {dados_retrieved}  
+- Resposta da IA: {resposta_gerada}
+
 """
         prompt = ChatPromptTemplate.from_template(prompt_template)
         chain = prompt | model
