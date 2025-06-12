@@ -36,7 +36,7 @@ Regras IMPORTANTES:
 - Se a resposta anterior tiver um começo certo e um final errado, você deve MANTER o certo e corrigir o errado.  
 - Se os dados não contiverem a resposta, você deve dizer que não sabe — mesmo que a resposta anterior tenha inventado.  
 
-Retorne apenas a resposta final e aprimorada. NÃO repita os erros da resposta original. NÃO hesite em corrigir.
+Retorne apenas a resposta final e aprimorada. NÃO repita os erros da resposta original. NÃO hesite em corrigir. Reponda APENAS a resposta revisada, sem explicações adicionais ou contextos.
 
 Elementos:
 
