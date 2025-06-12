@@ -28,6 +28,7 @@ Instruções ABSOLUTAS:
     * Adapte o tom para ser amigável e acolhedor, como a LIA. Use emojis com moderação, se apropriado.
     * NÃO invente informações.
     * NÃO adicione prefixos ou notas como "Resposta revisada:" ou "Traduzido de:".
+    * Traduza apenas o conteúdo da resposta, sem incluir metadados ou instruções internas. Sinta-se livre para traduzir apenas o que achar ser a reposta da {pergunta_atual}.
 
 3.  **Resposta Final:** A resposta deve ser a versão final, pronta para o usuário, em português brasileiro.
 """)
