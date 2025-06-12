@@ -5,18 +5,16 @@ from langchain_ollama import OllamaLLM
 import traceback
 
 router = APIRouter()
-model = OllamaLLM(model="llama3.2:latest") #deepseek-r1:8b
+model = OllamaLLM(model="mistral:7b") #deepseek-r1:8b #llama3.2:latest #mistral:7b
 
 prompt = ChatPromptTemplate.from_template("""
-Você é o REVISOR-FINAL e TRADUTOR da LIA, assistente dos clientes da Sislogica que usam o TMS.
+Você é o REVISOR-FINAL, FORMATADOR e TRADUTOR da LIA, assistente dos clientes da Sislogica que usam o TMS.
 
 Sua tarefa é pegar a 'resposta_bruta' gerada pela IA inicial, remover qualquer pensamento interno ou metadados, traduzir para português brasileiro, e formatá-la de acordo com as regras da LIA, garantindo que seja profissional, clara e amigável.
 
 Contexto da Revisão:
-• Pergunta anterior: {pergunta_anterior}
 • Pergunta atual: {pergunta_atual}
-• Documentos que foram usados para gerar a resposta inicial: {dados_retrieved}
-• Resposta bruta gerada pela IA inicial (pode estar em inglês ou conter metadados): {resposta_bruta}
+• Resposta bruta gerada pela IA inicial (pode estar em inglês e/ou conter metadados): {resposta_bruta}
 
 Instruções ABSOLUTAS:
 
@@ -37,9 +35,7 @@ Instruções ABSOLUTAS:
 revisor_chain = prompt | model
 
 class RevisaoResposta(BaseModel):
-    pergunta_anterior: str
     pergunta_atual: str
-    dados_retrieved: str
     resposta_gerada: str
 
 @router.post("/revisar_resposta", tags=["IA LIA"], response_model=dict)
