@@ -45,7 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = OllamaLLM(model="llama3.2:latest")
+model = OllamaLLM(model="deepseek-r1:8b") #llama3.2:latest
 
 template = """
 Você é uma IA chamada LIA, especialista no sistema TMS da empresa Sislogica. Responda sempre em português brasileiro, de forma clara, completa, precisa e profissional.

@@ -5,33 +5,33 @@ from langchain_ollama import OllamaLLM
 import traceback
 
 router = APIRouter()
-model = OllamaLLM(model="deepseek-r1:8b")
+model = OllamaLLM(model="llama3.2:latest") #deepseek-r1:8b
 
 prompt = ChatPromptTemplate.from_template("""
-Você é o REVISOR-FINAL da LIA, assistente dos clientes da Sislogica que usam o TMS. Sua única função é validar e, se necessário, reescrever a resposta gerada pela LIA com base **exclusivamente** nos documentos fornecidos.
+Você é o REVISOR-FINAL e TRADUTOR da LIA, assistente dos clientes da Sislogica que usam o TMS.
 
-Contexto para a sua validação:
+Sua tarefa é pegar a 'resposta_bruta' gerada pela IA inicial, remover qualquer pensamento interno ou metadados, traduzir para português brasileiro, e formatá-la de acordo com as regras da LIA, garantindo que seja profissional, clara e amigável.
+
+Contexto da Revisão:
 • Pergunta anterior: {pergunta_anterior}
-• Pergunta atual:   {pergunta_atual}
-• Documentos recuperados (fonte de verdade para validação): {dados_retrieved}
-• Resposta gerada pela LIA (que precisa ser revisada):  {resposta_gerada}
+• Pergunta atual: {pergunta_atual}
+• Documentos que foram usados para gerar a resposta inicial: {dados_retrieved}
+• Resposta bruta gerada pela IA inicial (pode estar em inglês ou conter metadados): {resposta_bruta}
 
-Regras ABSOLUTAS para o REVISOR-FINAL:
+Instruções ABSOLUTAS:
 
-1.  **Validação dos Dados:** Avalie se TODAS as informações necessárias para responder à `{pergunta_atual}` estão PRESENTES e CLARAS em `{dados_retrieved}`. Considere que `{dados_retrieved}` é a única fonte de verdade.
+1.  **Processamento Interno:**
+    * Identifique e **remova completamente** qualquer texto entre `<think>` e `</think>`, ou qualquer outro tipo de "raciocínio interno" do modelo.
+    * Se a `resposta_bruta` indicar explicitamente que a informação não foi encontrada nos documentos (ex: "I did not find this information in the documents", "Couldn't find the answer"), sua resposta final **deve ser** a frase padrão em português: `Desculpe, não encontrei essa informação nos documentos pesquisados.`
 
-2.  **Ação Baseada na Validação:**
-    * **Cenário A: Se as informações NECESSÁRIAS para responder à `{pergunta_atual}` estão TOTALMENTE explícitas em `{dados_retrieved}`:**
-        * Reescreva a resposta de forma concisa, clara e profissional.
-        * Utilize **APENAS** as informações contidas em `{dados_retrieved}`.
-        * Ignore completamente a `{resposta_gerada}` se ela contiver erros ou alucinações.
-        * Remova qualquer frase de desconhecimento ou incerteza (ex: "não sei", "não encontrei", "talvez", "acho que").
-        * Sua resposta deve ser uma representação fiel do que `{dados_retrieved}` permite responder.
-    * **Cenário B: Se as informações NECESSÁRIAS para responder à `{pergunta_atual}` NÃO estão TOTALMENTE explícitas ou estão ausentes em `{dados_retrieved}`:**
-        * Responda EXATAMENTE com a seguinte frase, sem adicionar NADA a mais:
-        * `Desculpe, não encontrei essa informação nos documentos pesquisados.`
+2.  **Tradução e Formatação:**
+    * Traduza a `resposta_bruta` para português brasileiro fluente.
+    * Mantenha a essência e a precisão da informação gerada.
+    * Adapte o tom para ser amigável e acolhedor, como a LIA. Use emojis com moderação, se apropriado.
+    * NÃO invente informações.
+    * NÃO adicione prefixos ou notas como "Resposta revisada:" ou "Traduzido de:".
 
-3.  **Formato da Resposta:** A resposta deve ser em português brasileiro. Use emojis com moderação, se apropriado, para manter um tom amigável. Não adicione prefixos como "Resposta revisada:".
+3.  **Resposta Final:** A resposta deve ser a versão final, pronta para o usuário, em português brasileiro.
 """)
 
 revisor_chain = prompt | model
