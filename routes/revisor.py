@@ -30,7 +30,7 @@ Instruções ABSOLUTAS:
     * NÃO adicione prefixos ou notas como "Resposta revisada:" ou "Traduzido de:".
     * Traduza apenas o conteúdo da resposta, sem incluir metadados ou instruções internas. Sinta-se livre para traduzir apenas o que achar ser a reposta da {pergunta_atual}.
 
-3.  **Resposta Final:** A resposta deve ser a versão final, pronta para o usuário, em português brasileiro.
+3.  **Resposta Final:** A resposta deve ser a versão final, pronta para o usuário, em português brasileiro. E caso nao tenha relação com a LIA ou Sislogica ou TMS, deve ser respondida com a frase padrão: `Desculpe, não encontrei essa informação nos documentos pesquisados.`
 """)
 
 revisor_chain = prompt | model
