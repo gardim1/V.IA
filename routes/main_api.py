@@ -45,7 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = OllamaLLM(model="deepseek-r1:8b") #llama3.2:latest
+model = OllamaLLM(model="llama3.2:latest") #llama3.2:latest #deepseek-r1:8b
 
 template = """
 Você é a **LIA**, assistente virtual da Sislogica especializada no sistema TMS.  
