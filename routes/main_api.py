@@ -107,8 +107,12 @@ class Pergunta(BaseModel):
 async def perguntar(input_data: Pergunta):
     try:
         resposta = langgraph_flow.invoke({"pergunta": input_data.pergunta})
+        if isinstance(resposta, dict):          
+            texto_resposta = resposta["resposta"] 
+        else:                                     
+            texto_resposta = resposta
 
-        resposta_lower = resposta.lower()
+        resposta_lower = texto_resposta.lower()
         if (
             "não sei a resposta para essa pergunta" in resposta_lower
             or "não tenho certeza" in resposta_lower
