@@ -1,6 +1,5 @@
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
-from langgraph.prebuilt import ToolNode
 
 from graph.roteador import roteador_tool
 from agents.cte_mdfe_agent import cte_mdfe_agent
@@ -14,15 +13,15 @@ class GraphState(TypedDict):
 
 builder = StateGraph(GraphState)
 
-builder.add_node("roteador", ToolNode([roteador_tool]))
-builder.add_node("cte_mdfe", cte_mdfe_agent)
+builder.add_node("roteador",     roteador_tool)  
+builder.add_node("cte_mdfe",     cte_mdfe_agent)
 builder.add_node("roteirizacao", roteirizacao_agent)
-builder.add_node("geral", geral_agent)
+builder.add_node("geral",        geral_agent)
 
 builder.set_entry_point("roteador")
-builder.add_edge("roteador", lambda state: state["next"])
-builder.add_edge("cte_mdfe", END)
+builder.add_edge("roteador", lambda s: s["next"])
+builder.add_edge("cte_mdfe",     END)
 builder.add_edge("roteirizacao", END)
-builder.add_edge("geral", END)
+builder.add_edge("geral",        END)
 
 langgraph_flow = builder.compile()
