@@ -19,5 +19,5 @@ def cte_mdfe_agent(state: dict) -> dict:
     return {
         "pergunta": pergunta,
         "resposta": resposta,
-        "next": ""          # nó final
+        "next": ""         
     }
