@@ -2,15 +2,13 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
-from langchain_text_splitters import CharacterTextSplitter
 import os
 
-
 def get_embedding_function():
-    return OllamaEmbeddings(
-        model="mxbai-embed-large")
+    return OllamaEmbeddings(model="mxbai-embed-large")
 
-def get_retriever():
+
+def get_retriever(filtro: str = None):
     embeddings = get_embedding_function()
     db_location = "./chroma_langchain_db"
 
@@ -20,46 +18,70 @@ def get_retriever():
         embedding_function=embeddings,
     )
 
-    retriever = vector_store.as_retriever(
+    search_kwargs = {"k": 10}
+    if filtro:
+        search_kwargs["filter"] = {"categoria": filtro}
+
+    return vector_store.as_retriever(
         search_type="mmr",
-        search_kwargs={"k": 10}
+        search_kwargs=search_kwargs
     )
-    return retriever
+
+def inferir_categoria(path: str) -> str:
+    nome = os.path.basename(path).lower()
+
+    if any(t in nome for t in ["cte", "mdf", "comprovante"]):
+        return "CTE_MDFE"
+    elif "roteirizacao" in nome or "rota" in nome:
+        return "ROTEIRIZACAO"
+    elif "relatorio" in nome:
+        return "RELATORIOS"
+    elif "devolucao" in nome or "recebimento" in nome:
+        return "DEVOLUCAO"
+    elif "chamado" in nome or "ocorrencia" in nome:
+        return "CHAMADOS"
+    elif "transportador" in nome:
+        return "TRANSPORTADORA"
+    elif "motorista" in nome or "veiculo" in nome:
+        return "FROTA"
+    elif "indenizacao" in nome:
+        return "INDENIZACAO"
+    else:
+        return "GERAL"
 
 def load_and_split_documents(file_paths):
-    documents = []
+    documentos = []
 
     for path in file_paths:
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             content = f.read()
 
-            sections = content.split('\n\n')
-            for idx, section in enumerate(sections):
-                section = section.strip()
-                if section:
-                    documents.append(Document(
-                        page_content=section,
+        categoria = inferir_categoria(path)
+        sections = content.split("\n\n")
+
+        for idx, sec in enumerate(sections):
+            texto = sec.strip()
+            if texto:
+                documentos.append(
+                    Document(
+                        page_content=texto,
                         metadata={
                             "source": os.path.basename(path),
-                            "section": idx
-                        }
-                    ))
+                            "section": idx,
+                            "categoria": categoria,
+                        },
+                    )
+                )
 
     splitter = RecursiveCharacterTextSplitter(
-        separators=[r"\n=====.*=====\n"],
-        keep_separator=True,
+        separators=[r"\n=====.*=====\n"], keep_separator=True
     )
-
-    split_docs = splitter.split_documents(documents)
+    split_docs = splitter.split_documents(documentos)
 
     for i, doc in enumerate(split_docs):
         doc.metadata["id"] = f"{doc.metadata['source']}_{i}"
 
     return split_docs
-
-def embed_documents(documents):
-    embeddings = get_embedding_function()
-    return embeddings.embed_documents([doc.page_content for doc in documents]), embeddings
 
 def save_to_chroma(documents):
     embeddings = get_embedding_function()
@@ -72,11 +94,13 @@ def save_to_chroma(documents):
     )
 
     existing_ids = set(vector_store.get()["ids"])
-    new_docs = [doc for doc in documents if doc.metadata["id"] not in existing_ids]
-    new_ids = [doc.metadata["id"] for doc in new_docs]
+    novos_docs = [d for d in documents if d.metadata["id"] not in existing_ids]
 
-    if new_docs:
-        vector_store.add_documents(documents=new_docs, ids=new_ids)
+    if novos_docs:
+        vector_store.add_documents(
+            documents=novos_docs,
+            ids=[d.metadata["id"] for d in novos_docs],
+        )
         vector_store.persist()
 
     return vector_store

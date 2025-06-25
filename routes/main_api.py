@@ -25,6 +25,8 @@ from routes.resumo_usuario import router as resumo_router, gerar_resumo_keybert
 from routes.formatar import router as formatador_router
 from routes.revisor import router as revisor_router
 from routes.revisor import revisor_chain
+from graph.langgraph_flow import langgraph_flow
+
 
 load_dotenv()
 
@@ -104,34 +106,7 @@ class Pergunta(BaseModel):
 @app.post("/perguntar", tags=["IA LIA"], response_model=dict)
 async def perguntar(input_data: Pergunta):
     try:
-        retriever = get_retriever()
-        docs = retriever.invoke(input_data.pergunta)
-        dados_retrieved = "\n".join([d.page_content for d in docs]) if docs else ""
-
-        print("Documentos usados pra responder")
-        print(dados_retrieved)
-
-        if not dados_retrieved:
-            raise HTTPException(status_code=404, detail="Nenhum documento encontrado.")
-
-        historico = get_history(input_data.user_id).messages
-        resumo_usuario = gerar_resumo_keybert(historico)
-
-        pergunta_anterior = "Sem pergunta anterior."
-        if historico:
-            for msg in reversed(historico):
-                if msg.type == "human":
-                    pergunta_anterior = msg.content
-                    break
-
-        resposta = chat_chain.invoke(
-            {
-                "dados": dados_retrieved,
-                "pergunta": input_data.pergunta,
-                "resumo_usuario": resumo_usuario,
-            },
-            config={"configurable": {"session_id": input_data.user_id}},
-        )
+        resposta = langgraph_flow.invoke({"pergunta": input_data.pergunta})
 
         resposta_lower = resposta.lower()
         if (
@@ -154,19 +129,15 @@ async def perguntar(input_data: Pergunta):
         ):
             with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
                 f.write(f"[Usuario]: {input_data.user_id}\n")
-                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
+                f.write(f"[Pergunta anterior]: {get_history(input_data.user_id).messages[-2].content if len(get_history(input_data.user_id).messages) >= 2 else 'N/A'}\n")
                 f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
-                f.write("=========================================================================\n")
-
-        payload = {
-            "pergunta_anterior": pergunta_anterior,
-            "pergunta_atual":   input_data.pergunta,
-            "dados_retrieved":  dados_retrieved,
-            "resposta_gerada":  resposta,
-        }
+                f.write("=========================================================================" + "\n")
 
         try:
-            resposta_revisada = revisor_chain.invoke(payload)
+            resposta_revisada = revisor_chain.invoke({
+                "pergunta_atual": input_data.pergunta,
+                "resposta_gerada": resposta
+            })
         except Exception as e:
             print("Erro ao revisar resposta:", str(e))
             resposta_revisada = resposta
@@ -177,6 +148,7 @@ async def perguntar(input_data: Pergunta):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/")
 async def root():
