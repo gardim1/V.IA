@@ -12,8 +12,7 @@ Pergunta: {pergunta}
 Categoria:
 """)
 
-model = OllamaLLM(model="mistral:7b")  
-
+model = OllamaLLM(model="mistral:7b")
 chain = prompt | model
 
 def roteador_tool(state: dict) -> dict:
@@ -26,4 +25,8 @@ def roteador_tool(state: dict) -> dict:
     if categoria not in validas:
         categoria = "GERAL"
 
-    return {"next": categoria.lower()}
+    return {
+        "pergunta": state["pergunta"],
+        "resposta": "",                  
+        "next": categoria.lower()        
+    }
