@@ -5,8 +5,15 @@ from graph.roteador import roteador_tool
 from agents.cte_mdfe_agent import cte_mdfe_agent
 from agents.roteirizacao_agent import roteirizacao_agent
 from agents.geral_agent import geral_agent  
+from typing import TypedDict
 
-builder = StateGraph()
+class GraphState(TypedDict):
+    pergunta: str
+    resposta: str
+    next: str
+
+builder = StateGraph(GraphState)
+
 
 builder.add_node("roteador", ToolNode(roteador_tool))
 builder.add_node("cte_mdfe",      cte_mdfe_agent)
