@@ -9,6 +9,11 @@ def roteirizacao_agent(state: dict) -> dict:
     docs = retriever.invoke(pergunta)
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
+    print("\n=== [ROTEIRIZACAO] Documentos recuperados ===")
+    for i, d in enumerate(docs, 1):
+        print(f"Doc {i}:\n{d.page_content}\n")
+    print("============================================\n")
+
     prompt = ChatPromptTemplate.from_template(
         """
 Com base exclusivamente nos documentos abaixo, responda à pergunta do usuário de forma clara, objetiva e profissional:
