@@ -23,8 +23,8 @@ from keybert import KeyBERT
 from stop_words import get_stop_words
 from routes.resumo_usuario import router as resumo_router, gerar_resumo_keybert
 from routes.formatar import router as formatador_router
-from routes.revisor import router as revisor_router
-from routes.revisor import revisor_chain
+#from routes.revisor import router as revisor_router
+#from routes.revisor import revisor_chain
 from graph.langgraph_flow import langgraph_flow
 
 
@@ -37,7 +37,7 @@ app.include_router(limpar_router)
 app.include_router(ver_historico_router)
 app.include_router(resumo_router)
 app.include_router(formatador_router)
-app.include_router(revisor_router)
+#app.include_router(revisor_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -137,16 +137,16 @@ async def perguntar(input_data: Pergunta):
                 f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
                 f.write("=========================================================================" + "\n")
 
-        try:
-            resposta_revisada = revisor_chain.invoke({
-                "pergunta_atual": input_data.pergunta,
-                "resposta_gerada": resposta
-            })
-        except Exception as e:
-            print("Erro ao revisar resposta:", str(e))
-            resposta_revisada = resposta
-
-        return {"resposta": resposta_revisada}
+        # try:
+        #     resposta_revisada = revisor_chain.invoke({
+        #         "pergunta_atual": input_data.pergunta,
+        #         "resposta_gerada": resposta
+        #     })
+        # except Exception as e:
+        #     print("Erro ao revisar resposta:", str(e))
+        #     resposta_revisada = resposta
+        # return {"resposta": resposta_revisada}
+        return {"resposta": texto_resposta}
 
     except Exception as e:
         import traceback
