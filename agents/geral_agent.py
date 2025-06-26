@@ -10,7 +10,20 @@ def geral_agent(state: dict) -> dict:
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
     prompt = ChatPromptTemplate.from_template(
-        "Responda com base nos documentos abaixo:\n\n{docs}\n\nPergunta: {pergunta}\n\n Responda de forma completa e profissional, utilizando apenas as informações fornecidas nos documentos. Use emojis sem exagerar para manter a conversa descontraida sem perder a profissionalidade. Se a informação não estiver presente, responda: 'Desculpe, não encontrei essa informação nos documentos pesquisados.'"
+        """
+Com base exclusivamente nos documentos abaixo, responda à pergunta do usuário de forma clara, objetiva e profissional:
+
+{docs}
+
+Pergunta: {pergunta}
+
+ Instruções:
+- Utilize apenas as informações presentes nos documentos.
+- Estruture a resposta em tópicos ou passos sempre que possível.
+- Use emojis com moderação para tornar a resposta amigável e leve, sem perder a formalidade.
+- Se a resposta não estiver nos documentos, diga: "Desculpe, não encontrei essa informação nos documentos disponíveis."
+
+"""
     )
     resposta = (prompt | OllamaLLM(model="llama3.2:latest")).invoke(
         {"docs": contexto, "pergunta": pergunta}
