@@ -90,7 +90,7 @@ def load_and_split_documents(file_paths):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=800,
         chunk_overlap=100,
-        separators=["\n\n", "\n", " ","","." ]
+        separators=["\n\n", "\n"]
     )
     split_docs = splitter.split_documents(documentos)
 
@@ -117,6 +117,5 @@ def save_to_chroma(documents):
             documents=novos_docs,
             ids=[d.metadata["id"] for d in novos_docs],
         )
-        vector_store.persist()
 
     return vector_store
