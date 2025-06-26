@@ -3,6 +3,16 @@ from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 import os
+from sentence_transformers import CrossEncoder
+
+reranker = CrossEncoder("BAAI/bge-reranker-large")
+
+def rerank_docs(query: str, docs: list, top_k: int = 3):
+    pairs = [[query, doc.page_content] for doc in docs]
+    scores = reranker.predict(pairs)
+    scored = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
+    return [doc for doc, _ in scored[:top_k]]
+
 
 def get_embedding_function():
     return OllamaEmbeddings(model="mxbai-embed-large")
