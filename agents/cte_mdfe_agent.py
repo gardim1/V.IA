@@ -8,7 +8,7 @@ def cte_mdfe_agent(state: dict) -> dict:
 
     retriever = get_retriever(filtro="CTE_MDFE")
     docs = retriever.invoke(pergunta)
-    docs = rerank_docs(pergunta, docs, top_k=3)
+    docs = rerank_docs(pergunta, docs, top_k=10)
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
     print("\n=== [CTE/MDFE] Chunks recuperados individualmente ===")
