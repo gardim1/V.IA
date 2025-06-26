@@ -83,8 +83,14 @@ def load_and_split_documents(file_paths):
                     )
                 )
 
+    # splitter = RecursiveCharacterTextSplitter(
+    #     separators=[r"\n=====.*=====\n"], keep_separator=True
+    # )
+
     splitter = RecursiveCharacterTextSplitter(
-        separators=[r"\n=====.*=====\n"], keep_separator=True
+        chunk_size=800,
+        chunk_overlap=100,
+        separators=["\n\n", "\n", " ","","." ]
     )
     split_docs = splitter.split_documents(documentos)
 

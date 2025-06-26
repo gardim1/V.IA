@@ -11,10 +11,15 @@ def roteirizacao_agent(state: dict) -> dict:
     docs = rerank_docs(pergunta, docs, top_k=3)
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
-    print("\n=== [ROTEIRIZACAO] Documentos recuperados ===")
+    print("\n=== [ROTEIRIZACAO] Chunks recuperados individualmente ===")
     for i, d in enumerate(docs, 1):
         print(f"Doc {i}:\n{d.page_content}\n")
-    print("============================================\n")
+
+    contexto = "\n".join(d.page_content for d in docs)
+
+    print("\n=== [ROTEIRIZACAO] Texto total passado para IA ===")
+    print(contexto)
+    print("===================================================\n")
 
     prompt = ChatPromptTemplate.from_template(
         """
