@@ -107,51 +107,53 @@ class Pergunta(BaseModel):
 async def perguntar(input_data: Pergunta):
     try:
         resposta = langgraph_flow.invoke({"pergunta": input_data.pergunta})
-        if isinstance(resposta, dict):          
-            texto_resposta = resposta["resposta"] 
-        else:                                     
-            texto_resposta = resposta
+        texto_resposta = resposta["resposta"] if isinstance(resposta, dict) else resposta
+
+        history = get_history(input_data.user_id)
+
+        pergunta_anterior = next(
+            (m.content for m in reversed(history.messages) if m.type == "human"),
+            "N/A"
+        )
+
+        history.add_user_message(input_data.pergunta)
+        history.add_ai_message(texto_resposta)
 
         resposta_lower = texto_resposta.lower()
-        if (
-            "não sei a resposta para essa pergunta" in resposta_lower
-            or "não tenho certeza" in resposta_lower
-            or "não sei" in resposta_lower
-            or "não posso ajudar" in resposta_lower
-            or "não tenho essa informação" in resposta_lower
-            or "não sei a resposta" in resposta_lower
-            or "não tenho certeza sobre isso" in resposta_lower
-            or "não posso responder isso" in resposta_lower
-            or "não tenho certeza se posso ajudar com isso" in resposta_lower
-            or "desculpe pela confusão anterior" in resposta_lower
-            or "desculpe pela confusão" in resposta_lower
-            or "desculpe, não tenho certeza" in resposta_lower
-            or "não tenho certeza, mas" in resposta_lower
-            or "não encontrei" in resposta_lower
-            or "não consegui encontrar" in resposta_lower
-            or "não consegui" in resposta_lower
-        ):
-            with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
-                f.write(f"[Usuario]: {input_data.user_id}\n")
-                f.write(f"[Pergunta anterior]: {get_history(input_data.user_id).messages[-2].content if len(get_history(input_data.user_id).messages) >= 2 else 'N/A'}\n")
-                f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
-                f.write("=========================================================================" + "\n")
+        gatilho = any(
+    frase in resposta_lower for frase in [
+        "não sei a resposta para essa pergunta",
+        "não tenho certeza",
+        "não sei",
+        "não posso ajudar",
+        "não tenho essa informação",
+        "não sei a resposta",
+        "não tenho certeza sobre isso",
+        "não posso responder isso",
+        "não tenho certeza se posso ajudar com isso",
+        "desculpe pela confusão anterior",
+        "desculpe pela confusão",
+        "desculpe, não tenho certeza",
+        "não tenho certeza, mas",
+        "não encontrei",
+        "não consegui encontrar",
+        "não consegui"
+    ]
+)
 
-        # try:
-        #     resposta_revisada = revisor_chain.invoke({
-        #         "pergunta_atual": input_data.pergunta,
-        #         "resposta_gerada": resposta
-        #     })
-        # except Exception as e:
-        #     print("Erro ao revisar resposta:", str(e))
-        #     resposta_revisada = resposta
-        # return {"resposta": resposta_revisada}
+        if gatilho:
+            with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
+                f.write(f"[Usuário]: {input_data.user_id}\n")
+                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
+                f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
+                f.write("================================================================\n")
+
         return {"resposta": texto_resposta}
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        import traceback; traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.get("/")
