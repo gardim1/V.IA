@@ -7,7 +7,7 @@ from sentence_transformers import CrossEncoder
 
 reranker = CrossEncoder("BAAI/bge-reranker-large")
 
-def rerank_docs(query: str, docs: list, top_k: int = 3):
+def rerank_docs(query: str, docs: list, top_k: int = 10):
     pairs = [[query, doc.page_content] for doc in docs]
     scores = reranker.predict(pairs)
     scored = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
