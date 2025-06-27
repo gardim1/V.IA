@@ -8,7 +8,7 @@ def geral_agent(state: dict) -> dict:
 
     retriever = get_retriever()
     docs = retriever.invoke(pergunta)
-    docs = rerank_docs(pergunta, docs, top_k=10)
+    docs = rerank_docs(pergunta, docs, top_k=3)
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
     print("\n=== [GERAL] Chunks recuperados individualmente ===")
