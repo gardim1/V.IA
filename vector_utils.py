@@ -28,12 +28,12 @@ def get_retriever(filtro: str = None):
         embedding_function=embeddings,
     )
 
-    search_kwargs = {"k": 10}
+    search_kwargs = {"k": 20}
     if filtro:
         search_kwargs["filter"] = {"categoria": filtro}
 
     return vector_store.as_retriever(
-        search_type="mmr",
+        search_type="similarity", #mmr
         search_kwargs=search_kwargs
     )
 
@@ -88,9 +88,9 @@ def load_and_split_documents(file_paths):
     # )
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=800,
-        chunk_overlap=100,
-        separators=["\n\n", "\n"]
+        chunk_size=1500,
+        chunk_overlap=200,
+        separators=["\n\n", "\n", ".", "!", "?"]
     )
     split_docs = splitter.split_documents(documentos)
 
