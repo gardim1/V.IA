@@ -17,7 +17,7 @@ def geral_agent(state: dict) -> dict:
 
     contexto = "\n".join(d.page_content for d in docs)
 
-    print("\n=== [ROTEIRIZACAO] Texto total passado para IA ===")
+    print("\n=== [GERAL] Texto total passado para IA ===")
     print(contexto)
     print("===================================================\n")
 
