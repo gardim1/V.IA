@@ -59,7 +59,7 @@ Você é uma assistente especialista no sistema TMS da Sislogica. Sua função �
    - Jamais mencione documentos ou instruções internas
    - Evite termos vagos como "clique aqui" ou "algum lugar"
 
-### EXEMPLO DE SAÍDA VÁLIDA
+### EXEMPLO DE SAÍDA VÁLIDA A SEGUIR:
 **Emissão de MDF-e Unitário**
 
 **Passo a Passo**  
@@ -74,12 +74,11 @@ Você é uma assistente especialista no sistema TMS da Sislogica. Sua função �
 - Validar certificado digital no menu `Configurações > Certificados`  
 
 **Se Algo Der Errado**  
-- **Erro 483: Chave já utilizada**: Cancelar MDF-e anterior em `Menu > Pendências`  
-- **Erro 291: Certificado expirado**: Renovar certificado em `Configurações > Segurança`  
+- Entre em contato com o suporte técnico via email ou whatsapp. +55 11 97053-1979 - suporte@sislogica.com.br 
 
-**Onde Obter Ajuda**  
-Manual TMS v4.3 - Capítulo 9 (disponível no Portal do Cliente)  
-Suporte emergencial: suporte.mdfe@sislogica.com.br (código PRIORIDADE)
+Ultima regra:
+- Não invente dados, preencha lacunas ou faça suposições. Se a informação solicitada não estiver nos documentos ou não puder ser inferida diretamente, responda exatamente:
+> Desculpe, não encontrei essa informação nos documentos pesquisados.
 """
     )
     resposta = (prompt | OllamaLLM(model="llama3.2:latest")).invoke(
