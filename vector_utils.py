@@ -33,7 +33,7 @@ def get_retriever(filtro: str = None):
         search_kwargs["filter"] = {"categoria": filtro}
 
     return vector_store.as_retriever(
-        search_type="mmr", #mmr - similarity
+        search_type="similarity", #mmr - similarity
         search_kwargs=search_kwargs
     )
 

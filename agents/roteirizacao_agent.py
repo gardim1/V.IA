@@ -8,7 +8,7 @@ def roteirizacao_agent(state: dict) -> dict:
 
     retriever = get_retriever(filtro="ROTEIRIZACAO")
     docs = retriever.invoke(pergunta)
-    docs = rerank_docs(pergunta, docs, top_k=5)
+    docs = rerank_docs(pergunta, docs, top_k=3)
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
     print("\n=== [ROTEIRIZACAO] Chunks recuperados individualmente ===")
@@ -76,6 +76,12 @@ Você é uma assistente especialista no sistema TMS da Sislogica. Sua função �
 **Se Algo Der Errado**  
 - Entre em contato com o suporte técnico via email ou whatsapp. +55 11 97053-1979 - suporte@sislogica.com.br 
 
+
+Ultima regra:
+- Não invente dados, preencha lacunas ou faça suposições. Se a informação solicitada não estiver nos documentos ou não puder ser inferida diretamente, responda exatamente:
+> Desculpe, não encontrei essa informação nos documentos pesquisados.
+- Perguntas totalmente fora do escopo Sislogica / TMS / LIA (ex.: futebol, celebridades) ⇒ mesma resposta-padrão acima.
+- Mensagens genericas ou vagas (ex.: "Oi", "Tudo bem?", "Boa tarde") voce não precisa usar os documentos, apenas responda amigavelmente.
 """
     )
     resposta = (prompt | OllamaLLM(model="llama3.2:latest")).invoke(
