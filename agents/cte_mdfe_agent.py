@@ -35,6 +35,9 @@ INSTRUÇÕES:
 - Utilize apenas as informações dos documentos.
 - Se não encontrar a resposta, diga: "Desculpe, não encontrei essa informação nos documentos disponíveis."
 - Use listas ou tópicos sempre que possível. Emojis são permitidos com moderação.
+
+NUNCA inclua frases como “se não encontrou nos documentos, diga...”.
+O usuário final não deve ver instruções internas, apenas a resposta direta à pergunta.
 """
     )
     resposta = (prompt | OllamaLLM(model="llama3.2:latest")).invoke(
