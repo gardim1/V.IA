@@ -88,8 +88,6 @@ def load_and_split_documents(file_paths):
     # )
 
     splitter = RecursiveCharacterTextSplitter(
-        separators=[r"\n={3,}.*={3,}\n"], 
-        keep_separator=True,
         chunk_size=1200,
         chunk_overlap=200
     )
