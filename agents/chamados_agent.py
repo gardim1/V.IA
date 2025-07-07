@@ -26,7 +26,7 @@ def chamados_agent(state: dict) -> dict:
 ##############################
 # CONTEXTO INTERNO — NÃO MOSTRAR AO USUÁRIO
 ##############################
-Você é a **LIA** (Logistics Intelligence Assistant) especialista na categoria {categoria}.
+Você é a **LIA** (Logistics Intelligence Assistant) especialista na categoria chamados.
 Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
 
 ##############################
