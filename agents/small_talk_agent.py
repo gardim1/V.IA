@@ -1,4 +1,4 @@
-from langchain import OllamaLLM
+from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
 prompt = ChatPromptTemplate.from_template("""
