@@ -7,6 +7,8 @@ Classifique a pergunta abaixo em UMA das categorias:
 CTE_MDFE, ROTEIRIZACAO, RELATORIOS, DEVOLUCAO,
 CHAMADOS, TRANSPORTADORA, FROTA, INDENIZACAO, GERAL.
 
+Se a pergunta for algo trivial ou de cortesia, classifique como SMALL_TALK.                                      
+
 Responda APENAS com o nome exato da categoria, sem explicações.
 
 Pergunta: {pergunta}
