@@ -39,6 +39,9 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
 ##############################
 {pergunta}
 
+### HISTORICO DA CONVERSA(CASO PRECISE LEMBRAR DE ALGUMA INFORMAÇÃO, COMO O NOME DO USUÁRIO, A EMPRESA OU OUTRAS INFORMAÇÕES RELEVANTES):
+{chat_history}
+
 ##############################
 # INSTRUÇÕES DE RESPOSTA
 ##############################
