@@ -1,5 +1,6 @@
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import PromptTemplate
+import re
 
 prompt = PromptTemplate.from_template("""
 Classifique a pergunta abaixo em UMA das categorias:
@@ -15,10 +16,22 @@ Categoria:
 model = OllamaLLM(model="mistral:7b")
 chain = prompt | model
 
+SMALL_TALK_PATTERNS = re.compile(
+    r"^(oi|olá|ola|e[ai]\b|bom dia|boa tarde|boa noite|"
+    r"tudo bem\??|como você está\??|qual.*seu nome|quem.*você|obrigado|obrigada)",
+    re.I
+)
+
 def roteador_tool(state: dict) -> dict:
-    categoria = chain.invoke({"pergunta": state["pergunta"]}).strip().upper()
+    pergunta = state["pergunta"].strip()
+
+    if SMALL_TALK_PATTERNS.match(pergunta):
+        categoria = "SMALL_TALK"
+    else:
+        categoria = chain.invoke({"pergunta": pergunta}).strip().upper()
 
     validas = {
+        "SMALL_TALK",
         "CTE_MDFE", "ROTEIRIZACAO", "RELATORIOS", "DEVOLUCAO",
         "CHAMADOS", "TRANSPORTADORA", "FROTA", "INDENIZACAO", "GERAL"
     }
@@ -26,7 +39,7 @@ def roteador_tool(state: dict) -> dict:
         categoria = "GERAL"
 
     return {
-        "pergunta": state["pergunta"],
-        "resposta": "",                  
-        "next": categoria.lower()        
+        "pergunta": pergunta,
+        "resposta": "",
+        "next": categoria.lower()
     }
