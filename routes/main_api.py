@@ -106,8 +106,16 @@ class Pergunta(BaseModel):
 @app.post("/perguntar", tags=["IA LIA"], response_model=dict)
 async def perguntar(input_data: Pergunta):
     try:
-        resposta = langgraph_flow.invoke({"pergunta": input_data.pergunta})
-        texto_resposta = resposta["resposta"] if isinstance(resposta, dict) else resposta
+        state = {
+            "pergunta": input_data.pergunta,
+            "user_id": input_data.user_id
+        }
+
+        resposta = langgraph_flow.invoke(state)
+
+        texto_resposta = (
+            resposta["resposta"] if isinstance(resposta, dict) else resposta
+        )
 
         history = get_history(input_data.user_id)
 
@@ -121,25 +129,25 @@ async def perguntar(input_data: Pergunta):
 
         resposta_lower = texto_resposta.lower()
         gatilho = any(
-    frase in resposta_lower for frase in [
-        "não sei a resposta para essa pergunta",
-        "não tenho certeza",
-        "não sei",
-        "não posso ajudar",
-        "não tenho essa informação",
-        "não sei a resposta",
-        "não tenho certeza sobre isso",
-        "não posso responder isso",
-        "não tenho certeza se posso ajudar com isso",
-        "desculpe pela confusão anterior",
-        "desculpe pela confusão",
-        "desculpe, não tenho certeza",
-        "não tenho certeza, mas",
-        "não encontrei",
-        "não consegui encontrar",
-        "não consegui"
-    ]
-)
+            frase in resposta_lower for frase in [
+                "não sei a resposta para essa pergunta",
+                "não tenho certeza",
+                "não sei",
+                "não posso ajudar",
+                "não tenho essa informação",
+                "não sei a resposta",
+                "não tenho certeza sobre isso",
+                "não posso responder isso",
+                "não tenho certeza se posso ajudar com isso",
+                "desculpe pela confusão anterior",
+                "desculpe pela confusão",
+                "desculpe, não tenho certeza",
+                "não tenho certeza, mas",
+                "não encontrei",
+                "não consegui encontrar",
+                "não consegui"
+            ]
+        )
 
         if gatilho:
             with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
@@ -153,6 +161,7 @@ async def perguntar(input_data: Pergunta):
     except Exception as e:
         import traceback; traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 

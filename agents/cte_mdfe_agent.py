@@ -1,10 +1,12 @@
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
-from vector_utils import get_retriever
 from vector_utils import get_retriever, rerank_docs
+
+from utils.history_chain import wrap_with_history
 
 def cte_mdfe_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
+    user_id = state.get("user_id", "anon") 
 
     retriever = get_retriever(filtro="CTE_MDFE")
     docs = retriever.invoke(pergunta)
@@ -14,8 +16,6 @@ def cte_mdfe_agent(state: dict) -> dict:
     print("\n=== [CTE/MDFE] Chunks recuperados individualmente ===")
     for i, d in enumerate(docs, 1):
         print(f"Doc {i}:\n{d.page_content}\n")
-
-    #contexto = "\n".join(d.page_content for d in docs)
 
     print("\n=== [CTE/MDFE] Texto total passado para IA ===")
     print(contexto)
@@ -90,12 +90,17 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
 ##############################
 """
     )
-    resposta = (prompt | OllamaLLM(model="llama3.2:latest")).invoke(
-        {"docs": contexto, "pergunta": pergunta}
+
+    pipeline = prompt | OllamaLLM(model="llama3.2:latest")
+    chain = wrap_with_history(pipeline, user_id)
+
+    resposta = chain.invoke(
+        {"docs": contexto, "pergunta": pergunta},
+        config={"configurable": {"session_id": user_id}}
     )
 
     return {
         "pergunta": pergunta,
         "resposta": resposta,
-        "next": ""         
+        "next": ""
     }

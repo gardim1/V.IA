@@ -3,9 +3,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever
 from vector_utils import get_retriever, rerank_docs
 
+from utils.history_chain import wrap_with_history
+
 def geral_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
-
+    user_id = state.get("user_id", "anon")
     retriever = get_retriever()
     docs = retriever.invoke(pergunta)
     docs = rerank_docs(pergunta, docs, top_k=3)
@@ -88,8 +90,12 @@ Ultima regra:
 - Mensagens genericas ou vagas (ex.: "Oi", "Tudo bem?", "Boa tarde") voce não precisa usar os documentos, apenas responda amigavelmente.
 """
     )
-    resposta = (prompt | OllamaLLM(model="llama3.2:latest")).invoke(
-        {"docs": contexto, "pergunta": pergunta}
+    pipeline = prompt | OllamaLLM(model="llama3.2:latest")
+    chain = wrap_with_history(pipeline, user_id)
+
+    resposta = chain.invoke(
+        {"docs": contexto, "pergunta": pergunta},
+        config={"configurable": {"session_id": user_id}}
     )
 
     return {

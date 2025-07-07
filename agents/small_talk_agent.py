@@ -1,6 +1,8 @@
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
+from utils.history_chain import wrap_with_history
+
 prompt = ChatPromptTemplate.from_template("""
 Você é a **LIA** — Logistics Intelligence Assistant da Sislogica.
 
@@ -21,8 +23,15 @@ LIA:
 model = OllamaLLM(model="mistral:7b")
 
 def small_talk_agent(state: dict) -> dict:
-    resposta = (prompt | model).invoke({"pergunta":state["pergunta"]})
+    user_id = state.get("user_id", "anon")
 
+    pipeline = prompt | model
+    chain = wrap_with_history(pipeline, user_id)
+
+    resposta = chain.invoke(
+        {"pergunta": state["pergunta"]},
+        config={"configurable": {"session_id": user_id}}
+    )
     return{
         "pergunta": state["pergunta"],
         "resposta": resposta,
