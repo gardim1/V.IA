@@ -3,21 +3,21 @@ from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever
 from vector_utils import get_retriever, rerank_docs
 
-def cte_mdfe_agent(state: dict) -> dict:
+def frota_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
 
-    retriever = get_retriever(filtro="CTE_MDFE")
+    retriever = get_retriever(filtro="FROTA")
     docs = retriever.invoke(pergunta)
     docs = rerank_docs(pergunta, docs, top_k=3)
     contexto = "\n".join(d.page_content for d in docs) if docs else ""
 
-    print("\n=== [CTE/MDFE] Chunks recuperados individualmente ===")
+    print("\n=== [FROTA] Chunks recuperados individualmente ===")
     for i, d in enumerate(docs, 1):
         print(f"Doc {i}:\n{d.page_content}\n")
 
-    #contexto = "\n".join(d.page_content for d in docs)
+    contexto = "\n".join(d.page_content for d in docs)
 
-    print("\n=== [CTE/MDFE] Texto total passado para IA ===")
+    print("\n=== [FROTA] Texto total passado para IA ===")
     print(contexto)
     print("===================================================\n")
 
@@ -97,5 +97,5 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
     return {
         "pergunta": pergunta,
         "resposta": resposta,
-        "next": ""         
+        "next": ""
     }
