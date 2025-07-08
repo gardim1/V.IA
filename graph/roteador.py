@@ -26,6 +26,7 @@ SMALL_TALK_PATTERNS = re.compile(
 
 def roteador_tool(state: dict) -> dict:
     pergunta = state["pergunta"].strip()
+    user_id = state.get("user_id")
 
     if SMALL_TALK_PATTERNS.match(pergunta):
         categoria = "SMALL_TALK"
@@ -43,5 +44,6 @@ def roteador_tool(state: dict) -> dict:
     return {
         "pergunta": pergunta,
         "resposta": "",
-        "next": categoria.lower()
+        "next": categoria.lower(),
+        "user_id": user_id
     }

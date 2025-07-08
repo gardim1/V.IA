@@ -39,8 +39,8 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
 ##############################
 {pergunta}
 
-### HISTORICO DA CONVERSA(CASO PRECISE LEMBRAR DE ALGUMA INFORMAÇÃO, COMO O NOME DO USUÁRIO, A EMPRESA OU OUTRAS INFORMAÇÕES RELEVANTES):
-{chat_history}
+### RESUMO DA CONVERSA(CASO PRECISE LEMBRAR DE ALGUMA INFORMAÇÃO, COMO O NOME DO USUÁRIO, A EMPRESA OU OUTRAS INFORMAÇÕES RELEVANTES):
+{resumo_usuario}
 
 ##############################
 # INSTRUÇÕES DE RESPOSTA
@@ -105,5 +105,6 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
     return {
         "pergunta": pergunta,
         "resposta": resposta,
-        "next": ""
+        "next": "",
+        "user_id": user_id
     }
