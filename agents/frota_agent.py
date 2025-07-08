@@ -7,7 +7,7 @@ from utils.history_chain import wrap_with_history
 
 def frota_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
-    user_id = state.get("user_id", "anon")
+    user_id = state.get("user_id")
 
     retriever = get_retriever(filtro="FROTA")
     docs = retriever.invoke(pergunta)

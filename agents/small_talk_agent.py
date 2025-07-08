@@ -25,7 +25,7 @@ LIA:
 model = OllamaLLM(model="mistral:7b")
 
 def small_talk_agent(state: dict) -> dict:
-    user_id = state.get("user_id", "anon")
+    user_id = state.get("user_id")
 
     pipeline = prompt | model
     chain = wrap_with_history(pipeline, user_id)

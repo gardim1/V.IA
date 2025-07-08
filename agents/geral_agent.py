@@ -7,7 +7,8 @@ from utils.history_chain import wrap_with_history
 
 def geral_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
-    user_id = state.get("user_id", "anon")
+    user_id = state.get("user_id")
+    
     retriever = get_retriever()
     docs = retriever.invoke(pergunta)
     docs = rerank_docs(pergunta, docs, top_k=3)
