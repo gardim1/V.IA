@@ -17,6 +17,7 @@ class GraphState(TypedDict):
     pergunta: str
     resposta: str
     next: str
+    user_id: str 
 
 builder = StateGraph(GraphState)
 
