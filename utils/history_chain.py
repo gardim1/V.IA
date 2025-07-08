@@ -3,6 +3,7 @@ from utils import get_history
 from utils.summary import resumo_ja_gerado, gerar_resumo_via_llm, carregar_resumo
 
 def wrap_with_history(pipeline, user_id: str):
+    user_id = user_id or "anon"
 
     if not resumo_ja_gerado(user_id):
         gerar_resumo_via_llm(user_id)

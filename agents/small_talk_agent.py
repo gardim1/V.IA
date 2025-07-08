@@ -26,6 +26,8 @@ model = OllamaLLM(model="mistral:7b")
 
 def small_talk_agent(state: dict) -> dict:
     user_id = state.get("user_id")
+    if not user_id:
+        raise ValueError("user_id está ausente ou é None")
 
     pipeline = prompt | model
     chain = wrap_with_history(pipeline, user_id)
