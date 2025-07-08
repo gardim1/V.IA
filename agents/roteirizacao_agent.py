@@ -7,7 +7,9 @@ from utils.history_chain import wrap_with_history
 
 def roteirizacao_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
-    user_id = state.get("user_id") 
+    user_id = state.get("user_id")
+    if not user_id:
+        raise ValueError("user_id está ausente ou é None") 
 
     retriever = get_retriever(filtro="ROTEIRIZACAO")
     docs = retriever.invoke(pergunta)
