@@ -22,7 +22,7 @@ Usuário: {pergunta}
 LIA:
 """)
 
-model = OllamaLLM(model="mistral:7b")
+model = OllamaLLM(model="llama3.2:latest")
 
 def small_talk_agent(state: dict) -> dict:
     user_id = state.get("user_id")
