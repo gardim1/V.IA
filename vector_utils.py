@@ -1,6 +1,7 @@
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter
 from langchain.docstore.document import Document
 import os
 from sentence_transformers import CrossEncoder
@@ -87,7 +88,7 @@ def load_and_split_documents(file_paths):
     #     separators=[r"\n=====.*=====\n"], keep_separator=True
     # )
 
-    splitter = RecursiveCharacterTextSplitter(
+    splitter = CharacterTextSplitter(
         chunk_size=1200,
         chunk_overlap=200
     )
