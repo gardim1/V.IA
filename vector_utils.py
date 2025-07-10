@@ -29,7 +29,7 @@ def get_retriever(filtro: str = None):
         embedding_function=embeddings,
     )
 
-    search_kwargs = {"k": 20}
+    search_kwargs = {"k": 30}
     if filtro:
         search_kwargs["filter"] = {"categoria": filtro}
 

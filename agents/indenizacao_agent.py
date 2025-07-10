@@ -11,20 +11,35 @@ def indenizacao_agent(state: dict) -> dict:
     if not user_id:
         raise ValueError("user_id está ausente ou é None")
 
-    retriever = get_retriever(filtro="INDENIZACAO")
-    docs = retriever.invoke(pergunta)
-    docs = rerank_docs(pergunta, docs, top_k=3)
-    contexto = "\n".join(d.page_content for d in docs) if docs else ""
+    try:
+        retriever = get_retriever(filtro="INDENIZACAO")
+        docs = retriever.invoke(pergunta)
+        docs = rerank_docs(pergunta, docs, top_k=3)
+        contexto = "\n".join(d.page_content for d in docs) if docs else ""
+    except Exception as e:
+        print(f"Erro no retrieval: {e}")
+        docs = []
 
-    print("\n=== [INDENIZACAO] Chunks recuperados individualmente ===")
-    for i, d in enumerate(docs, 1):
-        print(f"Doc {i}:\n{d.page_content}\n")
+    contexto_valido = False
+    contexto = ""
 
-    contexto = "\n".join(d.page_content for d in docs)
+    if docs:
+        print("\n=== [INDENIZACAO] Chunks recuperados individualmente ===")
+        for i, d in enumerate(docs, 1):
+            print(f"Doc {i}:\n{d.page_content}\n")
 
-    print("\n=== [INDENIZACAO] Texto total passado para IA ===")
-    print(contexto)
-    print("===================================================\n")
+        contexto = "\n".join(d.page_content for d in docs)
+
+        print("\n=== [INDENIZACAO] Texto total passado para IA ===")
+        print(contexto)
+        print("===================================================\n")
+    if not contexto_valido:
+        resposta_padrao = (
+            "Desculpe, não encontrei informações suficientes para responder sua pergunta sobre indenização. "
+            "Por favor entre em contato com o suporte da Sislogica por meio do:\n"
+            "📱 WhatsApp: +55 11 97053-1979\n"
+            "✉️ Email:suporte@sislogica.com.br"
+            )
 
     prompt = ChatPromptTemplate.from_template(
     """
@@ -98,13 +113,22 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
 ##############################
 """
     )
-    pipeline = prompt | OllamaLLM(model="mistral:7b")
-    chain = wrap_with_history(pipeline, user_id)
+    try:
+        pipeline = prompt | OllamaLLM(model="mistral:7b")
+        chain = wrap_with_history(pipeline, user_id)
 
-    resposta = chain.invoke(
-        {"docs": contexto, "pergunta": pergunta},
-        config={"configurable": {"session_id": user_id}}
-    )
+        resposta = chain.invoke(
+            {"docs": contexto, "pergunta": pergunta},
+            config={"configurable": {"session_id": user_id}}
+        )
+    except Exception as e:
+        print(f"Erro ao gerar resposta: {e}")
+        resposta = (
+            "Desculpe, não consegui processar sua pergunta no momento. "
+            "Por favor, tente novamente mais tarde ou entre em contato com o suporte da Sislogica."
+            "📱 WhatsApp: +55 11 97053-1979\n"
+            "✉️ Email:suporte@sislogica.com.br"
+            )
 
     return {
         "pergunta": pergunta,

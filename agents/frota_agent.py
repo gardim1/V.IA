@@ -12,7 +12,7 @@ def frota_agent(state: dict) -> dict:
     try:
         retriever = get_retriever(filtro="FROTA")
         docs = retriever.invoke(pergunta)
-        #docs = rerank_docs(pergunta, docs, top_k=3)
+        docs = rerank_docs(pergunta, docs, top_k=3)
     except Exception as e:
         print(f"Erro no retrieval: {e}")
         docs = []
