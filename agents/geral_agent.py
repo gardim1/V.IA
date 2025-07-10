@@ -94,7 +94,7 @@ Ultima regra:
 - Mensagens genericas ou vagas (ex.: "Oi", "Tudo bem?", "Boa tarde") voce não precisa usar os documentos, apenas responda amigavelmente.
 """
     )
-    pipeline = prompt | OllamaLLM(model="llama3.2:latest")
+    pipeline = prompt | OllamaLLM(model="mistral:7b")
     chain = wrap_with_history(pipeline, user_id)
 
     resposta = chain.invoke(

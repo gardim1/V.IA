@@ -98,7 +98,7 @@ Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
 ##############################
 """
     )
-    pipeline = prompt | OllamaLLM(model="llama3.2:latest")
+    pipeline = prompt | OllamaLLM(model="mistral:7b")
     chain = wrap_with_history(pipeline, user_id)
 
     resposta = chain.invoke(

@@ -15,7 +15,7 @@ Pergunta: {pergunta}
 Categoria:
 """)
 
-model = OllamaLLM(model="mistral:7b")
+model = OllamaLLM(model="llama3:8b")
 chain = prompt | model
 
 SMALL_TALK_PATTERNS = re.compile(
