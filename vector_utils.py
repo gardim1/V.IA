@@ -68,30 +68,33 @@ def load_and_split_documents(file_paths):
             content = f.read()
 
         categoria = inferir_categoria(path)
-        sections = content.split("\n\n")
-
-        for idx, sec in enumerate(sections):
-            texto = sec.strip()
-            if texto:
-                documentos.append(
-                    Document(
-                        page_content=texto,
-                        metadata={
-                            "source": os.path.basename(path),
-                            "section": idx,
-                            "categoria": categoria,
-                        },
-                    )
+        
+        sections = content.split("\n=====")
+        
+        for sec in sections:
+            if not sec.strip():
+                continue
+                
+            if not sec.startswith("= "):
+                sec = "=====" + sec
+                
+            documentos.append(
+                Document(
+                    page_content=sec.strip(),
+                    metadata={
+                        "source": os.path.basename(path),
+                        "categoria": categoria,
+                    },
                 )
+            )
 
-    # splitter = RecursiveCharacterTextSplitter(
-    #     separators=[r"\n=====.*=====\n"], keep_separator=True
-    # )
-
-    splitter = CharacterTextSplitter(
+    splitter = RecursiveCharacterTextSplitter(
+        separators=["\n=====", "\n\n", "\n", " "],
         chunk_size=1200,
-        chunk_overlap=200
+        chunk_overlap=200,
+        keep_separator=True
     )
+    
     split_docs = splitter.split_documents(documentos)
 
     for i, doc in enumerate(split_docs):
