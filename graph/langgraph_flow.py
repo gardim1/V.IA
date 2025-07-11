@@ -12,6 +12,7 @@ from agents.transportadora_agent import transportadora_agent
 from agents.frota_agent          import frota_agent
 from agents.indenizacao_agent    import indenizacao_agent
 from agents.chamados_agent       import chamados_agent
+from graph.continuacao import tratar_continuacao
 
 class GraphState(TypedDict):
     pergunta: str
@@ -33,12 +34,16 @@ builder.add_node("transportadora", transportadora_agent)
 builder.add_node("frota",          frota_agent)
 builder.add_node("indenizacao",    indenizacao_agent)
 builder.add_node("chamados",       chamados_agent)
+builder.add_node("tratar_continuacao", tratar_continuacao)
 
 builder.set_entry_point("roteador")
 
+#verificação de continuidade
+builder.add_edge("roteador", "tratar_continuacao")
+
 # roteamento condicional
 builder.add_conditional_edges(
-    "roteador",
+    "tratar_continuacao",
     lambda s: s["next"],
     {
         "cte_mdfe":     "cte_mdfe",
