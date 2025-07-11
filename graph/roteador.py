@@ -130,5 +130,7 @@ def roteador_tool(state: dict) -> dict:
         "pergunta": pergunta,
         "resposta": "",
         "next": categoria.lower(),
-        "user_id": user_id
+        "user_id": user_id,
+        "ultima_pergunta": state.get("ultima_pergunta", ""),
+        "topico_atual": categoria
     }
