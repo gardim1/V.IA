@@ -20,7 +20,7 @@ def chamados_agent(state: dict) -> dict:
         print(f"Erro no retrieval: {e}")
         docs = []
 
-    contexto_valido = False
+    contexto_valido = bool(docs)
     contexto = ""
 
     if docs:

@@ -19,7 +19,7 @@ def devolucao_agent(state: dict) -> dict:
     except Exception as e:
         print(f"Erro no retrieval: {e}")
         docs = []
-    contexto_valido = False
+    contexto_valido = bool(docs)
     contexto = ""
 
 
