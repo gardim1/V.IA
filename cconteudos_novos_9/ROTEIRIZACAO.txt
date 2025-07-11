@@ -1,0 +1,448 @@
+===== ROTEIRIZAÇÃO COM FILTROS =====
+
+Como realizar roteirização com filtros?
+
+Para realizar a Roteirização com filtros basta seguir o seguinte caminho:
+Rotas > Roteirização com Filtros
+
+
+
+Nessa tela conseguimos verificar as entregas que estão pendentes de roteirização divididas em cluster. 
+Também é possível aplicar um filtro de peso, caso necessite roteirizar algum limite de peso especifíco.
+
+
+Ícone 1 - Total de entregas: Total de entregas gerais;
+Ícone 2 - Total de rotas: Tota de rotas geradas;
+Ícone 3 - Valor total de entregas: Valor total das entregas;
+Ícone 4 - Veículos previstos: Veículos previstos para realizarem as rotas;
+Ícone 5 - Peso Total: Peso total das entregas;
+Ícone 6 - Geolocalização;
+Ícone 7 - Barra Azul: Nessa barra é possível filtrar o peso, filtrando o peso irá aparecer somente as rotas que estão nesse limite de peso desejado;
+Campo Pedidos: Abaixo da barra azul, no campo "Pedidos" conseguimos efetuar a roteirização de pedidos específicos;
+ - Botão Menos: Serve para diminuir o peso do filtro;
+ - Botão Mais: Serve para aumentar o peso do filtro;
+- Lupa: Serve para pesquisar as rotas;
+ - Botão Exportar Dados: Serve para exportar os dados das rotas em relatório CSV
+
+Ao clicar no ícone 8 indicado na imagem abaixo, terá as seguintes opções:
+
+
+
+Opção 1 - Gerenciar Entregas: É possível verificar as entregas que tem dentro do cluster;
+Opção 2 - Ver Mapa: Utilizado para visualização das entregas no mapa, para verificar se tem alguma entrega com o endereço divergente e conseguir ajustar;
+Opção 3 - Estatísticas;
+Opção 4 - Roteirizar: Ao clicar em roteirizar, a seguinte janela será exibida com uma sugestão de quantos veículos usar para essa carga, porém, o usuário poderá excluir a sugestão e inserir uma nova quantidade de acordo com a sua necessidade;
+
+
+Opção 1 - Gerenciar entregas:
+
+Campo 9 - Selecionar: Selecione as remessas desejadas e indique algum dos botões no canto superior da tela;
+Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista as remessas da rota, ou exibe as numerações das páginas;
+
+Botão Alternar: Alterna o modo de exibição da página;
+
+Botão Tela Cheia: Exibe as remessas em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Transferir de Rota: Faz a transferência das remessas selecionadas para outra rota;
+
+Botão Exportar Dados: Baixa o relatório de roteirização em Excel deste cluster específico;
+
+
+
+Opção 2 - Ver Mapa:
+
+Ao clicar em algum ícone de localização, terá as seguintes opções:
+(os ícones de localização se referem a cada entrega dentro da rota/cluster)
+
+Opção 1 - Detalhes: Ao clicar, o usuário é direcionado aos detalhes da remessa/pedido;
+Opção 2 - Endereço: É possível verificar se o endereço de entrega do pedido está correto, caso esteja errado pode ser alterado nessa mesma tela;
+Opção 3 - Transferir: Faz a transferência do pedido para outra rota;
+
+    
+
+Opção 3 - Estatística: 
+
+
+Opção 4 - Roteirizar:
+
+Ao clicar em roteirizar, será aberta a seguinte tela:
+
+Campo 10 - Quantidade: Selecione a quantidade de veículos que fará a entrega;
+Campo 11 -  Selecione: Indique quais veículos farão a entrega;
+Campo 12 - Ícone : Clique para inserir o veículo e a quantidade dentro da tag;
+Campo 13 - Ícone : Clique para retirar um veículo e quantidade de dentro da tag.
+
+
+(Relacionado a imagem acima, o peso da roteirização está de acordo com os filtros aplicados)
+
+Após clicar em confirmar será roteirizado.
+
+
+===== MAPA MONITORAMENTO CARGAS =====
+
+Como realizar mapa monitoramento cargas?
+
+Para visualizar o Mapa Monitoramento Cargas basta seguir o seguinte caminho:
+Rotas > Mapa Monitoramento Cargas
+
+
+Nessa tela visualizamos o andamento das entregas, através do mapa.
+
+Campo 1 -  Carga: É o número da carga pela qual você quer visualizar;
+Campo 2 - Pesquisar: Realiza a busca do pedido de acordo com o que foi filtrado nos campos;
+
+
+Campo 3 -  Detalhes da rota: Aqui é possível visualizar informações como: Nome da rota, número da carga, quantos quilômetros foram rodados durante o percurso e quantos quilos foram carregados;
+Campo 4 - Número da carga: Trata-se do número da carga, clicando no campo é possível ver os pedidos/remessas de forma individual;
+Campo 5 -  Mapa: É a visualização padrão da tela, permite nos mostrar a localização do motorista e das ocorrências;
+Campo 6 -  Satélite: É uma visualização que nos permite ter a visão no formato "Satélite";
+Botão Tela Cheia: Permite visualizar o mapa em tela cheia;
+ Sinalização Verde: Trata-se das remessas/pedidos que foram entregues;
+ Sinalização Amarela: Trata-se das remessas/pedidos que estão pendentes;
+Ícone Base: Mostra onde foi realizado o carregamento;
+  Ícone Veículo: Mostra a localização do motorista;
+  Botão Street View: Permite a visualização em street view, para ultilizar basta arrastar o ícone até ao local desejado;
+Botão Aumentar Zoom: Aproxima a tela;
+ Botão Diminuir Zoom: Diminuí a aproximação na tela;
+
+
+===== CADASTRO DE ROTA ENTREGA ABRANGÊNCIA =====
+
+Como cadastrar rota entrega abrangências?
+
+Para realizar a consulta das abrangências das rotas de entrega basta seguir o caminho:
+Cadastro > Operacional > Rota Entrega Abrangência
+
+
+
+Nessa tela conseguimos consultar todas os ceps de abrangência das rotas de entrega
+
+Campo 1 - Cliente Filial: Trata-se de qual filial queremos visualizar a abrangência das rotas;
+Campo 2 - Serviço: Caso queira filtrar apenas um serviço em específico, caso queira visualizar todos os serviços deixe em branco;
+Campo 3 - Pesquisar: Realiza a pesquisa de acordo com os campos acima;
+
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Classificação Múltipla: Exibe o relatório com uma classificação desejada, pode ser inserido uma coluna e a ordem que deseja visualizar a mesma (Ascendente ou Descendente);
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+
+Para realizar a consulta basta dar 2 cliques na rota desejada.
+
+
+Após, clique em Download Anexo e selecione a opção na qual você quer baixar o relatório.
+
+Observação: Caso apareça 0 registros na rota, ela pode estar duplicada ou não existe tabela de região CEP cadastrada.
+
+Abrindo o relatório você conseguirá verificar os CEPs inicias e finais da rota.
+
+
+===== TRANSFERÊNCIA LOTE =====
+
+Como realizar transferência lote?
+
+Para realizar a Transferência em Lote, basta seguir o caminho:
+Rotas > Transferência Lote
+
+
+
+
+Essa tela tem a função de realizar transferências em lote para as bases.
+
+Campo 1 - Filial Destino: Trata-se da filial onde a carga está localizada;
+Campo 2 - Número da carga: Número da carga dos pedidos;
+Campo 3 - Data Cadastro: Data em que os pedidos foram cadastrados;
+Campo 4 - Quantidade Remessas: Quantidade de remessas que pertencem ao lote;
+Campo 5 - Quantidade de CTEs gerados;
+Campo 6 - Peso Total: Peso total do lote;
+Campo 7 - Peso Cubado;
+Campo 8 - Valor total: Valor total do lote;
+
+
+
+Ícone : Clicando nesse ícone irá abrir um pop-up ao lado com as seguintes opções: 
+
+
+Primeira opção - Gerenciar entregas: Conseguimos visualizar a listagem completa dos pedidos.
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+
+Segunda opção - Carregar: Caso esteja tudo certo com o lote e os pedidos, prosseguimos nessa opção para a transferência.
+
+Campo 9 - Carga: Se caso tenha uma carga criada para esses pedidos, selecione a opção que conste o número da carga. Se não tiver carga criada,
+selecione a opçãp "Nova";
+Campo 10 - Percurso: Selecionamos o percurso referente a transferência. Caso não tenha percurso cadastrado, verifique o tutorial "Percurso";
+Campo 11 - Veículo: Selecione o veículo responsável pela transferência;
+Campo 12 - Motorista: Selecione o motorista responsável pelo transporte;
+Campo 13 - Rota: Selecione a rota da transferência;
+Campo 14 - Município: Selecione o município de carregamento (Origem);
+Campo 15 - Estado: Selecione o Estado de Descarregamento (Destino);
+Campo 16 - Município: Selecione o município de Descarregamento (Destino);
+Campo 17 - Filial: Selecione a filial de destino;
+Campo 18 - EDI Transportador;
+
+
+===== MONITORAMENTO DE ROTAS =====
+
+Como realizar monitoramento de rotas?
+
+Para realizar o Monitoramento de Rotas basta seguir o seguinte caminho:
+Rotas > Monitoramento de Rotas
+
+
+
+Como o próprio nome já diz, essa tela serve para realizar o monitoramento das rotas, nela podemos verificar quais rotas já foram monetizadas e quais ainda não foram.
+
+Campo 1 - Data de Carregamento: Data que foi realizado o carregamento das rotas, ou a data que deseja pesquisar o relatório (data inicial);
+Campo 2 - Até: Até qual data será pesquisado (data final);
+Campo 3 - Status: Qual o status das rotas que deseja verificar, monetizadas ou não monetizadas;
+Campo 4 - Classificar: De que forma deseja classificar o relatório para melhor visualização;
+Campo 5 - Pesquisar: Realiza a busca do relatório de acordo com o que foi filtrado nos campos;
+Campo 6 - Download: Serve para baixar o relatório das rotas monetizadas e não monetizadas em EXCEL;
+
+Obs: Não é obrigatório o preenchimento de todos os filtros, os filtros estão na tela para auxiliar o usuário a realizar as buscas.
+
+
+
+Ícone 7 - Carregadas/Total de Rota: Total de rotas que foram carregadas;
+Ícone 8 - Entregues/Total de Entregas: Total de entregas para serem realizadas; 
+Ícone 10 - Não monetizadas: Quantidade de rotas que não foram monetizadas; 
+Ícone 11 -  Total R$ Monetizado: Valor total que já foi monetizado; 
+Campo 12 - Filial - Rota: Nome da filial de descarregamento e descrição da rota, e também o número da carga dessa rota;
+Campo 13 - Placa: Número da placa do veículo que fará as entregas dessa rota;
+Campo 14 - Motorista: Nome do motorista que fará as entregas dessa rota;
+Campo 15 - Data das rotas que foram pesquisadas;
+Campo 16 -
+Campo 17 - KM realizado e KM planejado para a conclusão da entrega das rotas;
+Campo 18 - Entregas: Quantidade de entregas da rota e o peso da carga;
+Campo 19 - Paradas/Clientes: Quantas paradas que o motorista irá fazer dentro da rota para entregar cada pedido; 
+Campo 20 - Performance de entrega: porcentagem de entregas que o motorista já realizou; 
+Ícone 21 - Lupa: Verifica todas as remessas que estão dentro da carga;
+
+
+
+Ícone 22 - Lápis: Para editar o veículo e o motorista que fará a entrega da carga;
+
+
+
+Ícone 23 - Delete/X: Serve para excluir a carga, ao clicar será apresentado o modal para confirmação; 
+
+
+
+O relatório pesquisado, é apresentado da seguinte forma:
+
+
+===== À ROTEIRIZAR =====
+
+Como realizar à roteirizar?
+
+Para realizar a Roteirização basta seguir o seguinte caminho:
+Rotas > À Roteirizar
+
+
+
+Nessa tela conseguimos verificar as entregas que estão pendentes de roteirização divididas em cluster. 
+Ao clicar no ícone 1 indicado na imagem abaixo, terá as seguintes opções:
+
+Opção 1 - Gerenciar Entregas: É possível verificar as entregas que tem dentro do cluster;
+Opção 2 - Ver Mapa: Utilizado para visualização das entregas no mapa, para verificar se tem alguma entrega com o endereço divergente e conseguir ajustar;
+Opção 3 - Estatísticas:
+Opção 4 - Roteirizar: Ao clicar em roteirizar, a seguinte janela será exibida com uma sugestão de quantos veículos usar para essa carga, porém, o usuário poderá excluir a sugestão e inserir uma nova quantidade de acordo com a sua necessidade;
+Campo 2 - Exportar Dados: Baixar o relatório de roteirização em Excel de todos os clusters presentes na tela;
+
+  
+
+Gerenciar Entregas:
+
+Campo 3 - Selecionar: Selecione as remessas desejadas e indique algum dos botões no canto superior da tela;
+Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista as remessas da rota, ou exibe as numerações das páginas;
+
+Botão Alternar: Alterna o modo de exibição da página;
+
+Botão Tela Cheia: Exibe as remessas em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Transferir de Rota: Faz a transferência das remessas selecionadas para outra rota;
+
+Botão Exportar Dados: Baixa o relatório de roteirização em Excel deste cluster específico;
+
+
+
+Ver Mapa:
+
+Ao clicar no ícone 4 conforme indicado na imagem, terá as seguintes opções:
+(os ícones de localização se referem a cada entrega dentro da rota/cluster)
+
+Opção 1 - Detalhes: Ao clicar, o usuário é direcionado aos detalhes da remessa/pedido;
+Opção 2 - Endereço: É possível verificar se o endereço de entrega do pedido está correto, caso esteja errado pode ser alterado nessa mesma tela;
+Opção 3 - Transferir: Faz a transferência do pedido para outra rota;
+
+    
+
+Estatística: 
+
+
+
+Roteirizar:
+
+Ao clicar em roteirizar, será aberta a seguinte tela:
+
+Campo 5 - Escolha os Veículos e a Quantidade: Selecione o veículo e a quantidade necessária pra realizar a entrega dos pedidos que estão dentro do cluster, geralmente essa tela abre preenchida, mas pode ser alterado da forma que desejar, ;
+Campo 6 - Quantidade: Selecione a quantidade de veículos que fará a entrega;
+Campo 7 - Selecione: Indique quais veículos farão a entrega;
+Campo 8 - Ícone : Clique para inserir o veículo e a quantidade dentro da tag;
+Campo 9 - Ícone : Clique para retirar um veículo e quantidade de dentro da tag.
+
+
+
+
+Após preencher os campos, clique em Confirmar para roteirizar.
+
+
+===== CADASTRO DE ROTA TRANSFERÊNCIA =====
+
+Como cadastrar rota transferências?
+
+Para realizar cadastrar uma rota de transferência para outra filial/base basta seguir o seguinte caminho:
+Cadastro > Operacional > Rota Transferência > Incluir
+
+
+
+
+
+Nessa tela é possível realizar o cadastro de rotas de transferência entre filiais/bases
+
+Campo 1 - Nome da rota: Nomenclatura  da rota que será criada;
+Campo 2 - Código da rota: Código interno da rota (Pode ser ultilizado as UFs de destino, exemplo: SPMG);
+Campo 3 - Percurso Vinculado: Caso o percurso da rota não esteja criado, é necessário adicionar o percurso da rota (Tela: Cadastro > Operacional > Percurso > Incluir);
+Campo 4 - Transportador Filial;
+Campo 5 - Filial de destino: Filial de destino da transferência;
+Campo 6 - Filial de origem: Filial de origem da transferência;       
+Campo 7 - Selecione os transbordos: Caso tenha algum transbordo durante o trajeto, basta selecionar a rota e arrastar até o campo "Transbordos Selecionados" 
+Campo 8 - Cancelar: Caso queira cancelar o cadastro aperte "Cancelar";
+Campo 9 - Salvar: Caso os campos estverem preenchidos corretamente aperte "Salvar"
+
+
+
+Após salvar a rota de transferência entre filiais/bases será criada;
+
+
+
+===== CADASTRO DE PERCURSO =====
+
+Como cadastrar percursos?
+
+Para realizar o Cadastro de Percurso basta seguir o seguinte caminho:
+Cadastro > Operacional > Percurso > Incluir 
+
+
+
+Nessa tela realizamos os cadastros de percursos da transportadora. 
+
+Campo 1 - Percurso: Nome do percurso que será cadastrado;
+Etapa 2 - Depois de inserir o nome do percurso clique na UF que fará parte do percurso (conforme indicado abaixo em azul), após clicar na primeira UF o sistema libera em verde as UF's que podem ser traçadas no percurso que está sendo criado. 
+
+
+
+Após seguir todas as etapas, clique em salvar.
+
+
+===== PEDIDOS SHOPEE LM =====
+
+Como realizar pedidos shopee lm?
+
+Para o cadastro das rotas, basta seguir o caminho abaixo:
+Frota > Operacional > Pedidos Shopee LM
+
+
+
+
+Através desta tela, o sistema irá criar as cargas da Shopee.
+
+Antes de acessar:
+
+A planilha que deve ser realizada a busca é a "LM Hub_RN_Natal". Filtre a rota que será feita, em seguida
+copie todos os dados.
+
+
+
+Após filtrar a rota que será feita, copie todos os dados.
+
+
+
+Logo após copiar os dados, retorne ao sistema e cole os dados no "Campo 1"
+
+
+===== ENTREGA SHOPEE INTERMEDIÁRIO =====
+
+Como realizar entrega shopee intermediário?
+
+Para subir a planilha de pedidos da Shopee e emitir os CTE e MDFE siga este passo a passo:
+Operação>entrega Shopee intermediário
+
+
+
+
+Campo 1 - Percurso: Selecione o percurso (estados em que o veículo irá passar) que deverá ser feito para chegar na filial de destino;
+Campo 2 - Origem: Selecione a filial onde vai ser o carregamento;
+Campo 3 - Destino: Selecione em qual filial será feito o descarregamento;
+Campo 4 - Tomador: Selecione uma filial Shopee a quem vai pagar por essa viagem;
+Campo 5 - Valor: insira o valor que será cobrado do cliente;
+Campo 6 - Id Carga: é um numero interno da carga.
+
+Ap´´os preencher esses campos siga este caminho para subir o BR's que para o nosso sistema é os pedidos da Shopee;
+
+Na planilha que a Shopee envia, tem de ser copiado a coluna dos pedidos, os BR's, conforme esta na imagem abaixo;
+
+
+copie toda essa coluna com "CTRL+C" ;
+E cole (CTRL + V) no quadro branco "Código" após isso pesquise os dados clicando em "pesquisar dados" no botão azul;
+
+Após colar e pesquisar os dados irá aparecer os dados , que no caso são todos os pedidos conforme estar na imagem abaixo;
+
+Campo 7 - Motorista: selecione o motorista a qual vai fazer essa viagem;
+Campo 8 -  Veiculo: selecione a placa do veiculo a qual vai fazer esse transporte;
+Campo 9 - Placa reboque : selecione  o reboque atrelado ao veiculo para essa viagem.
+
+Preenchendo todo os campos, clique em "gravar" que será salvo a sua operação, partindo para ser emitindo o seu MDFE para seguir com a sua viagem.
+
+
+===== LANÇAMENTO ROTAS MERCADO LIVRE =====
+
+Como realizar lançamento rotas mercado livre?
+
+Para importar as rotas do Mercado Livre, basta seguir o caminho abaixo:
+Frota > Lançamento Rotas Mercado Livre
+
+
+
+Através desta tela, geramos as cargas do Mercado Livre.
+
+Campo 1 - Percurso: Selecione o percurso (estados em que o veículo irá passar);
+Campo 2 - Rota: Selecione a rota que irá ser feita para realizar a entrega;
+Campo 3 - Município: Selecione em qual município está sendo feito o carregamento;
+Campo 4 - Rota ML: Preencha o campo com o nome da Rota que será feita;
+Campo 5 - Estado: Selecione o estado de destino da carga (onde será entregue);
+Campo 6 - Município: Selecione o município de destino da carga (onde será entregue);
+Campo 7 - Código: Bipe os códigos do Mercado Livre (IDs);
+Campo 8 - Motorista: Selecione o motorista que fará a rota;
+Campo 9 - Veículo: Selecione a placa do veículo;
+Campo 10 - Placa Reboque: Selecione a placa reboque (Caso tenha);
+
+
+
+Após preencher devidamente todos os campos, vá ao "Campo 7" e escreva "Fechar", após isso aperte a tecla "Enter" para finalizar o carregamento.

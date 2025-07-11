@@ -1,0 +1,239 @@
+===== CADASTRO DE TRANSPORTADOR =====
+
+Como cadastrar transportadores?
+
+Para realizar o cadastro de transportadora basta seguir o seguinte caminho:
+Cadastro > Transportador > Incluir
+
+
+
+Nessa tela cadastramos todas as transportadoras de nossos clientes
+
+Logo do Transportador: Opcional;
+Campo 1 - Nome do Transportador: Nome da empresa de transporte;
+Campo 2 - Telefone: Telefone para contato;
+Campo 3 - Token: Código identificador gerado pelo sistema;
+Campo 4 - ID do Transportador: Código de identificação do transportador;
+Campo 5 - Seguro do ramo: Tipo de seguro da transportadora;
+Campo 6 - Possui De X Para: Sim ou não;
+Campo 7 - Contato: Nome do representante;
+Campo 8 - E-mail: E-mail corporativo do representante;
+Campo 9 - Visualizar Ocorrências: Serve para cadastrar o DeXPara do transportador;
+
+
+
+Após o preenchimento de todas as informações, clique em salvar.
+
+
+===== CADASTRO DE FILIAL TRANSPORTADOR. =====
+
+Como cadastrar filial transportador?
+
+Para realizar o cadastro de Transportador Filial basta seguir o seguinte caminho:
+Cadastro > Transportador > Filial Transp. > Incluir
+
+
+
+
+Nessa tela cadastramos as Filiais das Transportadoras.
+
+Logo da Filial da Transportadora: Opcional;
+Campo 1 - Nome do Transportador Filial: Nome da Filial da Transportadora;
+Campo 2 - CNPJ: Informe o CNPJ da filial;
+Campo 3 - Nome Fantasia: É a forma de identificação, pode ser através de código, abreviações ou até mesmo pelo
+próprio nome da transportadora;
+Campo 4 - Inscrição Estadual: Serve para o recolhimento do ICMS e para e emitir Nota Fiscal de Produto. Se não tiver,
+colocar "Isento";
+Campo 5 - Telefone: Telefone para contato;
+Campo 6 - Grupo Transportador: Nesse campo selecionamos a transportadora para a qual a filial pertence;
+Campo 7 - Número de Identificação: Número para identificação gerado pelo sistema;
+Campo 8 - CEP de onde a filial está localizada (ao preencher o CEP, as informações: logradouro, bairro, estado
+e município, são preenchidas automaticamente pelo sistema);
+Campo 9 - Número: Número do local;
+Campo 10 - Complemento: Caso haja algum complemento no endereço, adicionar no campo;
+Campo 11 - Unidades: Filiais vinculadas;
+Campo 12 - Tag de Peso;
+Campo 13 - Tag de Cubagem;
+Campo 14 - Tag de Volume;
+Campo 15 - Contato: Nome do representante da filial;
+Campo 16 - E-mail: E-mail corporativo do representante da filial;
+
+
+Após realizar o preenchimento de todos os campos, clique em salvar.
+
+
+===== CADASTRO DE TRANSPORTADOR SERVIÇO =====
+
+Como cadastrar transportador serviços?
+
+Para realizar o cadastro de Transportador Serviço basta seguir o seguinte caminho:
+Cadastro > Transportador > Transportador Serviço > Incluir 
+    
+
+
+Nessa tela cadastramos os serviços dos nossos transportadores.
+
+Campo 1 - Descrição Transportador Serviço: Descrição sobre o serviço;
+Campo 2 - Código Transportador Serviço: Código do serviço que está sendo cadastrado;
+Campo 3 - Serviço: Tipo de serviço que o transportador irá ultilizar;
+Campo 4 - Transportador:Transportador que ultilizará o serviço;
+Campo 5 - Grís %: Caso possua grís informe a porcentagem, caso não tenha coloque 0. O GRIS é uma taxa cobrada no valor da nota fiscal. Ela existe com o objetivo de cobrir os custos ligados ao combate contra roubo de cargas durante o transporte;
+Campo 6 - Ad Valorem %: Caso possua Ad Valorem informe a porcentagem, caso não possua coloque 0. Ad Valorem é uma taxa cobrada dentro da tabela de fretes que representa o custo do seguro da carga. Seu cálculo é feito através da porcentagem da mercadoria sobre o valor da Nota Fiscal da carga transportada agregada ao custo de frete;
+Campo 7 - Fator Cubagem: É um valor que equivale ao peso ideal para cada metro cúbico do interior do veículo;
+Campo 8 - Peso - Cubagem Mínima: O espaço mínimo que a carga irá realmente ocupar no veículo;
+Campo 9 - Cálculo de Frete: Como o frete será calculado (Por remessa, volume, lote entre outros);
+Campo 10 - CTE: Como o CTE deve ser gerado (Por remessa, volume, lote entre outros);
+Campo 11 - Emite Nota Fiscal: Se o transportador emite ou não nota fiscal;
+Campo 12 - Cobra mecanizado: A mecanização de certos processos serve para empresas que realizam a movimentação padronizada de certos materiais;
+Campo 13 - Medida do Mecanizado: Qual a medida do mecanizado;
+Campo 14 - Valor de Taxa de Mecanizado: Quanto este cliente cobra de taxa de mecanizado;
+Campo 15 - Método de Cálculo: Método de cálculo do serviço;
+Campo 16 - Tipo de serviço: Se é coleta, entrega, redespacho integral ou transferência;
+Campo 17 - Tipo de cobrança: Se é automática ou pré-fatura;
+Campo 18 - Tipo Reentrega: Se é fixo ou percentual;
+Campo 19 - Taxa Reentrega: Valor da taxa de reentrega;
+Campo 20 - Tipo Devolução: Se é fixo ou percentual;
+Campo 21 - Taxa de Devolução: Valor da taxa de devolução;
+
+
+
+
+Após o preenchimento de todos os campos, basta clicar em salvar ao final da tela e o transportador serviço será criado.
+
+
+===== CADASTRO DE TRANSPORTADOR TABELA PREÇO =====
+
+Como cadastrar transportador tabela preços?
+
+Para realizar o Cadastro de Tabela de Preço para o Transportador basta seguir o seguinte caminho:
+Cadastro > Transportador > Transportador Tabela Preço > Incluir
+Nessa tela realizamos os cadastros das tabelas que serão utilizadas para cadastrar o preço de frete que a transportadora cobra para as regiões atendidas.
+
+Campo 1 - Código - Tabela Preço: É a identificação da tabela, geralmente é inserido de forma abreviada o tipo de serviço (quando for cobrado fretes diferentes para cada tipo de serviço) e o nome da tabela;
+Campo 2 - Descrição: É o nome por completo da tabela que será cadastrada;
+Campo 3 - Serviço: Para qual tipo de serviço essa tabela de preço será;
+Campo 4 - Transportador: Para qual transportador o cadastro está sendo realizado;
+
+Após preencher todos os campos, clique em salvar.
+
+
+===== CADASTRO DE TRANSPORTADOR TABELA PREÇO =====
+
+Como cadastrar transportador tabela preços?
+
+Para realizar o Cadastro de Tabela de Preço para o Transportador basta seguir o seguinte caminho:
+Cadastro > Transportador > Transportador Tabela Preço > Incluir
+Nessa tela realizamos os cadastros das tabelas que serão utilizadas para cadastrar o preço de frete que a transportadora cobra para as regiões atendidas.
+
+Campo 1 - Código - Tabela Preço: É a identificação da tabela, geralmente é inserido de forma abreviada o tipo de serviço (quando for cobrado fretes diferentes para cada tipo de serviço) e o nome da tabela;
+Campo 2 - Descrição: É o nome por completo da tabela que será cadastrada;
+Campo 3 - Serviço: Para qual tipo de serviço essa tabela de preço será;
+Campo 4 - Transportador: Para qual transportador o cadastro está sendo realizado;
+
+Após preencher todos os campos, clique em salvar.
+
+
+===== CADASTRO DE TRANSPORTADOR TABELA REGIÃO CEP =====
+
+Como cadastrar transportador tabela região ceps?
+
+Para realizar o Cadastro da Tabela de Região CEP para o Transportador basta seguir o seguinte caminho:
+Cadastro > Transportador > Transportador Tabela Região CEP > Consultar
+
+
+
+
+
+Essa tela serve para cadastrarmos a tabela das regiões (faixas de CEP) que o transportador irá atender.
+
+Campo 1 - Transportador - Serviço: Selecione o serviço que irá atender a faixa de CEP;
+Campo 2 - Transportador - Tabela Região: Selecione a tabela de região que irá atender a faixa de CEP;
+Campo 3 - Transportador - Tabela Preço: Selecione qual tabela de preço que irá atender a faixa de CEP;
+Campo 4 - Pesquisar: Clique em pesquisar para puxar a tabela;
+Campo 5 - Após puxar a tabela, dê dois cliques na linha para abrir;
+
+
+
+Campo 6 - Download Anexo: Clique para abrir as opções de download e selecione CSV para baixar;
+
+
+Após baixar a tabela, abra a mesma e insira as seguintes informações:
+
+CEP Inicial e CEP Final: É a faixa de CEP que a transportadora irá atender naquele estado;
+UF: UF do estado que será atendido;
+Cidade: Cidade a qual a faixa de CEP pertence;
+Dias Entrega: Quantos dias leva para entregar nessa região (não é obrigatório preencher);
+Observação: Qualquer observação considerada importante se houver;
+Regional: Região do Estado;
+Ad Valorem: Valor cobrado de Ad Valorem;
+Gris: Valor cobrado de gris;
+Data Inicio: Data que a tabela iniciará para a Transportadora;
+Data bloqueio: É a data que a tabela deixará de valer (Caso a região não seja mais atendida).
+
+Após inserir essas informações, salvamos a planilha e voltamos ao TMS
+
+
+
+Após retornar ao TMS, realize o passo abaixo:
+
+Campo 7 - Anexar Arquivo: Clique em qualquer lugar dentro do quadro, será aberto a pasta da área de trabalho do seu computador, localize a planilha que foi salva e clique duas vezes na mesma, feito isso, o sistema irá substituir a tabela em branco pela tabela da faixa de CEP.
+
+
+
+===== CADASTRO DE TRANSPORTADOR PREÇO FRETE =====
+
+Como cadastrar transportador preço fretes?
+
+Para realizar o Cadastro Transportador Preço Frete basta seguir o seguinte caminho:
+Cadastro > Transportador > Transportador Preço Frete 
+
+
+
+
+
+Essa tela serve para subirmos a tabela de preço frete, que é o quanto a transportadora vai cobrar para entregar em determinada região (Para subir a tabela de preço frete, é necessário que já tenhamos cadastrado a tabela de região antes).
+
+Campo 1 - Transportador Filial: Transportador que iremos subir a tabela de preço frete;
+Campo 2 - Transportador Serviço: Tipo de serviço no qual ultilizará essa tabela;
+Campo 3 - Transportador Tabela Preço: Selecione a tabela de preço que irá receber essa tabela de preço frete;
+Campo 4 - Pesquisar: Clique em pesquisar para puxar a tabela;
+Campo 5 - Após puxar a tabela, dê dois cliques na linha para baixar;
+
+
+Após baixar a tabela, abra a mesma e insira as seguintes informações em vermelho:
+
+inicio: É a data que a tabela entrará em vigor;
+Peso Inicial/Peso final: É o peso em gramas, de 0 a 300g cobramos tal valor (Importante ressaltar que não pode haver repetições de pesos);
+Valor cobrado: Ao lado da coluna "Peso Final" colocamos o valor cobrado de acordo com o peso dos pedidos;
+
+
+OBS: Caso seja seja cobrado KG excedente, preencher ao lado da célula o valor cobrado para cada quilo que ultrapasse o limite.
+Após efetuar o preenchimento da planilha, retorne ao TMS e siga as orientações abaixo:
+Campo 6 - Upload: Clique no botão;
+Campo 7 - Anexar Arquivo: Clique em qualquer lugar dentro do campo, será aberto a pasta da área de trabalho do seu computador, localize a planilha que foi salva e clique duas vezes na mesma para realizar o upload.
+
+Após isso, a Tabela de Preço Frete será criada para o Transportador.
+
+
+===== VERIFICAR CEP TRANSPORTADOR =====
+
+Como verificar cep transportadores?
+
+Para realizar a Verificação de um CEP Transportador basta seguir o seguinte caminho:
+Cadastro > Transportador > Verificar CEP Transportador
+
+
+
+
+
+Essa tela serve para verificarmos se existe cadastro do CEP em alguma tabela dos transportadores,caso não houver, realize o cadastro ultilizando os manuais de cadastro de Transportador Tabela Região CEP.
+
+Campo 1 - CEP a Verificar: Indique qual CEP será verificado;
+Campo 2 - Pesquisar: Clique em pesquisar para puxar as informações.
+
+
+
+Ao puxar as informações, é possível verificar:
+- A qual cidade o CEP pertence;
+- Em qual serviço o CEP está cadastrado;
+- Em qual tabela de preço/região o CEP está cadastrado.

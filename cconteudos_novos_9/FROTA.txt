@@ -1,0 +1,317 @@
+===== DASHBOARD CARGA MOTORISTA =====
+
+Como realizar dashboard carga motorista?
+
+Para visualizar o DashBoard basta seguir o seguinte caminho:
+Frota > Motorista Relatórios > DashBoard Carga Motorista
+
+
+
+Nessa tela é possível extrair informações como dias trabalhados e detalhes das rotas dos motoristas.
+
+Campo 1 - Data de carregamento: Data inicial do período desejado;
+Campo 2 - Até: Data final do período desejado;
+Campo 3 - Status: Se a rota está monetizada ou não;
+Campo 4 - Classificar: Caso queira classificar de alguma forma a pesquisa;
+Campo 5 - Serviço: Tipo de serviço desejado;
+Campo 6 - Cliente Filial: Filial do cliente;
+Campo 7 - Pesquisar: Realiza a busca de acordo com o preenchimento dos campos;
+Campo 8 - Download: Baixa um relatório CSV com as informações desejadas;
+Campo 9 - Instruções;
+
+Obs: Não é obrigatório o preenchimento de todos os filtros, os filtros estão na tela para auxiliar o usuário a realizar as buscas.
+
+
+Campo 10 - Total de rotas: Mostra a quantidade total de rotas de acordo com a data filtrada;
+Campo 11 - Não monetizadas: Total de rotas não monetizadas;
+Campo 12 - % Não Monetizada: Porcentagem das rotas não monetizadas;
+Campo 13 - Monetizadas: Total de rotas monetizadas;
+Campo 14 - % Monetizada: Porcentagem das rotas monetizadas;
+Campo 15 - Total R$ monetizado: Valores totais que foram monetizados;
+Campo 16 - Filial, Rota e Carga: Nome da filial de carregamento, nome da rota e número da carga;
+Campo 17 - Placa e tipo de veículo: Trata-se da placa e o tipo de veículo que irá fazer as entregas dessa rota;
+Campo 18 - Motorista: Nome do motorista que fará as entregas dessa rota;
+Campo 19 - Data e hora que a rota foi gerada;
+Campo 20 - KM rodado e KM percorrido;
+Campo 21 - Entregas: Mostra a quantidade de pedidos entregues;
+Campo 22 - Paradas Clientes: Mostra a quantidade de paradas realizadas;
+Campo 23 - Performance: Mostra a performance do motorista de acordo com os pedidos entregues;
+Ícone 24 - Lupa: Mostra as informações pendentes da rota;
+Ícone 25 - Lapís: Permite alterar a placa ou motorista da rota;
+Ícone 26 - Mais: Permite realizar a monetização da rota;
+
+
+===== MAPA MONITORAMENTO CARGAS =====
+
+Como realizar mapa monitoramento cargas?
+
+Para visualizar o Mapa Monitoramento Cargas basta seguir o seguinte caminho:
+Rotas > Mapa Monitoramento Cargas
+
+
+Nessa tela visualizamos o andamento das entregas, através do mapa.
+
+Campo 1 -  Carga: É o número da carga pela qual você quer visualizar;
+Campo 2 - Pesquisar: Realiza a busca do pedido de acordo com o que foi filtrado nos campos;
+
+
+Campo 3 -  Detalhes da rota: Aqui é possível visualizar informações como: Nome da rota, número da carga, quantos quilômetros foram rodados durante o percurso e quantos quilos foram carregados;
+Campo 4 - Número da carga: Trata-se do número da carga, clicando no campo é possível ver os pedidos/remessas de forma individual;
+Campo 5 -  Mapa: É a visualização padrão da tela, permite nos mostrar a localização do motorista e das ocorrências;
+Campo 6 -  Satélite: É uma visualização que nos permite ter a visão no formato "Satélite";
+Botão Tela Cheia: Permite visualizar o mapa em tela cheia;
+ Sinalização Verde: Trata-se das remessas/pedidos que foram entregues;
+ Sinalização Amarela: Trata-se das remessas/pedidos que estão pendentes;
+Ícone Base: Mostra onde foi realizado o carregamento;
+  Ícone Veículo: Mostra a localização do motorista;
+  Botão Street View: Permite a visualização em street view, para ultilizar basta arrastar o ícone até ao local desejado;
+Botão Aumentar Zoom: Aproxima a tela;
+ Botão Diminuir Zoom: Diminuí a aproximação na tela;
+
+
+===== MONITORAMENTO PAINEL PERFORMANCE =====
+
+Como realizar monitoramento painel performance?
+
+Para visualizar o Painel de Performance basta seguir o seguinte caminho:
+Rotas > Monitoramento Painel Performance
+
+
+Nessa tela visualizamos a performance dos motoristas de acordo com as rotas.
+
+Campo 1 - Data de Carregamento: Data que foi realizado o carregamento das rotas, ou a data que deseja pesquisar o relatório (data inicial);
+Campo 2 - Até: Até qual data será pesquisado (data final);
+Campo 3 - Classificar: De que forma deseja classificar o relatório para melhor visualização;
+Campo 4 - Pesquisar: Realiza a busca do relatório de acordo com o que foi filtrado nos campos;
+Campo 5 - Download: Serve para baixar o relatório em EXCEL;
+
+Obs: Não é obrigatório o preenchimento de todos os filtros, os filtros estão na tela para auxiliar o usuário a realizar as buscas.
+
+
+Ícone 6 - Carregadas/Total de Rota: Total de rotas que foram carregadas;
+Ícone 7 - Entregues/Total de Entregas: Total de entregas para serem realizadas; 
+Ícone 8 - Não monetizadas: Quantidade de rotas que não foram monetizadas; 
+Ícone 9 - Porcentagem das rotas não monetizadas;
+Ícone 10 - Total R$ Monetizado: Valor total que já foi monetizado;
+Campo 11 - Filial - Rota: Nome da filial de carregamento, descrição da rota e número da carga dessa rota;
+Campo 12 - Nome do motorista e Placa: Motorista e placa do veículo que fará as entregas dessa rota;
+Campo 13 - Data que a rota foi iniciada;
+Campo 14 -
+Campo 15 - KM realizado e KM planejado para a conclusão da entrega das rotas;
+Campo 16 - Entregas: Quantidade de entregas da rota e o peso da carga;
+Campo 17 - Paradas/Clientes: Quantas paradas que o motorista irá fazer dentro da rota para entregar cada pedido; 
+Campo 18 - Performance de entrega e status da rota: Porcentagem de entregas que o motorista já realizou e abaixo irá aparecer o status da rota, se está pendente ou finalizada;
+Campo 19 - Tempo médio entre entregas, pedidos por hora e tempo de deslocamento; 
+
+
+
+
+
+Observação: Dando dois cliques no nome do motorista irá abrir a tela de Mapa Monitoramento Cargas, onde é possível ver a localização em tempo real dos pedidos.
+
+
+===== CADASTRO DE CONFIGURAÇÃO DE VEÍCULO =====
+
+Como cadastrar configuração de veículos?
+
+Para realizar a configuração de veículo basta seguir o caminho:
+Cadastro > Cliente > Configuração de Veículo
+
+
+Nessa tela cadastramos as especificações para cada tipo de veículo cadastrado.
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Classificação Múltipla: Exibe o relatório com uma classificação desejada, pode ser inserido uma coluna e a ordem que deseja visualizar a mesma (Ascendente ou Descendente);
+
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+
+Botão Incluir Serviço: Tem como função adicionar uma nova configuração de veículo;
+
+O primeiro passo para realizar a configuração de veículo é clicar no "Botão Incluir Serviço"
+
+
+
+
+Campo 1 - Peso Mínimo: Peso mínimo que o veículo poderá transportar;
+
+Campo 2 - Peso máximo: Peso máximo que o veículo poderá transportar;
+
+Campo 3 - Cubagem Mínima: Cubagem mínima que o veículo poderá transportar;
+
+Campo 4 - Cubagem máxima: Cubagem máxima que o veículo poderá transportar;
+
+Campo 5 - Valor máximo da carga: Valor máximo que o veículo poderá transportar;
+
+Campo 6 - Quantidade de entregas: Quantidade de entregas que o veículo podera fazer;
+
+Campo 7 - Tipo de Veículo: Tipo de veículo que está sendo configurado;
+
+Campo 8 - Preferencial;
+
+Campo 9 - Cancelar: Caso deseje cancelar a configuração atual;
+
+Campo 10 - Salvar: Caso as informações esteja todas corretas, clique em salvar para adicionar a configuração;
+
+
+===== SALDO DOS MOTORISTAS =====
+
+Como realizar saldo dos motoristas?
+
+Para visualizar o saldo dos motoristas, basta seguir o seguinte caminho:
+Frota > Motorista Relatórios > Saldo dos Motoristas
+
+
+
+Nesta tela, é possível extrair informações como os dias trabalhados e os lançamentos de pagamentos por rotas.
+
+Campo 1 - Parâmetro de Busca: Trata-se basicamente de um filtro no qual iremos selecionar o motorista;
+Campo 2 - Pesquisar: Realiza a busca de acordo com o preenchimento do Parâmetro de Busca;
+Campo 3 - Motorista;
+Campo 4 - Saldo Atual: Trata-se da soma sobre todos os pagamentos gerais por rotas;
+ Nesse ícone conseguimos acessar a tela sobre o extrato da conta;
+
+
+
+Após clicar no ícone para visualização do extrato, temos os campos abaixo:
+
+Campo 5 - Data do Extrato: Data início que desejamos fazer a busca;
+Campo 6 - Até: Data final que desejamos fazer a busca;
+Campo 7 - Carregamento;
+Campo 8 - Carregamento Externo;
+Campo 9 - Número de Documento: Caso queira filtrar por algum número de lista específico, selecione o número. (O preenchimento
+deste campo não é obrigatório, serve apenas para filtro);
+Campo 10 - Pesquisar: Realiza a busca de acordo com o preenchimento dos campos;
+Campo 11 - Download: Baixa um relatório CSV com as informações desejadas;
+
+
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Classificação Múltipla: Exibe o relatório com uma classificação desejada, pode ser inserido uma coluna e a ordem que deseja visualizar a mesma (Ascendente ou Descendente);
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+
+
+
+===== FECHAMENTO POR PERÍODO =====
+
+Como realizar fechamento por período?
+
+Para visualizar o fechamento por período, basta seguir o seguinte caminho:
+Frota > Motorista Relatórios > Fechamento por período
+
+
+
+Nesta tela, é possível extrair o fechamento dos saldos dos motoristas por período.
+
+Campo 1 - Data do Lançamento: Data inicial da busca;
+Campo 2 - Até: Data final da busca;
+Campo 3 - Motorista: Selecionamos o motorista;
+Campo 4 - Período Status: Trata-se do status do extrato, se está em aberto ou fechado;
+Campo 5 - Transportador: Caso o motorista esteja vinculado a um transportador, selecione;
+Campo 6 - Filial: Filial que o motorista está vinculado;
+Campo 7 - Pesquisar: Realiza a busca de acordo com o preenchimento dos campos;
+Campo 8 - Download: Baixa um relatório CSV com as informações desejadas;
+
+Importante: O fechamento é de acordo com as configurações do cadastro do motorista (Semanal, Quinzenal ou Mensal).
+
+
+Campo 9 - Valor Total: Valor de acordo com o período status pesquisado;
+Campo 10 - Motorista;
+Campo 11: Período do fechamento: Data inicial e final do período;
+Campo 12 - Mês do fechamento;
+Campo 13 - Quinzena (Primeira ou Segunda do mês);
+Campo 14 - Ano;
+Campo 15 - Saldo Atual: Saldo do fechamento;
+
+
+
+ Neste ícone realizamos a impressão de recibo do motorista;
+ Neste ícone visualizamos o resumo dos lançamentos do período;
+
+Clicando no ícone de resumo dos lançamentos por período:
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+
+
+===== QRCODE APP =====
+
+Como realizar qrcode app?
+
+Para fazer o download do aplicativo do condutor, basta seguir o seguinte caminho:
+Operação > QrCode App
+
+
+
+Nesta tela efetuamos o download do aplicativo para celulares Android.
+
+Campo 1 - Download: Clique no botão para baixar o aplicativo;
+Campo 2 -  Copiar: Copia o link do aplicativo para instalação;
+Campo 3 - Imprimir: Clique no botão caso queira imprimir o QrCode.
+
+
+(Imagem ilustrativa)
+
+ Passos importantes para instalação:
+
+1° Passo - Certifique-se que o aparelho está com a permissão "Instalar apps desconhecidos" ativada. É necessário que o aparelho esteja com essa permissão ativada para poder efetuar a instalação;
+
+
+
+2° Passo - Após a conclusão da instalação, acesse as configurações do aparelho, vá em "Aplicativos" e procure pelo TMS. Em seguida, permita o uso da localização, telefone, câmera, e também permita o uso da atividade em segundo plano para "Dados móveis" e "Bateria";
+
+
+É fundamental que essas configurações estejam ativadas sem restrições para o funcionamento do aplicativo.
+
+
+===== CARGAS CANCELADAS =====
+
+Como realizar cargas canceladas?
+
+Para consultar as cargas canceladas, basta seguir o seguinte caminho:
+Operação > Cargas Canceladas
+
+
+
+
+Nesta tela conseguimos acompanhar todas as cargas que foram deletadas.
+
+Campo 1 - Data de Início: Identifica a data inicial a partir da qual será feita a consulta;
+Campo 2 - Até: Define a data final até a qual será feita a consulta;
+Campo 3 - Número da Lista: Número da(s) lista(s) que deseja pesquisar. Caso queira pesquisar listas específicas, separe as listas por vírgula;
+Campo 4 - Rota de Entrega: Caso queira pesquisar por uma rota específica, selecione-a;
+Campo 5 - Placa do Veículo: Caso queira pesquisar por uma placa específica, selecione-a;
+Campo 6 - Motorista: Caso queira pesquisar por um motorista específico, selecione-o;
+Campo 7 - Usuário Cancelamento: Usuário que realizou o cancelamento das listas, caso queira pesquisar por um usuário específico.
+
+         Obs: Não é obrigatório o preenchimento de todos os filtros, os filtros estão na tela para auxiliar o usuário a realizar as buscas.
+
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Classificação Múltipla: Exibe o relatório com uma classificação desejada, pode ser inserido uma coluna e a ordem que deseja visualizar a mesma (Ascendente ou Descendente);
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+ Botão Detalhes: Clique para abrir o detalhamento da carga (Conseguimos visualizar todos os dados referente a carga, incluindo pedidos).
+
+Exemplo de visualização da Tela:

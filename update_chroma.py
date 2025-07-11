@@ -1,7 +1,7 @@
 import os
 from vector_utils import load_and_split_documents, save_to_chroma
 
-PASTA_BASE_TXT = "cconteudos_novos_8"
+PASTA_BASE_TXT = "cconteudos_novos_9"
 CHROMA_PATH = "chroma_langchain_db"
 
 def listar_txts(pasta: str):
