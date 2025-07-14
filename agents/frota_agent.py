@@ -2,6 +2,7 @@ from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from vector_utils import get_retriever, rerank_docs
 from utils.history_chain import wrap_with_history
+from agents.templates import prompt
 
 def frota_agent(state: dict) -> dict:
     pergunta = state["pergunta"]
@@ -12,13 +13,13 @@ def frota_agent(state: dict) -> dict:
     try:
         retriever = get_retriever(filtro="FROTA")
         docs = retriever.invoke(pergunta)
-        docs = rerank_docs(pergunta, docs, top_k=3)
+        docs = rerank_docs(pergunta, docs, top_k=2)
     except Exception as e:
         print(f"Erro no retrieval: {e}")
         docs = []
 
     contexto_valido = bool(docs)
-    contexto = ""
+    #contexto = ""
     
     if docs:
         print("\n=== [FROTA] Chunks recuperados individualmente ===")
@@ -45,45 +46,6 @@ def frota_agent(state: dict) -> dict:
             "next": "",
             "user_id": user_id
         }
-
-    prompt = ChatPromptTemplate.from_template(
-    """
-##############################
-# CONTEXTO INTERNO — NÃO MOSTRAR AO USUÁRIO
-##############################
-Você é a **LIA** (Logistics Intelligence Assistant) especialista na categoria frota.
-Responda **exclusivamente** com base nos DOCUMENTOS DE REFERÊNCIA abaixo.
-
-##############################
-# DOCUMENTOS DE REFERÊNCIA
-##############################
-{docs}
-
-##############################
-# PERGUNTA DO USUÁRIO
-##############################
-{pergunta}
-
-### INSTRUÇÕES CRÍTICAS:
-1. Se a resposta não estiver contida nos DOCUMENTOS DE REFERÊNCIA, você DEVE responder com:
-   "Desculpe, não encontrei essa informação específica nos documentos disponíveis. "
-   "Para assistência personalizada, entre em contato com o suporte da Sislogica: "
-   "📱 WhatsApp: +55 11 97053-1979"
-
-2. **Nunca** invente informações que não estejam nos documentos.
-
-3. Formato obrigatório quando a resposta for encontrada:
-   **[Título Direto]**  
-   **Passo a Passo**  
-   1. …  
-   **Validações Importantes**  
-   - …
-   
-##############################
-# FIM DO TEMPLATE
-##############################
-"""
-    )
     
     try:
         pipeline = prompt | OllamaLLM(model="mistral:7b")
