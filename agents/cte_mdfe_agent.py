@@ -14,7 +14,7 @@ def cte_mdfe_agent(state: dict) -> dict:
     try:
         retriever = get_retriever(filtro="CTE_MDFE")
         docs = retriever.invoke(pergunta)
-        docs = rerank_docs(pergunta, docs, top_k=2)
+        docs = rerank_docs(pergunta, docs, top_k=1)
         contexto = "\n".join(d.page_content for d in docs) if docs else ""
     except Exception as e:
         print(f"Erro no retrieval: {e}")
