@@ -20,7 +20,7 @@ def cte_mdfe_agent(state: dict) -> dict:
         docs = []
 
     contexto_valido = bool(docs)
-    contexto = ""
+    #contexto = ""
 
     if docs:
         print("\n=== [CTE/MDFE] Chunks recuperados individualmente ===")
