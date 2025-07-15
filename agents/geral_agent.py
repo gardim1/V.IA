@@ -50,7 +50,7 @@ def geral_agent(state: dict) -> dict:
         }
 
     try:
-        pipeline = prompt | OllamaLLM(model="mistral:7b")
+        pipeline = prompt | OllamaLLM(model="mistral:7b", temperature=0.5)
         chain = wrap_with_history(pipeline, user_id)
 
         resposta = chain.invoke(

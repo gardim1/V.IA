@@ -14,7 +14,7 @@ def chamados_agent(state: dict) -> dict:
     try:
         retriever = get_retriever(filtro="CHAMADOS")
         docs = retriever.invoke(pergunta)
-        docs = rerank_docs(pergunta, docs, top_k=2)
+        docs = rerank_docs(pergunta, docs, top_k=1)
         contexto = "\n".join(d.page_content for d in docs) if docs else ""
     except Exception as e:
         print(f"Erro no retrieval: {e}")
@@ -49,7 +49,7 @@ def chamados_agent(state: dict) -> dict:
         }
 
     try:
-        pipeline = prompt | OllamaLLM(model="mistral:7b")
+        pipeline = prompt | OllamaLLM(model="mistral:7b", temperature=0.3)
         chain = wrap_with_history(pipeline, user_id)
 
         resposta = chain.invoke(
