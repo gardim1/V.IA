@@ -1,0 +1,119 @@
+===== CADASTRO DE FAROL =====
+
+Como cadastrar farois?
+
+Para realizar o Cadastro Farol Indenização, basta seguir o seguinte caminho:
+Cadastro > Indenização > Farol > Incluir
+
+
+
+Nessa tela realizamos o cadastro Farol Indenização, basicamente definimos os status, as cores e o prazo para indenização.
+
+Campo 1 - Indenização Status: Trata-se do status da indenização;
+Campo 2 - Cor: Selecionamos a cor que a indenização representará;
+Campo 3 - Quantidade Dias: Prazo em dias para indenização
+Campo 4 - Ordem Hierarquia: Ordem de "prioridade";
+
+
+
+===== CADASTRO DE MOTIVO =====
+
+Como cadastrar motivos?
+
+Para realizar o Cadastro, basta seguir o seguinte caminho:
+Cadastro > Indenização > Motivo > Incluir
+
+
+Nessa tela realizamos o cadastro do motivo para Indenização.
+
+Campo 1 - Descrição Indenização Motivo: Trata-se do motivo da indenização (exemplo: extravio, acareação, protocolo
+de entrega, entre outros).
+
+
+
+Após o preenchimento do campo, basta salvar.
+
+
+===== CADASTRO DE RESPONSABILIDADE =====
+
+Como cadastrar responsabilidades?
+
+Para realizar o Cadastro, basta seguir o seguinte caminho:
+Cadastro > Indenização > Responsabilidade > Incluir
+
+
+
+
+Nessa tela cadastramos o responsável por atender a Indenização.
+
+Campo 1 - Responsável Indenização: Basicamente é o nome da pessoa ou grupo que irá atender.
+
+
+
+Após o preenchimento do campo, basta salvar.
+
+
+
+===== CADASTRO DE STATUS =====
+
+Como cadastrar statuses?
+
+Para realizar o Cadastro, basta seguir o seguinte caminho:
+Cadastro > Indenização > Status > Incluir
+
+
+
+
+Nessa tela cadastramos o status da Indenização.
+
+Campo 1 - Descrição Status Indenização: Trata-se do nome do status;
+Campo 2 - Finalizadora: Se o status é finalizador ou não;
+Campo 3 - Modelo E-mail Indenização: Caso tenha algum modelo configurado, selecione-o;
+Campo 4 - Enviar e-mail: Se o status envia e-mail ou não;
+Campo 5 - Visualiza;
+Campo 6 - Informação Adicional;
+
+
+Após o preenchimento dos campos, basta salvar.
+
+
+===== CADASTRO DE STATUS ROTEIRO =====
+
+Como cadastrar status roteiros?
+
+Para realizar o Cadastro, basta seguir o seguinte caminho:
+Cadastro > Indenização > Status Roteiro > Incluir
+
+
+
+
+Nessa tela cadastramos o status roteiro da Indenização.
+
+Campo 1 - Indenização Status: Defina o status da indenização;
+Campo 2 - Status permitido(s): Escolha os permitidos;
+Campo 3 - Status não permitido(s): Especifique os que não são permitidos.
+
+Após o preenchimento dos campos, basta salvar.
+
+
+
+===== CADASTRO DE CATEG. PRODUTO =====
+
+Como cadastrar categ. produtos?
+
+Para realizar o Cadastro, basta seguir o seguinte caminho:
+Cadastro > Indenização > Categ. Produto > Incluir
+
+
+
+
+Nessa tela cadastramos a categoria do produto para Indenização.
+
+Campo 1 - Categoria do Produto: Trata-se do segmento do produto;
+Campo 2 - Indenização: Se o produto irá receber indenização ou não;
+Campo 3 - Isento de ICMS: Se é isento ou não;
+Campo 4 - Justificativa Isenção ICMS;
+
+
+
+Após o preenchimento dos campos, basta salvar.

@@ -1,0 +1,98 @@
+===== CRIAR CHAMADO =====
+
+O caminho para acessar "CRIAR CHAMADO" é: Chamado > Criar Chamado
+
+Como realizar criar chamado:
+
+
+Para realizar a Criação de um Chamado basta seguir o seguinte caminho:
+Chamado > Criar Chamado
+
+
+
+Essa tela serve para o usuário criar chamados para a Sislogica.
+Campo 1 - Motivo: Qual o motivo da abertura do chamado ou qual o problema que está levando a abertura do chamado;
+Campo 2 - Nível a Ser Enviado: Para qual nível o chamado será enviado, geralmente é utilizado o Nível 1 para que todos do suporte técnico da Sislogica tenham acesso;
+Campo 3 - Selecione a Tela que Ocorreu o Chamado: Após selecionar o motivo, se for necessário, seleciona também a tela onde está tendo erro/problema, caso não seja necessário desconsiderar essa etapa;
+
+
+
+Campo 4 - Descrição do Chamado: Descrição do erro/problema que precisa ser ajustado, ou da melhoria que o cliente quer solicitar, sugestões, etc; 
+
+
+
+Campo 5 - Anexar Arquivo: Após adicionar a descrição e clicar em salvar, irá aparecer o seguinte campo para anexar fotos, vídeos, prints ou relatórios. Caso não queira inserir anexo, não é obrigatório e pode finalizar sem anexos que o chamado já estará disponível para o suporte da Sislogica.
+
+===== ATENDIMENTO CHAMADO =====
+
+O caminho para acessar "ATENDIMENTO CHAMADO" é: Chamado > Atendimento Chamado
+
+Como realizar atendimento chamado:
+
+
+Para verificar os Chamados em aberto basta seguir o seguinte caminho:
+Chamado > Atendimento Chamado
+
+
+Nessa tela verificamos todos os chamados que estão abertos para o Suporte Sislogica.
+
+Campo 1 - Data do Chamado: Data de criação do chamado, ou data que deseja verificar (data inicial);
+Campo 2 - Até: Até qual data será verificado (data final);
+Campo 3 - Cliente: Nome da transportadora caso queira verificar os chamados de uma transportadora específica;
+Campo 4 - Pesquisar: Clique para pesquisar chamados com os filtros que foram indicados;
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista os chamados, ou exibe as numerações das páginas;
+
+Botão Alternar: Alterna o modo de exibição da página;
+
+Botão Tela Cheia: Exibe a página em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Classificação Múltipla: Exibe o relatório dos chamados com uma classificação desejada, selecione a ordem que deseja visualizar o mesmo (Ascendente ou Descendente);
+
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa um relatório dos chamados registradas na tela, com o formato de arquivo desejado.
+
+Obs: Não é obrigatório o preenchimento de todos os filtros, os filtros estão na tela para auxiliar o usuário a realizar as buscas.
+
+
+
+Escolha um chamado que deseja verificar e clique duas vezes no mesmo e será aberta a seguinte tela com todos os detalhes do chamado.
+Campo 4 - Descrição: É onde o cliente inseriu a sua duvida ou erro;
+Campo 5 - Comentário: Insira uma mensagem ao cliente em casos de duvidas, ou verifique no próprio comentário possíveis duvidas do cliente;
+Campo 6 - Baixe o Arquivo para Visualizar (Clique no Ícone): É onde ficam reservados todos os anexos inserido pelo criador do chamado ou pelo suporte;
+Campo 7 - Anexar Arquivo: É usado para anexar fotos, prints, planilhas e etc, para o criador do chamado verificar.
+
+
+
+ - Clique quando for finalizar o chamado, ao clicar, será aberto o seguinte modal.
+Campo 8 - Resolvido: Selecione a opção que descreva se chamado foi resolvido ou não foi resolvido;
+Campo 9 - Nível á ser Enviado: É quando o chamado não será finalizado pela equipe do suporte, sendo assim é enviado a outro nível para que seja possível a resolução. Caso o chamado tenha sido resolvido pelo suporte, ignorar apenas este campo.
+Campo 10 - Descrição da Resolução: Descreva o que houve na resolução do chamado, ou apenas se o erro foi corrigido...
+
+
+
+Após o preenchimento, clique em salvar e o chamado será finalizado.
+
+===== MOTIVO CHAMADO =====
+
+O caminho para acessar "MOTIVO CHAMADO" é: Chamado > Motivo Chamado
+
+Como realizar motivo chamado:
+
+
+Para realizar o cadastro de Motivo Chamado basta seguir o seguinte caminho:
+Chamado > Motivo Chamado > Incluir
+
+
+
+Nessa tela é cadastrado os motivos dos chamados que futuramente serão tratados pelos seus usuários internamente.
+
+Campo 1 - Assunto Chamado: O assunto que respectivamente o usuário será responsável por tratar;
+Campo 2 - Prioridade do Chamado: Nível de prioridade do chamado, é basicamente a urgência do chamado (alta, média ou baixa);
+Campo 3 - Motivo do Motorista: Se o motivo do chamado estará disponível para o motorista no aplicativo;
+Campo 4 - Horas Até a Resposta do Chamado: Quase a mesma coisa do nível de prioridade, define quanto tempo o suporte terá para retornar.
+
+
+
+Após realizar o preenchimento de todos os campos, clique em salvar.

@@ -23,8 +23,10 @@ from keybert import KeyBERT
 from stop_words import get_stop_words
 from routes.resumo_usuario import router as resumo_router, gerar_resumo_keybert
 from routes.formatar import router as formatador_router
-from routes.revisor import router as revisor_router
-from routes.revisor import revisor_chain
+#from routes.revisor import router as revisor_router
+#from routes.revisor import revisor_chain
+from graph.langgraph_flow import langgraph_flow
+
 
 load_dotenv()
 
@@ -35,7 +37,7 @@ app.include_router(limpar_router)
 app.include_router(ver_historico_router)
 app.include_router(resumo_router)
 app.include_router(formatador_router)
-app.include_router(revisor_router)
+#app.include_router(revisor_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,79 +106,64 @@ class Pergunta(BaseModel):
 @app.post("/perguntar", tags=["IA LIA"], response_model=dict)
 async def perguntar(input_data: Pergunta):
     try:
-        retriever = get_retriever()
-        docs = retriever.invoke(input_data.pergunta)
-        dados_retrieved = "\n".join([d.page_content for d in docs]) if docs else ""
-
-        print("Documentos usados pra responder")
-        print(dados_retrieved)
-
-        if not dados_retrieved:
-            raise HTTPException(status_code=404, detail="Nenhum documento encontrado.")
-
-        historico = get_history(input_data.user_id).messages
-        resumo_usuario = gerar_resumo_keybert(historico)
-
-        pergunta_anterior = "Sem pergunta anterior."
-        if historico:
-            for msg in reversed(historico):
-                if msg.type == "human":
-                    pergunta_anterior = msg.content
-                    break
-
-        resposta = chat_chain.invoke(
-            {
-                "dados": dados_retrieved,
-                "pergunta": input_data.pergunta,
-                "resumo_usuario": resumo_usuario,
-            },
-            config={"configurable": {"session_id": input_data.user_id}},
-        )
-
-        resposta_lower = resposta.lower()
-        if (
-            "não sei a resposta para essa pergunta" in resposta_lower
-            or "não tenho certeza" in resposta_lower
-            or "não sei" in resposta_lower
-            or "não posso ajudar" in resposta_lower
-            or "não tenho essa informação" in resposta_lower
-            or "não sei a resposta" in resposta_lower
-            or "não tenho certeza sobre isso" in resposta_lower
-            or "não posso responder isso" in resposta_lower
-            or "não tenho certeza se posso ajudar com isso" in resposta_lower
-            or "desculpe pela confusão anterior" in resposta_lower
-            or "desculpe pela confusão" in resposta_lower
-            or "desculpe, não tenho certeza" in resposta_lower
-            or "não tenho certeza, mas" in resposta_lower
-            or "não encontrei" in resposta_lower
-            or "não consegui encontrar" in resposta_lower
-            or "não consegui" in resposta_lower
-        ):
-            with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
-                f.write(f"[Usuario]: {input_data.user_id}\n")
-                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
-                f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
-                f.write("=========================================================================\n")
-
-        payload = {
-            "pergunta_anterior": pergunta_anterior,
-            "pergunta_atual":   input_data.pergunta,
-            "dados_retrieved":  dados_retrieved,
-            "resposta_gerada":  resposta,
+        state = {
+            "pergunta": input_data.pergunta,
+            "user_id": input_data.user_id
         }
 
-        try:
-            resposta_revisada = revisor_chain.invoke(payload)
-        except Exception as e:
-            print("Erro ao revisar resposta:", str(e))
-            resposta_revisada = resposta
+        resposta = langgraph_flow.invoke(state)
 
-        return {"resposta": resposta_revisada}
+        texto_resposta = (
+            resposta["resposta"] if isinstance(resposta, dict) else resposta
+        )
+
+        history = get_history(input_data.user_id)
+
+        pergunta_anterior = next(
+            (m.content for m in reversed(history.messages) if m.type == "human"),
+            "N/A"
+        )
+
+        history.add_user_message(input_data.pergunta)
+        history.add_ai_message(texto_resposta)
+
+        resposta_lower = texto_resposta.lower()
+        gatilho = any(
+            frase in resposta_lower for frase in [
+                "não sei a resposta para essa pergunta",
+                "não tenho certeza",
+                "não sei",
+                "não posso ajudar",
+                "não tenho essa informação",
+                "não sei a resposta",
+                "não tenho certeza sobre isso",
+                "não posso responder isso",
+                "não tenho certeza se posso ajudar com isso",
+                "desculpe pela confusão anterior",
+                "desculpe pela confusão",
+                "desculpe, não tenho certeza",
+                "não tenho certeza, mas",
+                "não encontrei",
+                "não consegui encontrar",
+                "não consegui"
+            ]
+        )
+
+        if gatilho:
+            with open("feedbacks/feedbacks.txt", "a", encoding="utf-8") as f:
+                f.write(f"[Usuário]: {input_data.user_id}\n")
+                f.write(f"[Pergunta anterior]: {pergunta_anterior.strip()}\n")
+                f.write(f"[Pergunta atual]: {input_data.pergunta.strip()}\n")
+                f.write("================================================================\n")
+
+        return {"resposta": texto_resposta}
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        import traceback; traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
 
 @app.get("/")
 async def root():

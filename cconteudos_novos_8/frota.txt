@@ -1,0 +1,162 @@
+===== DASHBOARD CARGA MOTORISTA =====
+
+O caminho para acessar "DASHBOARD CARGA MOTORISTA" é: Frota > Motorista Relatórios > Dashboard Carga Motorista
+
+Como realizar dashboard carga motorista:
+
+
+Para visualizar o DashBoard basta seguir o seguinte caminho:
+Frota > Motorista Relatórios > DashBoard Carga Motorista
+
+
+
+Nessa tela é possível extrair informações como dias trabalhados e detalhes das rotas dos motoristas.
+
+Campo 1 - Data de carregamento: Data inicial do período desejado;
+Campo 2 - Até: Data final do período desejado;
+Campo 3 - Status: Se a rota está monetizada ou não;
+Campo 4 - Classificar: Caso queira classificar de alguma forma a pesquisa;
+Campo 5 - Serviço: Tipo de serviço desejado;
+Campo 6 - Cliente Filial: Filial do cliente;
+Campo 7 - Pesquisar: Realiza a busca de acordo com o preenchimento dos campos;
+Campo 8 - Download: Baixa um relatório CSV com as informações desejadas;
+Campo 9 - Instruções;
+
+Obs: Não é obrigatório o preenchimento de todos os filtros, os filtros estão na tela para auxiliar o usuário a realizar as buscas.
+
+
+Campo 10 - Total de rotas: Mostra a quantidade total de rotas de acordo com a data filtrada;
+Campo 11 - Não monetizadas: Total de rotas não monetizadas;
+Campo 12 - % Não Monetizada: Porcentagem das rotas não monetizadas;
+Campo 13 - Monetizadas: Total de rotas monetizadas;
+Campo 14 - % Monetizada: Porcentagem das rotas monetizadas;
+Campo 15 - Total R$ monetizado: Valores totais que foram monetizados;
+Campo 16 - Filial, Rota e Carga: Nome da filial de carregamento, nome da rota e número da carga;
+Campo 17 - Placa e tipo de veículo: Trata-se da placa e o tipo de veículo que irá fazer as entregas dessa rota;
+Campo 18 - Motorista: Nome do motorista que fará as entregas dessa rota;
+Campo 19 - Data e hora que a rota foi gerada;
+Campo 20 - KM rodado e KM percorrido;
+Campo 21 - Entregas: Mostra a quantidade de pedidos entregues;
+Campo 22 - Paradas Clientes: Mostra a quantidade de paradas realizadas;
+Campo 23 - Performance: Mostra a performance do motorista de acordo com os pedidos entregues;
+Ícone 24 - Lupa: Mostra as informações pendentes da rota;
+Ícone 25 - Lapís: Permite alterar a placa ou motorista da rota;
+Ícone 26 - Mais: Permite realizar a monetização da rota;
+
+===== RELATÓRIO LISTA ENTREGA) CASO NÃO TENHA DATA DE FECHAMENTO SIGNIFICA QUE A LISTA ESTÁ ABERTA, CONSEQUENTEMENTE PARA APARECER NO APLICATIVO DO MOTORISTA É NECESSÁRIO QUE ELA SEJA FECHADA =====
+
+Como realizar relatório lista entrega) caso não tenha data de fechamento significa que a lista está aberta, consequentemente para aparecer no aplicativo do motorista é necessário que ela seja fechada:
+
+
+Caso a rota não esteja aparecendo no aplicativo do motorista, siga as possíveis soluções abaixo:
+
+1° Solução: Verifique se a lista está fechada (Operação >Relatório Operação > Relatório Lista Entrega) caso não tenha data de fechamento significa que a lista está aberta, consequentemente para aparecer no aplicativo do motorista é necessário que ela seja fechada;
+
+
+
+2° Solução: Verifique o cadastro do motorista, valide todos os campos e certifique-se que estão corretos;
+
+
+
+
+3° Solução: Caso as possíveis soluções acima não se apliquem ao caso, tente realizar o seguinte teste:
+Vá na tela de cadastro do motorista e altere o telefone removendo o DDD, após remover salve os dados.
+Após salvar os dados, entre no aplicativo do motorista com os dados atualizados e veja se os pedidos foram carregados.
+
+===== SALDO DOS MOTORISTAS =====
+
+Como realizar saldo dos motoristas:
+
+
+Para visualizar o saldo dos motoristas, basta seguir o seguinte caminho:
+Frota > Motorista Relatórios > Saldo dos Motoristas
+
+
+
+Nesta tela, é possível extrair informações como os dias trabalhados e os lançamentos de pagamentos por rotas.
+
+Campo 1 - Parâmetro de Busca: Trata-se basicamente de um filtro no qual iremos selecionar o motorista;
+Campo 2 - Pesquisar: Realiza a busca de acordo com o preenchimento do Parâmetro de Busca;
+Campo 3 - Motorista;
+Campo 4 - Saldo Atual: Trata-se da soma sobre todos os pagamentos gerais por rotas;
+ Nesse ícone conseguimos acessar a tela sobre o extrato da conta;
+
+
+
+Após clicar no ícone para visualização do extrato, temos os campos abaixo:
+
+Campo 5 - Data do Extrato: Data início que desejamos fazer a busca;
+Campo 6 - Até: Data final que desejamos fazer a busca;
+Campo 7 - Carregamento;
+Campo 8 - Carregamento Externo;
+Campo 9 - Número de Documento: Caso queira filtrar por algum número de lista específico, selecione o número. (O preenchimento
+deste campo não é obrigatório, serve apenas para filtro);
+Campo 10 - Pesquisar: Realiza a busca de acordo com o preenchimento dos campos;
+Campo 11 - Download: Baixa um relatório CSV com as informações desejadas;
+
+
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+
+Botão Classificação Múltipla: Exibe o relatório com uma classificação desejada, pode ser inserido uma coluna e a ordem que deseja visualizar a mesma (Ascendente ou Descendente);
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+
+===== EVENTOS MOTORISTA =====
+
+O caminho para acessar "EVENTOS MOTORISTA" é: Frota > Eventos Motorista
+
+Como realizar eventos motorista:
+
+
+Para visualizar os eventos dos motoristas, basta seguir o seguinte caminho:
+Frota > Eventos Motorista
+
+
+Nesta tela, é possível verificar os eventos relacionados aos motoristas.
+
+Campo 1 - Data do Evento: Data inicial desejada para efetuar a busca;
+Campo 2 - Até: Data final;
+Campo 3 - Motoristas: Caso queira buscar por um motorista específico, selecione-o;
+Campo 4 - Placa: Caso queira filtrar por alguma placa, selecione-a.
+
+
+Botão Ocultar/Exibir Paginação: Botão Ocultar/Exibir Paginação: Oculta o número de páginas e lista a etiquetas, ou exibe as numerações das páginas;
+Botão Alternar: Simplica as informações dos campos
+
+Botão Tela Cheia: Exibe o relatório em tela cheia;
+
+Botão Colunas: Exibe apenas as colunas desejadas pelo usuário;
+Botão Exportar Dados (CSV, TXT, MS-Excel, (Open XML) e PNG): Baixa o relatório com o formato de arquivo desejado;
+
+Através desta tela é possível verificar os eventos relacionados aos motoristas e veículos, esses eventos são verificados através dos rastreadores, sendo assim uma ótima opção para realizar o acompanhamento de viagens.
+
+===== LANÇAMENTO MOTORISTA =====
+
+O caminho para acessar "LANÇAMENTO MOTORISTA" é: Frota > Motorista Operação > Lançamento Motorista
+
+Como realizar lançamento motorista:
+
+
+Para realizar o Lançamento Motorista basta seguir o seguinte caminho:
+Operação > Lançamento Motorista
+
+
+
+Essa tela serve para adicionar pagamentos ou descontos ao motorista. 
+
+Campo 1 - Modelo: Clique para baixar o modelo da planilha que deverá ser inserida no campo 3. A planilha deverá ser preenchida de acordo com as instruções informadas no campo 2;
+OBS: No campo valor, poderá ser inserido um valor no saldo do motorista, ou debitado do mesmo.  
+
+
+
+Campo 2 - Instruções: Clique para verificar as instruções de preenchimento da planilha;
+
+
+Após realizar o preenchimento, clique em salvar e adicione a planilha no campo 3.
+
+Campo 3 - Arraste seus arquivos: Clique e selecione a planilha (após o preenchimento) que foi salva em sua pasta da área de trabalho;
