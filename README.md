@@ -1,116 +1,161 @@
-# LIA – Logistics Intelligence Assistant
+# RAG_SISLOGICA — LIA
 
+Documento focado em **como a IA funciona**, **LangGraph + LangChain**, **agentes**, **APIs/endpoints** e **operação** (rodar local/Docker, dependências, `.env`).
 
-## Stack Principal
+## 1) Arquitetura & Fluxo
+- **Entrada**: `POST /perguntar` com `pergunta` e `user_id`.
+- **Roteador (LangGraph)**: classifica a pergunta (CTE/MDF-e, Frota, Chamados, etc.) e direciona para o agente.
+- **RAG**: retriever (ChromaDB + embeddings Ollama) busca trechos relevantes; **reranker** reordena evidências.
+- **Geração**: agente monta o prompt (LangChain) e chama o **LLM** (Ollama: llama3.2:latest, mistral:7b, mxbai-embed-large).
+- **Histórico**: mensagens por `user_id` são salvas no Redis; TTL configurável.
+- **Pós-processo**: endpoint `/formatar` permite padronizar a resposta final com título/caminho/campos/observações.
 
-- **Python 3.11+**
-- **FastAPI** para expor endpoints
-- **Ollama** (LLMs locais como `llama3.2`, `mistral`)
-- **ChromaDB** como vetorstore
-- **LangGraph** para controle de fluxo entre agentes
-- **Redis** para histórico de conversas por usuário
-- **KeyBERT** para gerar resumos de perfil
+Fluxo (simplificado):
+```
+Usuário → /perguntar → LangGraph.roteador → agente_X
+         → (retriever Chroma → reranker) → LLM → resposta
+         → (/formatar opcional) → histórico Redis → retorno
+```
 
----
+### Componentes principais
+- `graph/langgraph_flow.py`, `graph/roteador.py`, `graph/continuacao.py`
+- `agents/*.py` (10 agentes de domínio)
+- `vector.py`, `vector_utils.py` (indexação/consulta vetorial)
+- `utils/history.py` (Redis), `utils/summary.py`
+- `routes/*.py` (FastAPI)
 
-## Execução Local
+### Retriever & RAG
+- **Embeddings**: `OllamaEmbeddings(model="mxbai-embed-large")`
+- **Chunking**: `RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=400)`
+- **Top-k inicial**: `k=30` (após isso, reranqueia)
+- **Reranker**: `BAAI/bge-reranker-large` (via `sentence-transformers`)
+- **Coleção Chroma**: `ajuda_sislogica` em `./chroma_langchain_db`
 
-Requisitos:
+## 2) Agentes disponíveis
+- `chamados_agent`
+- `cte_mdfe_agent`
+- `devolucao_agent`
+- `frota_agent`
+- `geral_agent`
+- `indenizacao_agent`
+- `relatorios_agent`
+- `roteirizacao_agent`
+- `small_talk_agent`
+- `transportadora_agent`
 
+## 3) APIs & Endpoints
+| Método | Caminho | Arquivo |
+|---|---|---|
+| GET | `/` | main_api.py |
+| POST | `/formatar` | formatar.py |
+| DELETE | `/history/{user_id}` | limpar.py |
+| GET | `/history/{user_id}` | ver_historico.py |
+| POST | `/perguntar` | main_api.py |
+| GET | `/status` | status.py |
+| GET | `/testar` | testar.py |
+| GET | `/usuario/{user_id}/resumo` | resumo_usuario.py |
+
+### Contratos importantes
+**POST `/perguntar`** — Body:
+```json
+{
+  "pergunta": "<string>",
+  "user_id": "<string>"
+}
+```
+Resposta:
+```json
+{ "resposta": "..." }
+```
+
+**POST `/formatar`** — Body (`FeedbackCompleto`):
+```json
+{
+  "pergunta_atual": "<string>",
+  "pergunta_anterior": "<string>",
+  "resposta_correta": "<string>"
+}
+```
+Retorna um texto já padronizado (título, caminho, como realizar, campos, observações).
+
+**GET `/status`** → healthcheck
+
+**GET `/testar`** → página HTML simples para testar a IA
+
+**GET `/history/{user_id}`** → recupera histórico do usuário
+
+**DELETE `/history/{user_id}`** → apaga histórico do usuário
+
+**GET `/usuario/{user_id}/resumo`** → resumo condensado do histórico
+
+## 4) Como rodar
+### Local (sem Docker)
 ```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+uvicorn routes.main_api:app --reload --host 0.0.0.0 --port 8000
 ```
-
-Certifique-se de que o **Ollama** esteja rodando (`ollama run llama3.2`), assim como o **Redis** local.
-
-Inicie a API com:
-
+- Instale e rode **Ollama** no host (porta padrão `11434`).
+- Baixe os modelos usados:
 ```bash
-uvicorn routes.main_api:app --reload --port 8000
+ollama pull mistral:7b
+ollama pull llama3.2:latest
+ollama pull mxbai-embed-large
 ```
-
----
-
-## Estrutura de Diretórios
-
-```
-RAG_SISLOGICA/
-├── agents/                       # Agentes especializados por categoria
-│   └── chamados_agent.py         # Categoria: CHAMADOS
-│   └── cte_mdfe_agent.py         # Categoria: CTE_MDFE
-│   └── devolucao_agent.py        # Categoria: DEVOLUCAO
-│   └── frota_agent.py            # Categoria: FROTA
-│   └── geral_agent.py            # Categoria: fallback
-│   └── indenizacao_agent.py      # Categoria: INDENIZACAO
-│   └── relatorios_agent.py       # Categoria: RELATORIOS
-│   └── roteirizacao_agent.py     # Categoria: ROTEIRIZACAO
-│   └── small_talk_agent.py       # Saudações e mensagens triviais
-│   └── transportadora_agent.py   # Categoria: TRANSPORTADORA
-
-├── conteudos_novos_8/            # Pasta de ingestão de novos .txt para o Chroma `Apenas um exemplo`
-├── chroma_langchain_db/          # Base vetorial persistente
-├── feedbacks/feedbacks.txt       # Armazena perguntas mal respondidas
-├── graph/
-│   └── langgraph_flow.py         # Define o fluxo de agentes (StateGraph)
-│   └── roteador.py               # Classifica perguntas e define `next`
-├── routes/                       # Rotas FastAPI
-│   └── main_api.py               # Rota principal: POST /perguntar
-│   └── testar.py                 # Interface HTML de teste
-│   └── ver_historico.py          # Rota GET /history/{user_id}
-│   └── resumo_usuario.py         # Geração de resumo via KeyBERT
-│   └── formatar.py               # Formatação de resposta (usado parcialmente)
-│   └── limpar.py                 # Reseta histórico Redis (temporário)
-│   └── status.py                 # Rota de saúde da API
-├── templates/test_interface.html # Frontend para teste manual
-├── utils/
-│   └── history_chain.py          # Utilitário para histórico com `wrap_with_history`
-│   └── history.py                # RedisChatMessageHistory e TTL
-├── vector_utils.py               # Vetorização, chunking, embedding e reranking
-├── update_chroma.py              # Ingestão de novos documentos no Chroma
-├── requirements.txt
-└── .env
-```
-
----
-
-## Atualizar Base de Conhecimento
-
-Para atualizar os documentos usados no RAG:
-
-1. Coloque os arquivos `.txt` na pasta, ex: `conteudos_novos_8/`
-2. Rode:
-
+- Inicie **Redis** (local ou via Docker):
 ```bash
-python update_chroma.py
+docker run -p 6379:6379 redis:7
 ```
 
----
+### Docker / Compose
+`docker-compose.yml` já sobe **api** e **redis**:
+```bash
+docker compose up --build
+```
+_Observação_: o serviço ainda espera um servidor **Ollama** acessível (ex.: `host.docker.internal:11434`). Se necessário, defina `OLLAMA_HOST=http://host.docker.internal:11434` no `.env`.
 
-## Funcionamento Interno
+## 5) Configuração (.env)
+- `REDIS_URL` (ex.: `redis://localhost:6379`)
+- `CHAT_TTL_SECONDS` (ex.: `2592000`)
+- `ENV` (ex.: `dev`/`prod`)
+- `SERVER` (opcional; usado em `db_utils.py` se habilitar SQL Server por env)
+- (opcionais) `OLLAMA_HOST`, variáveis de DB (`UID`, `PWD`, `DATABASE`) se for usar SQL Server autenticado)
 
-1. A pergunta do usuário é classificada via prompt (`mistral:7b`) → rota para categoria correta
-2. O agente correspondente busca documentos via **ChromaDB** e faz **rerank com BAAI/bge-reranker**
-3. O prompt do agente gera uma resposta estruturada (com passo a passo, validações etc)
-4. A resposta é retornada e o histórico é salvo em Redis (por `user_id`)
-5. Se a IA falhar (resposta vazia, genérica, etc), a pergunta é salva em `feedbacks.txt`
+## 6) Dependências (requirements)
+- fastapi
+- uvicorn
+- langchain
+- langchain-community
+- langchain-core
+- langchain-chroma
+- langchain-ollama
+- pydantic
+- pytest
+- httpx
+- jinja2
+- langchain-text-splitters
+- redis
+- python-dotenv
+- pyodbc
+- keybert
+- stop-words
+- langgraph
 
----
+## 7) Indexação & Atualização do Chroma
+- **Atualizar a coleção** com pastas de `.txt`: `python vector.py` (função `update_chroma_from_folder`) ou `python update_chroma.py`.
+- Pastas de conteúdo detectadas (exemplo):
+  - `cconteudos_novos_9/`
+    
+*Passar caminho da pasta desejada no arquivo `update_chroma.py`*
 
-## Endpoints
+## 8) Histórico & Resumos
+- `utils/history.py` usa `RedisChatMessageHistory` (TTL via `CHAT_TTL_SECONDS`).
+- `utils/summary.py` gera resumos periódicos para manter o contexto enxuto.
 
-| Método | Rota               | Descrição                                   |
-|--------|--------------------|----------------------------------------------|
-| GET    | `/status`          | Verifica se a API está ativa                 |
-| POST   | `/perguntar`       | Envia pergunta com `pergunta` e `user_id`    |
-| GET    | `/history/{id}`    | Retorna mensagens anteriores do usuário      |
-| GET    | `/testar`          | Interface web de testes                      |
-| GET    | `/docs`            | Interface Swagger                            |
-
----
-
-## Observações
-
-- O arquivo `vector.py` está obsoleto → utilizar `vector_utils.py`
-- A pasta `conteudos_novos_X` é mantida apenas por histórico
-- O `.env` precisa conter `REDIS_URL` e `CHAT_TTL_SECONDS` se o Redis não for padrão
+## 9) Dicas de manutenção
+- Monitore latência do retriever e do `reranker` (pode ser pesado). Ajuste `k`, `chunk_size/overlap`.
+- Log estruturado e captura de exceções (ver `try/except` nos endpoints).
+- Versione prompts dos agentes em `agents/templates.py`.
+- Adicione testes para `/perguntar` e para o roteador do LangGraph.
 
