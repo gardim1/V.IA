@@ -34,7 +34,6 @@ Thumbs.db
 *.tar
 *.tar.gz
 
-# Node (caso use frontend futuramente)
 node_modules/
 dist/
 build/
@@ -47,3 +46,6 @@ build/
 /meu_venv
 merda.py
 /chroma_langchain_db
+/pytest*
+.pytest*
+/contact*

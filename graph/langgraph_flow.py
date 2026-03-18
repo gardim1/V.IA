@@ -2,76 +2,73 @@ from typing import TypedDict
 from langgraph.graph import StateGraph, END
 
 from graph.roteador import roteador_tool
-from agents.cte_mdfe_agent      import cte_mdfe_agent
-from agents.roteirizacao_agent  import roteirizacao_agent
-from agents.geral_agent         import geral_agent
-from agents.small_talk_agent import small_talk_agent
-from agents.relatorios_agent     import relatorios_agent
-from agents.devolucao_agent      import devolucao_agent
-from agents.transportadora_agent import transportadora_agent
-from agents.frota_agent          import frota_agent
-from agents.indenizacao_agent    import indenizacao_agent
-from agents.chamados_agent       import chamados_agent
 from graph.continuacao import tratar_continuacao
+
+from agents.identidade_agent import identidade_agent
+from agents.vida_pessoal_agent import vida_pessoal_agent
+from agents.relacionamentos_agent import relacionamentos_agent
+from agents.formacao_agent import formacao_agent
+from agents.carreira_agent import carreira_agent
+from agents.projetos_agent import projetos_agent
+from agents.habilidades_agent import habilidades_agent
+from agents.objetivos_agent import objetivos_agent
+from agents.preferencias_agent import preferencias_agent
+from agents.small_talk_agent import small_talk_agent
 
 class GraphState(TypedDict):
     pergunta: str
     resposta: str
     next: str
-    user_id: str 
-    ultima_pergunta: str 
-    topico_atual: str     
-    continuidade_count: int 
+    user_id: str
+    ultima_pergunta: str
+    topico_atual: str
+    continuidade_count: int
 
 builder = StateGraph(GraphState)
 
-# nós
-builder.add_node("roteador",     roteador_tool)
-builder.add_node("cte_mdfe",     cte_mdfe_agent)
-builder.add_node("roteirizacao", roteirizacao_agent)
-builder.add_node("geral",        geral_agent)
-builder.add_node("small_talk",   small_talk_agent)
-builder.add_node("relatorios",     relatorios_agent)
-builder.add_node("devolucao",      devolucao_agent)
-builder.add_node("transportadora", transportadora_agent)
-builder.add_node("frota",          frota_agent)
-builder.add_node("indenizacao",    indenizacao_agent)
-builder.add_node("chamados",       chamados_agent)
+builder.add_node("roteador", roteador_tool)
 builder.add_node("tratar_continuacao", tratar_continuacao)
 
-builder.set_entry_point("roteador")
+builder.add_node("small_talk", small_talk_agent)
+builder.add_node("identidade", identidade_agent)
+builder.add_node("vida_pessoal", vida_pessoal_agent)
+builder.add_node("relacionamentos", relacionamentos_agent)
+builder.add_node("formacao", formacao_agent)
+builder.add_node("carreira", carreira_agent)
+builder.add_node("projetos", projetos_agent)
+builder.add_node("habilidades", habilidades_agent)
+builder.add_node("objetivos", objetivos_agent)
+builder.add_node("preferencias", preferencias_agent)
 
-#verificação de continuidade
+builder.set_entry_point("roteador")
 builder.add_edge("roteador", "tratar_continuacao")
 
-# roteamento condicional
 builder.add_conditional_edges(
     "tratar_continuacao",
     lambda s: s["next"],
     {
-        "cte_mdfe":     "cte_mdfe",
-        "roteirizacao": "roteirizacao",
-        "geral":        "geral",
-        "small_talk":   "small_talk",
-        "relatorios":     "relatorios",
-        "devolucao":      "devolucao",
-        "transportadora": "transportadora",
-        "frota":          "frota",
-        "indenizacao":    "indenizacao",
-        "chamados":       "chamados",
+        "small_talk": "small_talk",
+        "identidade": "identidade",
+        "vida_pessoal": "vida_pessoal",
+        "relacionamentos": "relacionamentos",
+        "formacao": "formacao",
+        "carreira": "carreira",
+        "projetos": "projetos",
+        "habilidades": "habilidades",
+        "objetivos": "objetivos",
+        "preferencias": "preferencias",
     },
 )
 
-# nós finais
-builder.add_edge("cte_mdfe",       END)
-builder.add_edge("roteirizacao",   END)
-builder.add_edge("geral",          END)
-builder.add_edge("small_talk",     END)
-builder.add_edge("relatorios",     END)
-builder.add_edge("devolucao",      END)
-builder.add_edge("transportadora", END)
-builder.add_edge("frota",          END)
-builder.add_edge("indenizacao",    END)
-builder.add_edge("chamados",       END)
+builder.add_edge("small_talk", END)
+builder.add_edge("identidade", END)
+builder.add_edge("vida_pessoal", END)
+builder.add_edge("relacionamentos", END)
+builder.add_edge("formacao", END)
+builder.add_edge("carreira", END)
+builder.add_edge("projetos", END)
+builder.add_edge("habilidades", END)
+builder.add_edge("objetivos", END)
+builder.add_edge("preferencias", END)
 
 langgraph_flow = builder.compile()

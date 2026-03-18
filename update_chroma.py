@@ -1,35 +1,44 @@
 import os
-from vector_utils import load_and_split_documents, save_to_chroma
+import shutil
 
-PASTA_BASE_TXT = "cconteudos_novos_9"
-CHROMA_PATH = "chroma_langchain_db"
+from vector_utils import CHROMA_PATH, get_vector_store, load_and_split_documents, save_to_chroma
+
+PASTA_BASE_TXT = "conteudos_vini_02"
+
 
 def listar_txts(pasta: str):
     return [
-        os.path.join(pasta, f)
-        for f in os.listdir(pasta)
-        if f.endswith(".txt")
+        os.path.join(pasta, file_name)
+        for file_name in os.listdir(pasta)
+        if file_name.endswith(".txt")
     ]
+
 
 def validar_arquivo(caminho: str) -> bool:
-    with open(caminho, "r", encoding="utf-8") as f:
-        return len(f.read().strip()) > 10
+    with open(caminho, "r", encoding="utf-8") as file_pointer:
+        return len(file_pointer.read().strip()) > 10
+
 
 def main():
-    txts_validos = [
-        p for p in listar_txts(PASTA_BASE_TXT) if validar_arquivo(p)
-    ]
+    txts_validos = [path for path in listar_txts(PASTA_BASE_TXT) if validar_arquivo(path)]
 
     if not txts_validos:
-        print("Nenhum .txt válido encontrado.")
+        print("Nenhum .txt valido encontrado.")
         return
 
-    print(f"{len(txts_validos)} arquivos válidos → carregando…")
+    if os.path.exists(CHROMA_PATH):
+        shutil.rmtree(CHROMA_PATH)
+        print(f"Base anterior removida: {CHROMA_PATH}")
+
+    get_vector_store.cache_clear()
+
+    print(f"{len(txts_validos)} arquivos validos -> carregando...")
     docs = load_and_split_documents(txts_validos)
-    print(f"{len(docs)} chunks gerados → enviando ao ChromaDB…")
+    print(f"{len(docs)} chunks gerados -> enviando ao ChromaDB...")
 
     save_to_chroma(docs)
-    print("✅ Base vetorial atualizada com sucesso!")
+    print("Base vetorial atualizada com sucesso!")
+
 
 if __name__ == "__main__":
     main()

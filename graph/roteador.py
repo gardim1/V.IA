@@ -1,98 +1,78 @@
-from langchain_ollama import OllamaLLM
+#from langchain_ollama import OllamaLLM
+from llm_provider import get_router_llm
 from langchain_core.prompts import PromptTemplate
 import re
 
 prompt = PromptTemplate.from_template("""
 Classifique a pergunta abaixo em UMA das categorias:
-CTE_MDFE, ROTEIRIZACAO, RELATORIOS, DEVOLUCAO,
-CHAMADOS, TRANSPORTADORA, FROTA, INDENIZACAO, GERAL.
-                                      
-Se a pergunta for algo trivial ou de cortesia, classifique como SMALL_TALK.
-                                      
-CHAMADOS:
-    - CADASTRO DE OCORRÊNCIA SISTEMA
-    - CADASTRO DE USUÁRIO
 
-CTE_MDFE:
-    - CHAVE CTE ANTERIOR NÃO INFORMADA
-    - CORREÇÃO CTE ANTERIOR CANCELADO
-    - ENTREGA MDF-E UNITÁRIO
-    - ERRO DE VALOR DO ICMS
-    - EVENTO JÁ REGISTRADO NA SEFAZ
-    - INSCRIÇÃO ESTADUAL DESTINATÁRIO NÃO INFORMADA
-    - INSCRIÇÃO ESTADUAL REMETENTE NÃO INFORMADA
-    - MDF-E UNITÁRIO
-    - NFE COM MAIS DE 6 MESES
-    - RELATÓRIO UPLOAD COMPROVANTE CTE
+IDENTIDADE, VIDA_PESSOAL, RELACIONAMENTOS, FORMACAO, CARREIRA,
+PROJETOS, HABILIDADES, OBJETIVOS, PREFERENCIAS.
 
-DEVOLUCAO:
-    - CADASTRO DE CLIENTE SERVIÇO
-    - CADASTRO DE SERVIÇO
-    - RECEBIMENTO TRANSFERÊNCIA COM FALTANTES
+Se a pergunta for trivial, saudação ou cortesia, classifique como SMALL_TALK.
 
-FROTA:
-    - CADASTRO DE CONFIGURAÇÃO DE VEÍCULO
-    - CARGAS CANCELADAS
-    - DASHBOARD CARGA MOTORISTA
-    - FECHAMENTO POR PERÍODO
-    - MAPA MONITORAMENTO CARGAS
-    - MONITORAMENTO PAINEL PERFORMANCE
-    - QRCODE APP
-    - SALDO DOS MOTORISTAS
+IDENTIDADE:
+    - Quem é você?
+    - Qual seu nome?
+    - Quantos anos você tem?
+    - Me fala sobre você
+    - Se apresenta
 
-GERAL:
-    - CADASTRO DE CLIENTE SERVIÇO
-    - CADASTRO DE FILIAL GRUPO EMPRESARIAL
-    - CADASTRO DE GRUPO
-    - CADASTRO DE MODELO
-    - CADASTRO DE ROTA TRANSFERÊNCIA
-    - CADASTRO DE SEGUROS
-    - CADASTRO DE USUÁRIO
-    - ERRO DE VALOR DO ICMS
-    - INSTALAÇÃO DO CONECTOR
+VIDA_PESSOAL:
+    - Como é sua rotina?
+    - O que você gosta de fazer?
+    - Como é seu dia a dia?
+    - O que faz no tempo livre?
+    - Como é sua vida fora do trabalho?
 
-INDENIZACAO:
-    - CADASTRO DE CATEG. PRODUTO
-    - CADASTRO DE FAROL
-    - CADASTRO DE MOTIVO
-    - CADASTRO DE RESPONSABILIDADE
-    - CADASTRO DE STATUS
-    - CADASTRO DE STATUS ROTEIRO
+RELACIONAMENTOS:
+    - Você namora?
+    - Quem é sua namorada?
+    - Como é seu relacionamento?
+    - Fala da Carol
+    - Como vocês se conheceram?
 
-RELATORIOS:
-    - ERROS DE IMPORTACAO
-    - RELATÓRIO CARREGAMENTO
-    - RELATÓRIO CONSULTA DE REMESSA RÁPIDA
-    - RELATÓRIO CONSULTA DE REMESSA SIMPLIFICADA
-    - RELATÓRIO CORREÇÃO DE CTE
-    - RELATÓRIO CTE
-    - RELATÓRIO FINANCEIRO REMESSA
-    - RELATÓRIO LANÇAMENTOS CUSTOS
-    - RELATÓRIO NFSE
-    - RELATÓRIO OCORRÊNCIA EM LOTE
-    - RELATÓRIO REENVIO DE OCORRÊNCIA
+FORMACAO:
+    - Você faz faculdade?
+    - O que você estuda?
+    - Fala da FIAP
+    - Em que semestre você está?
+    - Como é sua formação?
 
-ROTEIRIZACAO:
-    - CADASTRO DE PERCURSO
-    - CADASTRO DE ROTA ENTREGA ABRANGÊNCIA  
-    - CADASTRO DE ROTA TRANSFERÊNCIA
-    - ENTREGA SHOPEE INTERMEDIÁRIO
-    - LANÇAMENTO ROTAS MERCADO LIVRE
-    - MAPA MONITORAMENTO CARGAS
-    - MONITORAMENTO DE ROTAS
-    - PEDIDOS SHOPEE LM
-    - ROTEIRIZAÇÃO COM FILTROS
-    - TRANSFERÊNCIA LOTE
-    - À ROTEIRIZAR
+CARREIRA:
+    - Onde você trabalha?
+    - Qual sua experiência profissional?
+    - Fala da sua carreira
+    - Qual seu currículo?
+    - O que você faz na Sislogica?
 
-TRANSPORTADORA:
-    - CADASTRO DE FILIAL TRANSPORTADOR.
-    - CADASTRO DE TRANSPORTADOR
-    - CADASTRO DE TRANSPORTADOR PREÇO FRETE
-    - CADASTRO DE TRANSPORTADOR SERVIÇO
-    - CADASTRO DE TRANSPORTADOR TABELA PREÇO
-    - CADASTRO DE TRANSPORTADOR TABELA REGIÃO CEP
-    - VERIFICAR CEP TRANSPORTADOR                                     
+PROJETOS:
+    - Quais projetos você está fazendo?
+    - Fala do Collaborate
+    - Como funciona sua IA com RAG?
+    - Quais APIs você já criou?
+    - Quais projetos você quer lançar?
+
+HABILIDADES:
+    - Quais tecnologias você domina?
+    - Você sabe Python?
+    - Você trabalha com Java?
+    - Qual sua stack?
+    - O que você sabe de IA?
+
+OBJETIVOS:
+    - Quais seus objetivos?
+    - Onde você quer chegar?
+    - Quais suas metas?
+    - Você quer ser CTO?
+    - Quais seus planos para o futuro?
+
+PREFERENCIAS:
+    - Como você prefere aprender?
+    - Como gosta de responder?
+    - Quais suas preferências?
+    - O que você valoriza?
+    - Qual seu estilo?
 
 Responda APENAS com o nome exato da categoria, sem explicações.
 
@@ -100,14 +80,14 @@ Pergunta: {pergunta}
 Categoria:
 """)
 
-model = OllamaLLM(model="llama3:8b")
+model = get_router_llm()
 chain = prompt | model
 
 SMALL_TALK_PATTERNS = re.compile(
-    r"^(oi|olá|ola|e[ai]\b|bom dia|boa tarde|boa noite|"
-    r"tudo bem\??|como você está\??|qual.*seu nome|quem.*você|obrigado|obrigada)",
+    r"^(oi|olá|ola|bom dia|boa tarde|boa noite|tudo bem\??|e ai|e aí|valeu|obrigado|obrigada)\s*$",
     re.I
 )
+
 
 def roteador_tool(state: dict) -> dict:
     pergunta = state["pergunta"].strip()
@@ -120,11 +100,19 @@ def roteador_tool(state: dict) -> dict:
 
     validas = {
         "SMALL_TALK",
-        "CTE_MDFE", "ROTEIRIZACAO", "RELATORIOS", "DEVOLUCAO",
-        "CHAMADOS", "TRANSPORTADORA", "FROTA", "INDENIZACAO", "GERAL"
+        "IDENTIDADE",
+        "VIDA_PESSOAL",
+        "RELACIONAMENTOS",
+        "FORMACAO",
+        "CARREIRA",
+        "PROJETOS",
+        "HABILIDADES",
+        "OBJETIVOS",
+        "PREFERENCIAS"
     }
+
     if categoria not in validas:
-        categoria = "GERAL"
+        categoria = "IDENTIDADE"
 
     return {
         "pergunta": pergunta,
@@ -132,5 +120,6 @@ def roteador_tool(state: dict) -> dict:
         "next": categoria.lower(),
         "user_id": user_id,
         "ultima_pergunta": state.get("ultima_pergunta", ""),
-        "topico_atual": categoria
+        "topico_atual": categoria,
+        "continuidade_count": state.get("continuidade_count", 0)
     }

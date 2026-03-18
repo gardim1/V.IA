@@ -1,86 +1,113 @@
-from langchain_ollama import OllamaEmbeddings
-from langchain_chroma import Chroma
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_text_splitters import CharacterTextSplitter
-from langchain.docstore.document import Document
+from __future__ import annotations
+
 import os
-from sentence_transformers import CrossEncoder
+from dataclasses import dataclass
+from functools import lru_cache
 
-reranker = CrossEncoder("BAAI/bge-reranker-large")
+from langchain_chroma import Chroma
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-def rerank_docs(query: str, docs: list, top_k: int = 10):
-    pairs = [[query, doc.page_content] for doc in docs]
-    scores = reranker.predict(pairs)
-    scored = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
-    return [doc for doc, _ in scored[:top_k]]
+from llm_provider import get_embed_model
 
-
-def get_embedding_function():
-    return OllamaEmbeddings(model="mxbai-embed-large")
+CHROMA_PATH = os.getenv("CHROMA_PATH", "./chroma_langchain_db")
+CHROMA_COLLECTION_NAME = os.getenv("CHROMA_COLLECTION_NAME", "perfil_vinicius")
 
 
-def get_retriever(filtro: str = None):
-    embeddings = get_embedding_function()
-    db_location = "./chroma_langchain_db"
+@dataclass
+class RetrievedDocument:
+    document: Document
+    score: float | None = None
 
-    vector_store = Chroma(
-        collection_name="ajuda_sislogica",
-        persist_directory=db_location,
-        embedding_function=embeddings,
+
+@lru_cache(maxsize=1)
+def get_vector_store() -> Chroma:
+    return Chroma(
+        collection_name=CHROMA_COLLECTION_NAME,
+        persist_directory=CHROMA_PATH,
+        embedding_function=get_embed_model(),
     )
 
-    search_kwargs = {"k": 30}
+
+def get_retriever(filtro: str | None = None, k: int = 6):
+    search_kwargs = {"k": k}
     if filtro:
         search_kwargs["filter"] = {"categoria": filtro}
+    return get_vector_store().as_retriever(search_type="similarity", search_kwargs=search_kwargs)
 
-    return vector_store.as_retriever(
-        search_type="similarity", #mmr - similarity
-        search_kwargs=search_kwargs
+
+def search_documents(query: str, limit: int = 6, filtro: str | None = None) -> list[RetrievedDocument]:
+    results = get_vector_store().similarity_search_with_score(
+        query,
+        k=limit,
+        filter={"categoria": filtro} if filtro else None,
     )
+    return [RetrievedDocument(document=doc, score=score) for doc, score in results]
+
+
+def get_vector_store_health() -> dict:
+    try:
+        vector_store = get_vector_store()
+        payload = vector_store.get()
+        return {
+            "provider": "chroma",
+            "status": "ok",
+            "collection_name": CHROMA_COLLECTION_NAME,
+            "persist_directory": CHROMA_PATH,
+            "document_count": len(payload.get("ids", [])),
+        }
+    except Exception as exc:  # pragma: no cover - depends on local storage
+        return {
+            "provider": "chroma",
+            "status": "error",
+            "collection_name": CHROMA_COLLECTION_NAME,
+            "persist_directory": CHROMA_PATH,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
 
 def inferir_categoria(path: str) -> str:
     nome = os.path.basename(path).lower()
 
-    if any(t in nome for t in ["cte", "mdf", "comprovante"]):
-        return "CTE_MDFE"
-    elif "roteirizacao" in nome or "rota" in nome:
-        return "ROTEIRIZACAO"
-    elif "relatorio" in nome:
-        return "RELATORIOS"
-    elif "devolucao" in nome or "recebimento" in nome:
-        return "DEVOLUCAO"
-    elif "chamado" in nome or "ocorrencia" in nome:
-        return "CHAMADOS"
-    elif "transportador" in nome:
-        return "TRANSPORTADORA"
-    elif "motorista" in nome or "veiculo" in nome:
-        return "FROTA"
-    elif "indenizacao" in nome:
-        return "INDENIZACAO"
-    else:
-        return "GERAL"
+    if "identidade" in nome:
+        return "IDENTIDADE"
+    if "vida_pessoal" in nome or "pessoal" in nome:
+        return "VIDA_PESSOAL"
+    if "relacionamento" in nome or "namorada" in nome:
+        return "RELACIONAMENTOS"
+    if "formacao" in nome or "faculdade" in nome or "estudos" in nome:
+        return "FORMACAO"
+    if "carreira" in nome or "profissao" in nome or "trabalho" in nome:
+        return "CARREIRA"
+    if "projeto" in nome or "portfolio" in nome:
+        return "PROJETOS"
+    if "habilidade" in nome or "stack" in nome or "tecnologia" in nome or "diferencia" in nome or "problema" in nome:
+        return "HABILIDADES"
+    if "objetivo" in nome or "meta" in nome or "planos" in nome:
+        return "OBJETIVOS"
+    if "preferencia" in nome or "estilo" in nome or "forma_de_pensar" in nome:
+        return "PREFERENCIAS"
+    return "IDENTIDADE"
 
-def load_and_split_documents(file_paths):
-    documentos = []
+
+def load_and_split_documents(file_paths: list[str]) -> list[Document]:
+    documentos: list[Document] = []
 
     for path in file_paths:
-        with open(path, "r", encoding="utf-8") as f:
-            content = f.read()
+        with open(path, "r", encoding="utf-8") as file_pointer:
+            content = file_pointer.read()
 
         categoria = inferir_categoria(path)
-        
-        sections = content.split("\n=====")
-        
-        for sec in sections:
-            if not sec.strip():
+        secoes = content.split("=====")
+
+        for secao in secoes:
+            secao = secao.strip()
+            if not secao:
                 continue
-                
-            if not sec.startswith("= "):
-                sec = "=====" + sec
-                
+
             documentos.append(
                 Document(
-                    page_content=sec.strip(),
+                    page_content=secao,
                     metadata={
                         "source": os.path.basename(path),
                         "categoria": categoria,
@@ -90,35 +117,28 @@ def load_and_split_documents(file_paths):
 
     splitter = RecursiveCharacterTextSplitter(
         separators=["\n=====", "\n\n", "\n", " "],
-        chunk_size=1500,
-        chunk_overlap=400,
-        keep_separator=True
+        chunk_size=500,
+        chunk_overlap=100,
+        keep_separator=True,
     )
-    
-    split_docs = splitter.split_documents(documentos)
 
-    for i, doc in enumerate(split_docs):
-        doc.metadata["id"] = f"{doc.metadata['source']}_{i}"
+    split_docs = splitter.split_documents(documentos)
+    for index, doc in enumerate(split_docs):
+        doc.metadata["id"] = f"{doc.metadata['source']}_{index}"
 
     return split_docs
 
-def save_to_chroma(documents):
-    embeddings = get_embedding_function()
-    db_location = "./chroma_langchain_db"
 
-    vector_store = Chroma(
-        collection_name="ajuda_sislogica",
-        persist_directory=db_location,
-        embedding_function=embeddings,
-    )
-
-    existing_ids = set(vector_store.get()["ids"])
-    novos_docs = [d for d in documents if d.metadata["id"] not in existing_ids]
+def save_to_chroma(documents: list[Document]) -> Chroma:
+    vector_store = get_vector_store()
+    existing = vector_store.get()
+    existing_ids = set(existing["ids"]) if existing and existing.get("ids") else set()
+    novos_docs = [doc for doc in documents if doc.metadata["id"] not in existing_ids]
 
     if novos_docs:
         vector_store.add_documents(
             documents=novos_docs,
-            ids=[d.metadata["id"] for d in novos_docs],
+            ids=[doc.metadata["id"] for doc in novos_docs],
         )
 
     return vector_store

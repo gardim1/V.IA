@@ -14,7 +14,7 @@ class FeedbackCompleto(BaseModel):
     pergunta_anterior: str
     resposta_correta: str
 
-@router.post("/formatar", tags=["IA LIA"], response_model=dict)
+@router.post("/formatar", tags=["IA Vinnie"], response_model=dict)
 async def formatar_feedback_completo(dados: FeedbackCompleto):
     try:
         prompt_template = """

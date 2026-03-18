@@ -39,7 +39,7 @@ class RevisaoResposta(BaseModel):
     pergunta_atual: str
     resposta_gerada: str
 
-@router.post("/revisar_resposta", tags=["IA LIA"], response_model=dict)
+@router.post("/revisar_resposta", tags=["IA Vinnie"], response_model=dict)
 async def revisar_resposta(dados: RevisaoResposta):
     try:
         resposta = revisor_chain.invoke(dados.model_dump())

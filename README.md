@@ -1,161 +1,227 @@
-# RAG_SISLOGICA — LIA
+# Vinnie | AI Portfolio Backend + Frontend
 
-Documento focado em **como a IA funciona**, **LangGraph + LangChain**, **agentes**, **APIs/endpoints** e **operação** (rodar local/Docker, dependências, `.env`).
+Portfolio conversacional do Vinicius Silva Gardim.
 
-## 1) Arquitetura & Fluxo
-- **Entrada**: `POST /perguntar` com `pergunta` e `user_id`.
-- **Roteador (LangGraph)**: classifica a pergunta (CTE/MDF-e, Frota, Chamados, etc.) e direciona para o agente.
-- **RAG**: retriever (ChromaDB + embeddings Ollama) busca trechos relevantes; **reranker** reordena evidências.
-- **Geração**: agente monta o prompt (LangChain) e chama o **LLM** (Ollama: llama3.2:latest, mistral:7b, mxbai-embed-large).
-- **Histórico**: mensagens por `user_id` são salvas no Redis; TTL configurável.
-- **Pós-processo**: endpoint `/formatar` permite padronizar a resposta final com título/caminho/campos/observações.
+O projeto e dividido em duas partes:
 
-Fluxo (simplificado):
-```
-Usuário → /perguntar → LangGraph.roteador → agente_X
-         → (retriever Chroma → reranker) → LLM → resposta
-         → (/formatar opcional) → histórico Redis → retorno
-```
+- `frontend/`: interface React + Vite para recrutadores e visitantes
+- `backend`: API FastAPI com RAG, fallback de providers, historico e painel simples de contatos
 
-### Componentes principais
-- `graph/langgraph_flow.py`, `graph/roteador.py`, `graph/continuacao.py`
-- `agents/*.py` (10 agentes de domínio)
-- `vector.py`, `vector_utils.py` (indexação/consulta vetorial)
-- `utils/history.py` (Redis), `utils/summary.py`
-- `routes/*.py` (FastAPI)
+## Visao geral
 
-### Retriever & RAG
-- **Embeddings**: `OllamaEmbeddings(model="mxbai-embed-large")`
-- **Chunking**: `RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=400)`
-- **Top-k inicial**: `k=30` (após isso, reranqueia)
-- **Reranker**: `BAAI/bge-reranker-large` (via `sentence-transformers`)
-- **Coleção Chroma**: `ajuda_sislogica` em `./chroma_langchain_db`
+O Vinnie e o assistente virtual do portfolio do Vinicius. Ele responde perguntas sobre carreira, projetos, stack, objetivos, forma de trabalho e outros temas pessoais/profissionais que estejam na base documental.
 
-## 2) Agentes disponíveis
-- `chamados_agent`
-- `cte_mdfe_agent`
-- `devolucao_agent`
-- `frota_agent`
-- `geral_agent`
-- `indenizacao_agent`
-- `relatorios_agent`
-- `roteirizacao_agent`
-- `small_talk_agent`
-- `transportadora_agent`
+Fluxo principal:
 
-## 3) APIs & Endpoints
-| Método | Caminho | Arquivo |
-|---|---|---|
-| GET | `/` | main_api.py |
-| POST | `/formatar` | formatar.py |
-| DELETE | `/history/{user_id}` | limpar.py |
-| GET | `/history/{user_id}` | ver_historico.py |
-| POST | `/perguntar` | main_api.py |
-| GET | `/status` | status.py |
-| GET | `/testar` | testar.py |
-| GET | `/usuario/{user_id}/resumo` | resumo_usuario.py |
+1. o frontend envia a pergunta para `POST /perguntar`
+2. o backend busca contexto no Chroma
+3. tenta responder via OpenAI
+4. se OpenAI falhar, tenta provider local via Ollama
+5. se tudo falhar, devolve uma mensagem amigavel
 
-### Contratos importantes
-**POST `/perguntar`** — Body:
-```json
-{
-  "pergunta": "<string>",
-  "user_id": "<string>"
-}
-```
-Resposta:
-```json
-{ "resposta": "..." }
+## Estrutura
+
+- `routes/main_api.py`: API principal, contatos, painel admin, CORS e rate limit
+- `services/portfolio_chat.py`: fluxo central de pergunta/resposta
+- `vector_utils.py`: retrieval, categorizacao e persistencia vetorial
+- `update_chroma.py`: recria a base vetorial a partir de `conteudos_vini_02/`
+- `utils/history.py`: historico em Redis com fallback para memoria
+- `utils/rate_limit.py`: rate limit com Redis e fallback para memoria
+- `frontend/src/`: app React
+
+## Requisitos
+
+- Python 3.11+
+- Node 22+
+- Redis
+- Ollama
+- chave da OpenAI
+
+## Variaveis de ambiente
+
+Copie `.env.example` para `.env` e ajuste os valores:
+
+```bash
+copy .env.example .env
 ```
 
-**POST `/formatar`** — Body (`FeedbackCompleto`):
-```json
-{
-  "pergunta_atual": "<string>",
-  "pergunta_anterior": "<string>",
-  "resposta_correta": "<string>"
-}
+Variaveis mais importantes:
+
+- `OPENAI_API_KEY`: chave da OpenAI
+- `OPENAI_MODEL`: modelo principal
+- `OLLAMA_BASE_URL`: endpoint do Ollama
+- `OLLAMA_RAG_MODEL`: modelo local de fallback
+- `OLLAMA_EMBED_MODEL`: modelo de embedding
+- `REDIS_URL`: Redis para historico e rate limit
+- `ADMIN_CONTACT_TOKEN`: token para acessar os contatos privados
+- `ALLOWED_ORIGINS`: dominios autorizados no CORS, separados por virgula
+
+## Base vetorial
+
+Os documentos usados pelo RAG ficam em `conteudos_vini_02/`.
+
+Para recriar a base do zero:
+
+```bash
+python update_chroma.py
 ```
-Retorna um texto já padronizado (título, caminho, como realizar, campos, observações).
 
-**GET `/status`** → healthcheck
+O script remove a base anterior, recarrega os `.txt` validos e reconstrui o Chroma.
 
-**GET `/testar`** → página HTML simples para testar a IA
+## Rodando localmente sem Docker
 
-**GET `/history/{user_id}`** → recupera histórico do usuário
+Backend:
 
-**DELETE `/history/{user_id}`** → apaga histórico do usuário
-
-**GET `/usuario/{user_id}/resumo`** → resumo condensado do histórico
-
-## 4) Como rodar
-### Local (sem Docker)
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+.venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn routes.main_api:app --reload --host 0.0.0.0 --port 8000
-```
-- Instale e rode **Ollama** no host (porta padrão `11434`).
-- Baixe os modelos usados:
-```bash
-ollama pull mistral:7b
-ollama pull llama3.2:latest
-ollama pull mxbai-embed-large
-```
-- Inicie **Redis** (local ou via Docker):
-```bash
-docker run -p 6379:6379 redis:7
+python update_chroma.py
+uvicorn routes.main_api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Docker / Compose
-`docker-compose.yml` já sobe **api** e **redis**:
+Frontend:
+
+```bash
+cd frontend
+npm install
+copy .env.example .env.local
+npm run dev
+```
+
+No `frontend/.env.local`, defina:
+
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+## Rodando com Docker + Redis
+
+O projeto agora tem `docker-compose.yml` para subir backend e Redis juntos.
+
 ```bash
 docker compose up --build
 ```
-_Observação_: o serviço ainda espera um servidor **Ollama** acessível (ex.: `host.docker.internal:11434`). Se necessário, defina `OLLAMA_HOST=http://host.docker.internal:11434` no `.env`.
 
-## 5) Configuração (.env)
-- `REDIS_URL` (ex.: `redis://localhost:6379`)
-- `CHAT_TTL_SECONDS` (ex.: `2592000`)
-- `ENV` (ex.: `dev`/`prod`)
-- `SERVER` (opcional; usado em `db_utils.py` se habilitar SQL Server por env)
-- (opcionais) `OLLAMA_HOST`, variáveis de DB (`UID`, `PWD`, `DATABASE`) se for usar SQL Server autenticado)
+Isso sobe:
 
-## 6) Dependências (requirements)
-- fastapi
-- uvicorn
-- langchain
-- langchain-community
-- langchain-core
-- langchain-chroma
-- langchain-ollama
-- pydantic
-- pytest
-- httpx
-- jinja2
-- langchain-text-splitters
-- redis
-- python-dotenv
-- pyodbc
-- keybert
-- stop-words
-- langgraph
+- `backend` na porta `8000`
+- `redis` na porta `6379`
 
-## 7) Indexação & Atualização do Chroma
-- **Atualizar a coleção** com pastas de `.txt`: `python vector.py` (função `update_chroma_from_folder`) ou `python update_chroma.py`.
-- Pastas de conteúdo detectadas (exemplo):
-  - `cconteudos_novos_9/`
-    
-*Passar caminho da pasta desejada no arquivo `update_chroma.py`*
+Observacoes importantes:
 
-## 8) Histórico & Resumos
-- `utils/history.py` usa `RedisChatMessageHistory` (TTL via `CHAT_TTL_SECONDS`).
-- `utils/summary.py` gera resumos periódicos para manter o contexto enxuto.
+- o frontend nao sobe nesse compose; ele continua separado porque, em producao, a ideia e publica-lo na Vercel
+- se o backend no container precisar conversar com um Ollama rodando na sua maquina host, use algo como:
 
-## 9) Dicas de manutenção
-- Monitore latência do retriever e do `reranker` (pode ser pesado). Ajuste `k`, `chunk_size/overlap`.
-- Log estruturado e captura de exceções (ver `try/except` nos endpoints).
-- Versione prompts dos agentes em `agents/templates.py`.
-- Adicione testes para `/perguntar` e para o roteador do LangGraph.
+```bash
+OLLAMA_BASE_URL=http://host.docker.internal:11434
+```
 
+## Endpoints principais
+
+- `POST /perguntar`: pergunta principal do chat
+- `POST /contato`: salva lead de contato
+- `GET /status`: healthcheck completo
+- `GET /status/openai`
+- `GET /status/local`
+- `GET /status/redis`
+- `GET /status/vector`
+- `GET /admin/contatos`: lista contatos salvos, exige `x-admin-token`
+- `GET /admin/contatos/painel`: painel HTML simples para visualizar contatos
+
+## Rate limit e seguranca
+
+Ja foi adicionado:
+
+- rate limit em `/perguntar`
+- rate limit em `/contato`
+- rate limit nas rotas administrativas
+- CORS configuravel por `ALLOWED_ORIGINS`
+- token administrativo em `ADMIN_CONTACT_TOKEN`
+
+Configuracoes padrao:
+
+- chat: `20` req por `60s`
+- contato: `5` req por `3600s`
+- admin: `30` req por `60s`
+
+Se Redis estiver disponivel, o rate limit usa Redis.
+Se Redis nao estiver disponivel, cai para memoria local.
+
+## Contatos privados
+
+Os contatos enviados pelo formulario ficam em:
+
+- `data/contact_leads.jsonl`
+
+Para consumir via API:
+
+```http
+GET /admin/contatos
+x-admin-token: SEU_TOKEN
+```
+
+Para abrir o painel no navegador:
+
+- acesse `/admin/contatos/painel`
+- informe o token
+
+## Frontend em producao
+
+Recomendacao:
+
+- publique o `frontend/` na Vercel
+- aponte `VITE_API_BASE_URL` para o backend publicado
+
+Se quiser reaproveitar um projeto Vercel existente, configure a `Root Directory` como:
+
+```text
+frontend
+```
+
+## Backend em producao
+
+Opcoes praticas:
+
+- Railway para o backend principal
+- fallback local via Ollama, se voce quiser manter esse plano
+
+Arquitetura recomendada para deploy hibrido:
+
+1. frontend na Vercel
+2. backend principal na Railway
+3. OpenAI como provider principal
+4. Ollama local como fallback opcional
+
+Se voce quiser usar fallback local real em producao, sua maquina e o servico do Ollama precisam estar ligados quando esse fallback for necessario.
+
+## Testes
+
+Backend:
+
+```bash
+python -m pytest -q -p no:tmpdir
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
+## Estado atual
+
+Validado nesta base:
+
+- testes backend passando
+- build do frontend passando
+- base Chroma recriada com os documentos atuais
+
+## Proximos passos sugeridos
+
+- publicar frontend na Vercel
+- publicar backend principal na Railway
+- restringir `ALLOWED_ORIGINS` para o dominio final
+- configurar um dominio proprio depois
+- se necessario, colocar Cloudflare Access na frente do painel admin

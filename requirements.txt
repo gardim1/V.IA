@@ -16,3 +16,5 @@ pyodbc
 keybert
 stop-words
 langgraph
+langchain-openai
+openai
