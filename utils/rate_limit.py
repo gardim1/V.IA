@@ -13,9 +13,12 @@ load_dotenv()
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 RATE_LIMIT_ENABLED = os.getenv("RATE_LIMIT_ENABLED", "true").strip().lower() not in {"0", "false", "no"}
+REDIS_CONNECT_TIMEOUT_SECONDS = float(os.getenv("REDIS_CONNECT_TIMEOUT_SECONDS", "0.5"))
+REDIS_RETRY_COOLDOWN_SECONDS = float(os.getenv("REDIS_RETRY_COOLDOWN_SECONDS", "5"))
 
 _memory_counters: dict[str, int] = {}
 _memory_lock = Lock()
+_last_redis_failure_at = 0.0
 
 
 @dataclass(frozen=True)
@@ -27,11 +30,25 @@ class RateLimitRule:
 
 
 def _get_redis_client() -> redis.Redis | None:
+    global _last_redis_failure_at
+
+    if _last_redis_failure_at:
+        elapsed = time.time() - _last_redis_failure_at
+        if elapsed < REDIS_RETRY_COOLDOWN_SECONDS:
+            return None
+
     try:
-        client = redis.from_url(REDIS_URL, decode_responses=True)
+        client = redis.from_url(
+            REDIS_URL,
+            decode_responses=True,
+            socket_connect_timeout=REDIS_CONNECT_TIMEOUT_SECONDS,
+            socket_timeout=REDIS_CONNECT_TIMEOUT_SECONDS,
+        )
         client.ping()
+        _last_redis_failure_at = 0.0
         return client
     except Exception:
+        _last_redis_failure_at = time.time()
         return None
 
 

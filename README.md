@@ -56,6 +56,7 @@ Variaveis mais importantes:
 - `OLLAMA_RAG_MODEL`: modelo local de fallback
 - `OLLAMA_EMBED_MODEL`: modelo de embedding
 - `REDIS_URL`: Redis para historico e rate limit
+- `REDIS_CONNECT_TIMEOUT_SECONDS`: timeout curto para nao travar requests se Redis nao existir
 - `ADMIN_CONTACT_TOKEN`: token para acessar os contatos privados
 - `ALLOWED_ORIGINS`: dominios autorizados no CORS, separados por virgula
 
@@ -162,6 +163,7 @@ Configuracoes padrao:
 
 Se Redis estiver disponivel, o rate limit usa Redis.
 Se Redis nao estiver disponivel, cai para memoria local.
+No cloud, se voce ainda nao tiver Redis provisionado, pode simplesmente nao definir `REDIS_URL` e o app vai responder usando memoria.
 
 ## Contatos privados
 

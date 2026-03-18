@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from threading import Lock
 from typing import Any
 
@@ -13,9 +14,12 @@ load_dotenv()
 
 CHAT_TTL_SECONDS = int(os.getenv("CHAT_TTL_SECONDS", "2592000"))
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
+REDIS_CONNECT_TIMEOUT_SECONDS = float(os.getenv("REDIS_CONNECT_TIMEOUT_SECONDS", "0.5"))
+REDIS_RETRY_COOLDOWN_SECONDS = float(os.getenv("REDIS_RETRY_COOLDOWN_SECONDS", "5"))
 
 _memory_histories: dict[str, InMemoryChatMessageHistory] = {}
 _memory_lock = Lock()
+_last_redis_failure_at = 0.0
 
 
 def _get_memory_history(session_id: str) -> InMemoryChatMessageHistory:
@@ -26,11 +30,25 @@ def _get_memory_history(session_id: str) -> InMemoryChatMessageHistory:
 
 
 def _get_redis_client() -> redis.Redis | None:
+    global _last_redis_failure_at
+
+    if _last_redis_failure_at:
+        elapsed = time.time() - _last_redis_failure_at
+        if elapsed < REDIS_RETRY_COOLDOWN_SECONDS:
+            return None
+
     try:
-        client = redis.from_url(REDIS_URL, decode_responses=False)
+        client = redis.from_url(
+            REDIS_URL,
+            decode_responses=False,
+            socket_connect_timeout=REDIS_CONNECT_TIMEOUT_SECONDS,
+            socket_timeout=REDIS_CONNECT_TIMEOUT_SECONDS,
+        )
         client.ping()
+        _last_redis_failure_at = 0.0
         return client
     except Exception:
+        _last_redis_failure_at = time.time()
         return None
 
 
