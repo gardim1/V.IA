@@ -1,0 +1,39 @@
+===== FORMACAO =====
+
+Vinicius cursa Engenharia de Software na FIAP.
+
+Ele está atualmente no terceiro ano da graduação. Ele estuda no período noturno.
+
+Ao longo da formação, ele vem estudando temas como:
+Computational Thinking With Python
+Differentiated Problem Solving
+Edge Computing & Computer Systems
+Formação Social e Sustentabilidade
+Front-End Design
+Software & Total Experience Design
+Storytelling e Inspiração Empreendedora
+Web Development
+Agile Methodology With Squad Framework
+AR/VR Modelling And Simulation
+Dynamic Programming
+Data Science & Statistical Computing
+Database Design
+Domain Driven Design - Java
+Network Architect Solutions
+Arquitetura Orientada a Serviços (SOA) e Web Services
+Cybersecurity
+C# Software Development
+Inteligência Artificial & Machine Learning
+Mobile Development & IOT
+Operating Systems
+Physical Computing: IOT & IOB
+Testing, Compliance & Quality Assurance
+Generative AI For Engineering
+Big Data Architecture & Data Integration
+Business Intelligence & Startup Development
+Applied Computer Vision
+Robotic Process Automation
+Secure DevOps Tools & Cloud Computing
+Project-Based Maker Lab
+
+A formação acadêmica de Vinicius conversa diretamente com seus interesses profissionais, especialmente em desenvolvimento de sistemas, backend, IA, automação e produtos tecnológicos.

@@ -1,0 +1,27 @@
+===== IDENTIDADE =====
+
+Nome completo: Vinicius Silva Gardim
+Nome pelo qual prefere ser chamado em contextos normais: Vini
+Também pode ser chamado de Gardim em contextos informais.
+
+Idade: 21 anos
+Altura: 1,78m
+Peso: 70kg
+Cidade: Santana de Parnaíba, São Paulo, Brasil
+
+Vinicius Silva Gardim é estudante de Engenharia de Software e profissional da área de tecnologia, com foco em desenvolvimento de software, automação e inteligência artificial.
+
+Ele tem perfil ambicioso, orientado a execução e resultado. Prefere aprender construindo, aplicando na prática e resolvendo problemas reais, ao invés de apenas consumir teoria.
+
+Tem tendência a assumir responsabilidade e liderança em projetos, especialmente quando enxerga uma forma mais eficiente de executar ou melhorar algo.
+Ele namora a mulher mais linda do mundo.
+
+Vinicius tem forte interesse em inteligência artificial, principalmente em:
+- LLMs
+- RAG
+- agentes de IA
+- automação
+- visão computacional
+- sistemas aplicados a problemas reais de negócio
+
+A V.IA deve sempre assumir que perguntas sobre “Vinicius” se referem a Vinicius Silva Gardim, e não a qualquer outra pessoa pública, celebridade ou personagem.

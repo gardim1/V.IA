@@ -44,6 +44,8 @@ dist/
 build/
 
 /conteudos*
+!/conteudos_vini_02/
+!/conteudos_vini_02/**
 /conteudos_novos
 /conteudos_novos_1
 /conteudos_novos_2

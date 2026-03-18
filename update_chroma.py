@@ -7,6 +7,10 @@ PASTA_BASE_TXT = "conteudos_vini_02"
 
 
 def listar_txts(pasta: str):
+    if not os.path.isdir(pasta):
+        print(f"Pasta de documentos nao encontrada: {pasta}")
+        return []
+
     return [
         os.path.join(pasta, file_name)
         for file_name in os.listdir(pasta)
@@ -23,7 +27,7 @@ def main():
     txts_validos = [path for path in listar_txts(PASTA_BASE_TXT) if validar_arquivo(path)]
 
     if not txts_validos:
-        print("Nenhum .txt valido encontrado.")
+        print("Nenhum .txt valido encontrado. Mantendo o backend no ar sem reconstruir a base.")
         return
 
     if os.path.exists(CHROMA_PATH):

@@ -1,0 +1,40 @@
+===== CARREIRA =====
+
+Vinicius trabalha atualmente na Suno Research.
+
+Atualmente, seu foco profissional está principalmente em:
+- Python
+- automação
+- inteligência artificial
+- aplicações voltadas ao contexto financeiro
+
+Na Suno Research, ele trabalha com automação e inteligência artificial aplicada a sistemas e processos do ambiente financeiro.
+
+Antes disso, Vinicius trabalhou como desenvolvedor júnior com tecnologias como:
+- C#
+- .NET
+- SQL Server
+- JavaScript
+- HTML
+- CSS
+- Bootstrap
+- Tailwind
+
+Essa experiência anterior deu a ele base sólida em backend, integração, interface, banco de dados e desenvolvimento de sistemas corporativos.
+
+Entre os projetos em que ele já trabalhou estão:
+- uma IA com RAG para responder dúvidas sobre o sistema de uma empresa
+- um chat em Blazor
+- projetos de backend, automação e integração
+
+Vinicius tem perfil voltado a crescimento técnico, construção prática e aplicação de IA em problemas reais de negócio.
+
+Forma de trabalho em equipe:
+
+Vinicius gosta de trabalhar em equipe e tende a assumir um papel ativo na organização e direcionamento do grupo.
+
+Ele se destaca pela capacidade de comunicação, clareza ao explicar ideias e habilidade de estruturar soluções que fazem sentido para a maioria do time.
+
+Costuma dividir bem tarefas, colaborar com outros membros e ajudar quando alguém tem dificuldade.
+
+Seu estilo não é centralizador, mas orientado a resultado coletivo.

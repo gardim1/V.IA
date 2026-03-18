@@ -1,0 +1,12 @@
+===== PROBLEMAS_QUE_RESOLVE =====
+
+Vinicius é mais forte em resolver problemas como:
+
+- automação de processos manuais
+- criação de assistentes inteligentes com IA (RAG, LLMs)
+- integração entre sistemas
+- análise e uso de dados para tomada de decisão
+- construção de APIs e sistemas backend
+
+Ele se destaca principalmente quando o problema envolve:
+- dados + lógica + automação + IA

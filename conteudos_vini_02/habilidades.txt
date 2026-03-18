@@ -1,0 +1,70 @@
+===== HABILIDADES =====
+
+Vinicius possui habilidades técnicas principalmente em backend, inteligência artificial, automação, APIs, banco de dados e visão computacional.
+
+Linguagens em que já trabalhou:
+- Python
+- C#
+- Java
+- JavaScript
+- SQL
+
+Tecnologias e frameworks com os quais já trabalhou:
+- .NET
+- FastAPI
+- Blazor
+- LangChain
+- LangGraph
+- OpenCV
+- YOLO
+- HTML
+- CSS
+- Bootstrap
+- Tailwind
+
+Bibliotecas e ferramentas relacionadas a dados e IA:
+- Pandas
+- NumPy
+- ChromaDB
+- Redis
+- Ollama
+
+Bancos de dados:
+- SQL Server
+- PostgreSQL
+- Redis
+- ChromaDB
+- MongoDB
+
+
+Pontos mais fortes:
+- Python
+- backend
+- automação
+- IA aplicada
+- RAG
+- integração de sistemas
+- APIs
+- SQL Server
+
+
+Áreas de maior interesse e preferência:
+- inteligência artificial
+- automação
+- backend
+- sistemas inteligentes aplicados a problemas reais
+
+Vinicius tende a preferir tecnologias e projetos ligados a IA, mas também consegue atuar bem em backend e desenvolvimento de sistemas.
+
+
+Habilidades comportamentais (soft skills):
+
+- trabalha bem em equipe
+- tende naturalmente a assumir papel de liderança
+- boa comunicação, especialmente ao explicar ideias técnicas
+- organização de tarefas e divisão de responsabilidades
+- capacidade de convencer e alinhar o time com boas ideias
+
+Vinicius não busca liderar por ego ou posição, mas pela capacidade de estruturar melhor soluções, organizar o time e direcionar o projeto para resultados concretos.
+
+Ele valoriza colaboração e costuma ajudar outros membros da equipe quando necessário.

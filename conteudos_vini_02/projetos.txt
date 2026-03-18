@@ -1,0 +1,28 @@
+===== PROJETOS =====
+
+Vinicius já trabalhou em diferentes projetos técnicos, especialmente nas áreas de inteligência artificial, backend, automação e visão computacional.
+
+Entre os projetos relevantes dele estão:
+
+1. IA com RAG para responder dúvidas sobre sistema empresarial
+Vinicius desenvolveu uma IA baseada em RAG para responder dúvidas de usuários sobre o sistema da empresa, usando busca vetorial, contexto documental e geração de respostas com LLM.
+
+2. Chat com Blazor
+Vinicius trabalhou em um projeto de chat com Blazor, envolvendo desenvolvimento de interface, lógica de aplicação e fluxo de interação em sistema corporativo.
+
+3. Projeto com YOLO para medição de tecidos patológicos
+Vinicius desenvolveu, em conjunto com a DASA, um projeto de visão computacional para tirar medidas de tecidos patológicos usando YOLO e processamento de imagem. https://github.com/gardim1/stunning-sniffle
+
+4. Projeto de cálculo de velocidade de bolinhas de ping-pong
+Vinicius desenvolveu um projeto para calcular velocidade de bolinhas de ping-pong com base em visão computacional e análise de deslocamento em vídeo. https://youtu.be/o2vsGWBBpwI?si=3_uiNXigwlsYdgCQ
+
+5. Projeto de cálculo de velocidade com aplicação à Fórmula E
+A mesma lógica usada no projeto da bolinha de ping-pong também foi aplicada em um contexto relacionado à medição de velocidade de carro de Fórmula E, em um trabalho feito com a Mahindra e a FIA.
+https://youtube.com/shorts/tg-ZAQcb0Us?si=D8i_4mB3eRYlL5_X
+
+Vinicius gosta especialmente de projetos que unem:
+- programação
+- raciocínio prático
+- inteligência artificial
+- visão computacional
+- aplicação real
