@@ -94,9 +94,62 @@ function buildErrorMetadata(language: UiLanguage): ProviderMetadata {
   };
 }
 
+function buildProviderBadgeLabel(engine: ProviderMetadata["engine"], language: UiLanguage) {
+  if (engine === "local") {
+    return language === "en-US" ? "Local GPU" : "GPU local";
+  }
+
+  return "OpenAI";
+}
+
+function normalizeProviderMetadata(
+  metadata: ProviderMetadata | undefined,
+  language: UiLanguage,
+  previousProvider?: ProviderMetadata
+) {
+  if (!metadata) {
+    return metadata;
+  }
+
+  if (metadata.engine === "openai" || metadata.engine === "local") {
+    return {
+      ...metadata,
+      label: buildProviderBadgeLabel(metadata.engine, language)
+    };
+  }
+
+  if (metadata.engine === "rules") {
+    const inheritedEngine = previousProvider?.engine === "local" ? "local" : "openai";
+
+    return {
+      ...metadata,
+      engine: inheritedEngine,
+      label: buildProviderBadgeLabel(inheritedEngine, language),
+      model: inheritedEngine === "local" ? previousProvider?.model ?? "local" : "gpt"
+    };
+  }
+
+  return metadata;
+}
+
 export default function App() {
   const [language, setLanguage] = useState<UiLanguage>(() => getStoredLanguage());
-  const [messages, setMessages] = useState<ChatMessage[]>(() => getStoredChatState().messages);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    const storedLanguage = getStoredLanguage();
+    const storedState = getStoredChatState();
+    const normalizedLastProvider = normalizeProviderMetadata(storedState.lastProvider, storedLanguage);
+
+    return storedState.messages.map((message) => {
+      if (message.role !== "assistant" || !message.metadata) {
+        return message;
+      }
+
+      return {
+        ...message,
+        metadata: normalizeProviderMetadata(message.metadata, storedLanguage, normalizedLastProvider)
+      };
+    });
+  });
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -111,7 +164,11 @@ export default function App() {
     source: "linkedin",
     message: ""
   });
-  const [lastProvider, setLastProvider] = useState<ProviderMetadata | undefined>(() => getStoredChatState().lastProvider);
+  const [lastProvider, setLastProvider] = useState<ProviderMetadata | undefined>(() => {
+    const storedLanguage = getStoredLanguage();
+    const storedState = getStoredChatState();
+    return normalizeProviderMetadata(storedState.lastProvider, storedLanguage);
+  });
   const userId = useMemo(() => getOrCreateUserId(), []);
   const messageViewportRef = useRef<HTMLDivElement | null>(null);
   const copy = getUiCopy(language);
@@ -227,16 +284,17 @@ export default function App() {
 
     try {
       const response = await askQuestion({ question: content, language, userId });
+      const normalizedMetadata = normalizeProviderMetadata(response.metadata, language, lastProvider);
       const assistantMessage: ChatMessage = {
         id: createId(),
         role: "assistant",
         content: response.resposta,
-        metadata: response.metadata
+        metadata: normalizedMetadata
       };
 
       startTransition(() => {
         setMessages((current) => [...current, assistantMessage]);
-        setLastProvider(response.metadata);
+        setLastProvider(normalizedMetadata);
       });
     } catch (error) {
       const metadata = buildErrorMetadata(language);
