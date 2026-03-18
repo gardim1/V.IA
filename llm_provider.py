@@ -8,7 +8,7 @@ from typing import Any
 import httpx
 from dotenv import load_dotenv
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 load_dotenv()
 
@@ -17,7 +17,9 @@ OPENAI_MAX_RETRIES = int(os.getenv("OPENAI_MAX_RETRIES", "1"))
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
 OLLAMA_HEALTH_TIMEOUT_SECONDS = float(os.getenv("OLLAMA_HEALTH_TIMEOUT_SECONDS", "2"))
 DEFAULT_OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-DEFAULT_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "mxbai-embed-large")
+DEFAULT_OPENAI_EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small")
+DEFAULT_OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "mxbai-embed-large")
+EMBED_PROVIDER = os.getenv("EMBED_PROVIDER", "ollama").strip().lower()
 DEFAULT_LOCAL_MODELS = (
     "qwen3:4b",
     "qwen3:8b",
@@ -93,9 +95,21 @@ def get_local_llm(model_name: str, temperature: float = 0.2) -> OllamaLLM:
     return OllamaLLM(model=model_name, temperature=temperature, base_url=OLLAMA_BASE_URL)
 
 
+def get_embed_provider() -> str:
+    if EMBED_PROVIDER == "openai" and is_openai_configured():
+        return "openai"
+    return "ollama"
+
+
 @lru_cache(maxsize=1)
-def get_embed_model() -> OllamaEmbeddings:
-    return OllamaEmbeddings(model=DEFAULT_EMBED_MODEL, base_url=OLLAMA_BASE_URL)
+def get_embed_model() -> OpenAIEmbeddings | OllamaEmbeddings:
+    if get_embed_provider() == "openai":
+        return OpenAIEmbeddings(
+            model=DEFAULT_OPENAI_EMBED_MODEL,
+            api_key=os.getenv("OPENAI_API_KEY"),
+        )
+
+    return OllamaEmbeddings(model=DEFAULT_OLLAMA_EMBED_MODEL, base_url=OLLAMA_BASE_URL)
 
 
 def invoke_with_fallback(prompt, variables: dict[str, Any], temperature: float = 0.2) -> GenerationResult:

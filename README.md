@@ -49,6 +49,8 @@ Variaveis mais importantes:
 
 - `OPENAI_API_KEY`: chave da OpenAI
 - `OPENAI_MODEL`: modelo principal
+- `OPENAI_EMBED_MODEL`: modelo de embedding da OpenAI
+- `EMBED_PROVIDER`: `openai` ou `ollama`
 - `OLLAMA_BASE_URL`: endpoint do Ollama
 - `OLLAMA_RAG_MODEL`: modelo local de fallback
 - `OLLAMA_EMBED_MODEL`: modelo de embedding
@@ -67,6 +69,15 @@ python update_chroma.py
 ```
 
 O script remove a base anterior, recarrega os `.txt` validos e reconstrui o Chroma.
+
+Para deploy em cloud sem Ollama no servidor, use:
+
+```bash
+EMBED_PROVIDER=openai
+OPENAI_EMBED_MODEL=text-embedding-3-small
+```
+
+Assim o backend pode reconstruir e consultar a base vetorial usando a OpenAI, sem depender de Ollama para embeddings.
 
 ## Rodando localmente sem Docker
 
@@ -116,6 +127,8 @@ Observacoes importantes:
 ```bash
 OLLAMA_BASE_URL=http://host.docker.internal:11434
 ```
+
+- no Dockerfile de producao, o backend executa `python update_chroma.py` antes de subir a API, para recriar a base vetorial automaticamente no ambiente cloud
 
 ## Endpoints principais
 
@@ -191,7 +204,8 @@ Arquitetura recomendada para deploy hibrido:
 1. frontend na Vercel
 2. backend principal na Railway
 3. OpenAI como provider principal
-4. Ollama local como fallback opcional
+4. OpenAI embeddings no cloud
+5. Ollama local como fallback opcional
 
 Se voce quiser usar fallback local real em producao, sua maquina e o servico do Ollama precisam estar ligados quando esse fallback for necessario.
 
