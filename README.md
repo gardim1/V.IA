@@ -218,10 +218,3 @@ Validado nesta base:
 - build do frontend passando
 - base Chroma recriada com os documentos atuais
 
-## Proximos passos sugeridos
-
-- publicar frontend na Vercel
-- publicar backend principal na Railway
-- restringir `ALLOWED_ORIGINS` para o dominio final
-- configurar um dominio proprio depois
-- se necessario, colocar Cloudflare Access na frente do painel admin
