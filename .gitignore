@@ -28,6 +28,11 @@ Thumbs.db
 
 *.sqlite3
 *.json
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/tsconfig.json
+!frontend/tsconfig.app.json
+!frontend/tsconfig.node.json
 *.yaml
 *.yml
 *.zip
