@@ -66,13 +66,46 @@ def get_vector_store_health() -> dict:
         }
 
 
-def inferir_categoria(path: str) -> str:
+def _content_has_any(text: str, keywords: tuple[str, ...]) -> bool:
+    return any(keyword in text for keyword in keywords)
+
+
+def _inferir_categoria_por_conteudo(content: str) -> str | None:
+    normalized = content.lower()
+
+    if "pergunta frequente:" not in normalized:
+        return None
+
+    faq_question = normalized.split("pergunta frequente:", 1)[1].splitlines()[0].strip()
+    if not faq_question:
+        return None
+
+    if _content_has_any(faq_question, ("formacao", "faculdade", "curso", "fiap", "estuda")):
+        return "FORMACAO"
+    if _content_has_any(faq_question, ("idade", "quantos anos", "fale sobre", "quem e", "quem eh")):
+        return "IDENTIDADE"
+    if _content_has_any(
+        faq_question,
+        ("experiencia", "experiencias", "carreira", "emprego", "trabalhou", "ultimo emprego"),
+    ):
+        return "CARREIRA"
+    if _content_has_any(faq_question, ("projeto", "projetos", "desafio tecnico")):
+        return "PROJETOS"
+    if _content_has_any(faq_question, ("5 anos", "futuro", "objetivo", "trabalhar nesta empresa")):
+        return "OBJETIVOS"
+    if _content_has_any(faq_question, ("equipe", "pressao", "pontos fortes", "pontos de melhoria", "contratar")):
+        return "HABILIDADES"
+
+    return "IDENTIDADE"
+
+
+def inferir_categoria(path: str, content: str | None = None) -> str:
     nome = os.path.basename(path).lower()
 
     if "identidade" in nome:
         return "IDENTIDADE"
     if "faq" in nome or "recrutador" in nome:
-        return "IDENTIDADE"
+        return _inferir_categoria_por_conteudo(content or "") or "IDENTIDADE"
     if "vida_pessoal" in nome or "pessoal" in nome:
         return "VIDA_PESSOAL"
     if "relacionamento" in nome or "namorada" in nome:
@@ -99,13 +132,14 @@ def load_and_split_documents(file_paths: list[str]) -> list[Document]:
         with open(path, "r", encoding="utf-8") as file_pointer:
             content = file_pointer.read()
 
-        categoria = inferir_categoria(path)
         secoes = content.split("=====")
 
         for secao in secoes:
             secao = secao.strip()
             if not secao:
                 continue
+
+            categoria = inferir_categoria(path, secao)
 
             documentos.append(
                 Document(

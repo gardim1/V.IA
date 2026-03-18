@@ -111,6 +111,7 @@ def _registrar_feedback(user_id: str, pergunta_atual: str, resposta: str) -> Non
 def _build_response_metadata(result, language: str | None) -> dict:
     normalized_language = "en-US" if (language or "").lower().startswith("en") else "pt-BR"
     provider = result.provider
+    response_mode = getattr(result, "response_mode", None)
 
     if provider == "openai":
         engine = "openai"
@@ -122,7 +123,14 @@ def _build_response_metadata(result, language: str | None) -> dict:
         label = f"Local GPU - {model}"
     elif provider == "rule":
         engine = "rules"
-        label = "Fast path" if normalized_language == "en-US" else "Fluxo rapido"
+        if response_mode == "direct_answer":
+            label = "Direct answer" if normalized_language == "en-US" else "Resposta direta"
+        elif response_mode == "out_of_scope":
+            label = "Out of scope" if normalized_language == "en-US" else "Fora de escopo"
+        elif response_mode == "small_talk":
+            label = "Friendly" if normalized_language == "en-US" else "Cordial"
+        else:
+            label = "Rule" if normalized_language == "en-US" else "Regra"
         model = "rules"
     else:
         engine = "fallback"
@@ -136,6 +144,7 @@ def _build_response_metadata(result, language: str | None) -> dict:
         "model": model,
         "used_fallback": result.used_fallback,
         "category_hint": result.category_hint,
+        "response_mode": response_mode,
         "rewritten_question": result.rewritten_question,
     }
 

@@ -9,7 +9,11 @@ def test_perguntar_returns_answer(client, monkeypatch):
     monkeypatch.setattr("utils.rate_limit._get_redis_client", lambda: None)
     monkeypatch.setattr(
         "routes.main_api.answer_portfolio_question",
-        lambda question, user_id, language=None: AnswerResult(answer="Resposta ok", provider="rule"),
+        lambda question, user_id, language=None: AnswerResult(
+            answer="Resposta ok",
+            provider="rule",
+            response_mode="direct_answer",
+        ),
     )
 
     response = client.post("/perguntar", json={"user_id": "u123", "pergunta": "Qual sua stack favorita?"})
@@ -18,6 +22,7 @@ def test_perguntar_returns_answer(client, monkeypatch):
     payload = response.json()
     assert payload["resposta"] == "Resposta ok"
     assert "metadata" in payload
+    assert payload["metadata"]["label"] == "Resposta direta"
 
 
 def test_contact_route_persists_lead(client, monkeypatch):

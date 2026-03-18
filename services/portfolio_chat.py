@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 import unicodedata
 from dataclasses import dataclass, field
+from functools import lru_cache
+from pathlib import Path
 
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
@@ -135,6 +137,58 @@ SMALL_TALK_ALLOWED_TOKENS = {
     "see",
     "ya",
     "viu",
+}
+
+DIRECT_ANSWER_STOPWORDS = {
+    "o",
+    "a",
+    "os",
+    "as",
+    "de",
+    "do",
+    "da",
+    "dos",
+    "das",
+    "e",
+    "em",
+    "no",
+    "na",
+    "nos",
+    "nas",
+    "um",
+    "uma",
+    "me",
+    "sobre",
+    "quero",
+    "saber",
+    "mais",
+    "ele",
+    "dele",
+    "dela",
+    "para",
+    "por",
+    "que",
+    "qual",
+    "quais",
+    "como",
+    "onde",
+    "nos",
+    "nas",
+}
+
+DIRECT_ANSWER_INTENTS = {
+    "idade": ("idade", "quantos anos"),
+    "formacao": ("formacao", "faculdade", "curso", "fiap"),
+    "objetivos_5_anos": ("5 anos", "proximos 5 anos"),
+    "experiencias": ("experiencia profissional", "experiencias profissionais", "experiencias passadas", "trajetoria profissional"),
+    "pontos_fortes": ("pontos fortes",),
+    "pontos_melhoria": ("pontos de melhoria",),
+    "trabalhar_empresa": ("trabalhar nesta empresa",),
+    "ultimo_emprego": ("ultimo emprego",),
+    "pressao": ("pressao",),
+    "equipe": ("equipe", "trabalha bem em equipe"),
+    "desafio_tecnico": ("desafio tecnico",),
+    "contratar": ("contratar",),
 }
 
 OUT_OF_SCOPE_RESPONSE = LANGUAGE_COPY[DEFAULT_LANGUAGE]["out_of_scope"]
@@ -275,7 +329,6 @@ CATEGORY_KEYWORDS = {
         "chatbot",
         "automacao",
         "automacoes",
-        "ia",
         "v ia",
         "vinnie",
         "project",
@@ -390,6 +443,7 @@ class AnswerResult:
     answer: str
     provider: str
     category_hint: str | None = None
+    response_mode: str | None = None
     used_fallback: bool = False
     rewritten_question: str | None = None
     retrieved_docs: list[Document] = field(default_factory=list)
@@ -643,10 +697,119 @@ def _extract_direct_answer_from_text(content: str) -> str | None:
     return answer or None
 
 
-def _extract_direct_answer(retrieved_docs: list[RetrievedDocument]) -> str | None:
+def _extract_direct_question_from_text(content: str) -> str | None:
+    marker = "Pergunta frequente:"
+    if marker not in content:
+        return None
+
+    head = content.split(marker, 1)[1].strip()
+    if not head:
+        return None
+
+    first_line = head.splitlines()[0].strip()
+    return first_line or None
+
+
+def _parse_direct_faq_entries(content: str) -> list[tuple[str, str]]:
+    pattern = re.compile(
+        r"Pergunta frequente:\s*(.+?)\n\s*\nResposta direta:\s*(.+?)(?=\n\s*\nPergunta frequente:|\Z)",
+        re.DOTALL,
+    )
+    entries: list[tuple[str, str]] = []
+
+    for question, answer in pattern.findall(content):
+        cleaned_question = question.strip().splitlines()[0].strip()
+        cleaned_answer = answer.strip()
+        if cleaned_question and cleaned_answer:
+            entries.append((cleaned_question, cleaned_answer))
+
+    return entries
+
+
+def _tokenize_direct_match(text: str) -> set[str]:
+    normalized = _normalize_text(text)
+    return {
+        token
+        for token in normalized.split()
+        if len(token) >= 3 and token not in DIRECT_ANSWER_STOPWORDS
+    }
+
+
+def _extract_direct_intent(text: str) -> str | None:
+    normalized = _normalize_text(text)
+    for intent, phrases in DIRECT_ANSWER_INTENTS.items():
+        if any(phrase in normalized for phrase in phrases):
+            return intent
+    return None
+
+
+def _faq_matches_question(question: str, faq_question: str) -> bool:
+    normalized_question = _normalize_text(question)
+    normalized_faq_question = _normalize_text(faq_question)
+
+    question_intent = _extract_direct_intent(question)
+    faq_intent = _extract_direct_intent(faq_question)
+    if question_intent and faq_intent and question_intent == faq_intent:
+        return True
+
+    if normalized_question == normalized_faq_question:
+        return True
+
+    if len(normalized_question) >= 18 and normalized_question in normalized_faq_question:
+        return True
+
+    if len(normalized_faq_question) >= 18 and normalized_faq_question in normalized_question:
+        return True
+
+    question_tokens = _tokenize_direct_match(question)
+    faq_tokens = _tokenize_direct_match(faq_question)
+    if not question_tokens or not faq_tokens:
+        return False
+
+    shared_tokens = question_tokens & faq_tokens
+    if len(shared_tokens) < 2:
+        return False
+
+    overlap = len(shared_tokens) / min(len(question_tokens), len(faq_tokens))
+    return overlap >= 0.5
+
+
+@lru_cache(maxsize=1)
+def _load_direct_faq_entries() -> list[tuple[str, str]]:
+    faq_dir = Path(__file__).resolve().parent.parent / "conteudos_vini_02"
+    entries: list[tuple[str, str]] = []
+
+    if not faq_dir.exists():
+        return entries
+
+    for path in faq_dir.glob("*.txt"):
+        content = path.read_text(encoding="utf-8")
+        parsed_entries = _parse_direct_faq_entries(content)
+        if parsed_entries:
+            entries.extend(parsed_entries)
+            continue
+
+        for section in content.split("====="):
+            faq_question = _extract_direct_question_from_text(section)
+            answer = _extract_direct_answer_from_text(section)
+            if faq_question and answer and len(answer) >= 20:
+                entries.append((faq_question, answer))
+
+    return entries
+
+
+def _lookup_direct_answer(question: str) -> str | None:
+    for faq_question, answer in _load_direct_faq_entries():
+        if _faq_matches_question(question, faq_question):
+            return answer
+    return None
+
+
+def _extract_direct_answer(retrieved_docs: list[RetrievedDocument], question: str) -> str | None:
     for item in retrieved_docs[:4]:
+        faq_question = _extract_direct_question_from_text(item.document.page_content)
         answer = _extract_direct_answer_from_text(item.document.page_content)
-        if answer and len(answer) >= 40:
+        if faq_question and answer and len(answer) >= 40 and _faq_matches_question(question, faq_question):
             return answer
 
     return None
@@ -663,8 +826,7 @@ def _retrieve_context(question: str, category_hint: str | None) -> list[Retrieve
 
     ordered: list[RetrievedDocument] = []
     seen_ids: set[str] = set()
-    direct_global = [item for item in global_filtered if _extract_direct_answer_from_text(item.document.page_content)]
-    for group in (direct_global, hinted_filtered, global_filtered):
+    for group in (hinted_filtered, global_filtered):
         for item in group:
             doc_id = item.document.metadata.get("id") or item.document.metadata.get("source") or item.document.page_content
             if doc_id in seen_ids:
@@ -694,19 +856,45 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
         answer = _build_small_talk_answer(normalized_question, normalized_language)
         history.add_user_message(question)
         history.add_ai_message(answer)
-        return AnswerResult(answer=answer, provider="rule", rewritten_question=question.strip())
+        return AnswerResult(
+            answer=answer,
+            provider="rule",
+            response_mode="small_talk",
+            rewritten_question=question.strip(),
+        )
 
     if _is_obviously_off_topic(normalized_question):
         history.add_user_message(question)
         history.add_ai_message(copy["out_of_scope"])
-        return AnswerResult(answer=copy["out_of_scope"], provider="rule", rewritten_question=question.strip())
+        return AnswerResult(
+            answer=copy["out_of_scope"],
+            provider="rule",
+            response_mode="out_of_scope",
+            rewritten_question=question.strip(),
+        )
 
     if not _is_scope_question(normalized_question, previous_user_question):
         history.add_user_message(question)
         history.add_ai_message(copy["out_of_scope"])
-        return AnswerResult(answer=copy["out_of_scope"], provider="rule", rewritten_question=question.strip())
+        return AnswerResult(
+            answer=copy["out_of_scope"],
+            provider="rule",
+            response_mode="out_of_scope",
+            rewritten_question=question.strip(),
+        )
 
     rewritten_question = _rewrite_question(question, previous_user_question)
+    direct_catalog_answer = _lookup_direct_answer(rewritten_question)
+    if direct_catalog_answer:
+        history.add_user_message(question)
+        history.add_ai_message(direct_catalog_answer)
+        return AnswerResult(
+            answer=direct_catalog_answer,
+            provider="rule",
+            response_mode="direct_answer",
+            rewritten_question=rewritten_question,
+        )
+
     category_hint = _classify_question(_normalize_text(rewritten_question))
     retrieved_docs = _retrieve_context(rewritten_question, category_hint)
 
@@ -717,10 +905,11 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             answer=copy["not_found"],
             provider="retrieval",
             category_hint=category_hint,
+            response_mode="not_found",
             rewritten_question=rewritten_question,
         )
 
-    direct_answer = _extract_direct_answer(retrieved_docs)
+    direct_answer = _extract_direct_answer(retrieved_docs, rewritten_question)
     if direct_answer:
         history.add_user_message(question)
         history.add_ai_message(direct_answer)
@@ -728,6 +917,7 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             answer=direct_answer,
             provider="rule",
             category_hint=category_hint,
+            response_mode="direct_answer",
             rewritten_question=rewritten_question,
             retrieved_docs=[item.document for item in retrieved_docs[:3]],
         )
@@ -750,6 +940,7 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             answer=answer,
             provider=generation.provider,
             category_hint=category_hint,
+            response_mode="generated",
             used_fallback=generation.provider != "openai",
             rewritten_question=rewritten_question,
             retrieved_docs=[item.document for item in retrieved_docs[:3]],
@@ -762,6 +953,7 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             answer=copy["busy"],
             provider="fallback_error",
             category_hint=category_hint,
+            response_mode="busy",
             used_fallback=True,
             rewritten_question=rewritten_question,
             retrieved_docs=[item.document for item in retrieved_docs[:3]],
