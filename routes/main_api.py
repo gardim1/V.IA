@@ -10,11 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, ConfigDict
 
-from routes.formatar import router as formatador_router
 from routes.limpar import router as limpar_router
-from routes.resumo_usuario import router as resumo_router
 from routes.status import router as status_router
-from routes.testar import router as testar_router
 from routes.ver_historico import router as ver_historico_router
 from services.portfolio_chat import answer_portfolio_question
 from utils.rate_limit import RateLimitRule, enforce_rate_limit
@@ -56,11 +53,8 @@ ADMIN_RATE_LIMIT = RateLimitRule(
 
 app = FastAPI()
 app.include_router(status_router)
-app.include_router(testar_router)
 app.include_router(limpar_router)
 app.include_router(ver_historico_router)
-app.include_router(resumo_router)
-app.include_router(formatador_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -20,6 +20,12 @@ DEFAULT_OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 DEFAULT_OPENAI_EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-small")
 DEFAULT_OLLAMA_EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "mxbai-embed-large")
 EMBED_PROVIDER = os.getenv("EMBED_PROVIDER", "ollama").strip().lower()
+ENABLE_LOCAL_FALLBACK = os.getenv("ENABLE_LOCAL_FALLBACK", "true").strip().lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
 DEFAULT_LOCAL_MODELS = (
     "qwen3:4b",
     "qwen3:8b",
@@ -59,7 +65,14 @@ def is_openai_configured() -> bool:
     return bool(os.getenv("OPENAI_API_KEY", "").strip())
 
 
+def is_local_fallback_enabled() -> bool:
+    return ENABLE_LOCAL_FALLBACK
+
+
 def get_local_model_candidates() -> tuple[str, ...]:
+    if not is_local_fallback_enabled():
+        return tuple()
+
     configured_model = os.getenv("OLLAMA_RAG_MODEL", "").strip()
     ordered_models: list[str] = []
     installed_models = _get_installed_ollama_models()
@@ -124,12 +137,15 @@ def invoke_with_fallback(prompt, variables: dict[str, Any], temperature: float =
     else:
         errors.append("openai: OPENAI_API_KEY not configured")
 
-    for model_name in get_local_model_candidates():
-        try:
-            result = (prompt | get_local_llm(model_name, temperature=temperature)).invoke(variables)
-            return GenerationResult(text=_coerce_text(result), provider=f"ollama:{model_name}", errors=errors)
-        except Exception as exc:  # pragma: no cover - depends on external service
-            errors.append(_format_provider_error(f"ollama:{model_name}", exc))
+    if is_local_fallback_enabled():
+        for model_name in get_local_model_candidates():
+            try:
+                result = (prompt | get_local_llm(model_name, temperature=temperature)).invoke(variables)
+                return GenerationResult(text=_coerce_text(result), provider=f"ollama:{model_name}", errors=errors)
+            except Exception as exc:  # pragma: no cover - depends on external service
+                errors.append(_format_provider_error(f"ollama:{model_name}", exc))
+    else:
+        errors.append("ollama: local fallback disabled")
 
     raise AllProvidersFailedError(errors)
 
@@ -167,6 +183,13 @@ def get_openai_health(probe: bool = False) -> dict[str, Any]:
 
 
 def get_ollama_server_health() -> dict[str, Any]:
+    if not is_local_fallback_enabled():
+        return {
+            "provider": "ollama",
+            "status": "disabled",
+            "base_url": OLLAMA_BASE_URL,
+        }
+
     url = f"{OLLAMA_BASE_URL}/api/tags"
     try:
         response = httpx.get(url, timeout=OLLAMA_HEALTH_TIMEOUT_SECONDS)
@@ -200,6 +223,14 @@ def _get_installed_ollama_models() -> tuple[str, ...]:
 
 
 def get_local_generation_health() -> dict[str, Any]:
+    if not is_local_fallback_enabled():
+        return {
+            "provider": "ollama",
+            "status": "disabled",
+            "base_url": OLLAMA_BASE_URL,
+            "message": "Local fallback is disabled for this environment.",
+        }
+
     server_health = get_ollama_server_health()
     if server_health["status"] != "ok":
         return server_health

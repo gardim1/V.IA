@@ -51,6 +51,7 @@ Variaveis mais importantes:
 - `OPENAI_MODEL`: modelo principal
 - `OPENAI_EMBED_MODEL`: modelo de embedding da OpenAI
 - `EMBED_PROVIDER`: `openai` ou `ollama`
+- `ENABLE_LOCAL_FALLBACK`: ativa ou desativa fallback local via Ollama
 - `OLLAMA_BASE_URL`: endpoint do Ollama
 - `OLLAMA_RAG_MODEL`: modelo local de fallback
 - `OLLAMA_EMBED_MODEL`: modelo de embedding
@@ -75,9 +76,10 @@ Para deploy em cloud sem Ollama no servidor, use:
 ```bash
 EMBED_PROVIDER=openai
 OPENAI_EMBED_MODEL=text-embedding-3-small
+ENABLE_LOCAL_FALLBACK=false
 ```
 
-Assim o backend pode reconstruir e consultar a base vetorial usando a OpenAI, sem depender de Ollama para embeddings.
+Assim o backend pode reconstruir e consultar a base vetorial usando a OpenAI, sem depender de Ollama para embeddings nem tentar fallback local dentro da Railway.
 
 ## Rodando localmente sem Docker
 
