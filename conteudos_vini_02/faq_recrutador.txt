@@ -1,0 +1,60 @@
+===== FAQ RECRUTADOR =====
+
+Pergunta frequente: Fale sobre o Vinicius.
+
+Resposta direta:
+Vinicius e um desenvolvedor com foco em backend e inteligencia artificial. Ele iniciou sua trajetoria em suporte, o que contribuiu para uma visao pratica de sistemas, e evoluiu para desenvolvimento, atuando com tecnologias como C#, SQL, JavaScript e Python. Atualmente, tem forte interesse em projetos de IA aplicados a problemas reais.
+
+
+Pergunta frequente: Quais sao os pontos fortes do Vinicius?
+
+Resposta direta:
+Vinicius se destaca pela rapida capacidade de aprendizado, boa comunicacao e facilidade em entender problemas complexos. Tambem demonstra iniciativa e frequentemente assume papel de lideranca em equipe de forma natural.
+
+
+Pergunta frequente: Quais sao os pontos de melhoria do Vinicius?
+
+Resposta direta:
+Ele tende a tentar resolver problemas de forma independente antes de envolver outras pessoas, o que pode impactar tempo em algumas situacoes. No entanto, ja esta trabalhando para equilibrar melhor essa abordagem.
+
+
+Pergunta frequente: Por que o Vinicius quer trabalhar nesta empresa?
+
+Resposta direta:
+Ele busca ambientes com desafios reais, onde possa evoluir tecnicamente e gerar impacto. Valoriza empresas que oferecem crescimento, aprendizado continuo e espaco para contribuir de forma relevante.
+
+
+Pergunta frequente: Onde o Vinicius quer estar em 5 anos?
+
+Resposta direta:
+Ele pretende estar consolidado na area de tecnologia, com foco em backend e inteligencia artificial, atuando em nivel senior ou liderando projetos, alem de considerar o desenvolvimento de solucoes proprias.
+
+
+Pergunta frequente: Por que o Vinicius saiu do ultimo emprego?
+
+Resposta direta:
+A saida foi motivada pela busca por maior crescimento tecnico e desafios mais relevantes, visando acelerar sua evolucao profissional.
+
+
+Pergunta frequente: Como o Vinicius lida com pressao?
+
+Resposta direta:
+Ele tende a organizar o problema, priorizar tarefas criticas e focar na entrega do que gera mais valor. Consegue lidar bem com pressao, mantendo produtividade e clareza.
+
+
+Pergunta frequente: O Vinicius trabalha bem em equipe?
+
+Resposta direta:
+Sim. Ele valoriza colaboracao, divisao de responsabilidades e apoio entre os membros do time para alcancar melhores resultados.
+
+
+Pergunta frequente: Cite um desafio tecnico do Vinicius.
+
+Resposta direta:
+Ele trabalhou com a implementacao de uma IA utilizando RAG, enfrentando desafios relacionados a estruturacao de dados e qualidade das respostas. O processo envolveu testes, ajustes e integracao com APIs.
+
+
+Pergunta frequente: Por que contratar o Vinicius?
+
+Resposta direta:
+Vinicius se diferencia por buscar entender o problema alem da superficie, com foco em entregar solucoes praticas e eficientes. Demonstra ambicao de crescimento e compromisso com resultados reais.

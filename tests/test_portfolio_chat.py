@@ -102,3 +102,40 @@ def test_provider_fallback_to_busy_message(monkeypatch):
 
     assert result.answer == BUSY_RESPONSE
     assert result.provider == "fallback_error"
+
+
+def test_direct_answer_from_retrieved_context_bypasses_llm(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+
+    fake_doc = type(
+        "RetrievedDocument",
+        (),
+        {
+            "document": type(
+                "Document",
+                (),
+                {
+                    "page_content": (
+                        "Pergunta frequente: Onde o Vinicius quer estar em 5 anos?\n\n"
+                        "Resposta direta:\n"
+                        "Ele pretende estar consolidado na area de tecnologia, com foco em backend e inteligencia artificial, "
+                        "atuando em nivel senior ou liderando projetos.\n\n"
+                        "Outras informacoes:"
+                    ),
+                    "metadata": {"source": "faq_recrutador.txt", "categoria": "IDENTIDADE", "id": "faq-1"},
+                },
+            )(),
+            "score": 0.01,
+        },
+    )()
+
+    monkeypatch.setattr("services.portfolio_chat.search_documents", lambda *args, **kwargs: [fake_doc])
+    monkeypatch.setattr(
+        "services.portfolio_chat.invoke_with_fallback",
+        lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("LLM should not be called for direct answers")),
+    )
+
+    result = answer_portfolio_question("Onde o Vinicius quer estar em 5 anos?", "u1")
+
+    assert "consolidado na area de tecnologia" in result.answer
+    assert result.provider == "rule"

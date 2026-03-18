@@ -71,6 +71,8 @@ def inferir_categoria(path: str) -> str:
 
     if "identidade" in nome:
         return "IDENTIDADE"
+    if "faq" in nome or "recrutador" in nome:
+        return "IDENTIDADE"
     if "vida_pessoal" in nome or "pessoal" in nome:
         return "VIDA_PESSOAL"
     if "relacionamento" in nome or "namorada" in nome:

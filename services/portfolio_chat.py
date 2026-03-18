@@ -152,6 +152,7 @@ PORTFOLIO_PROMPT = ChatPromptTemplate.from_messages(
                 "Use somente o contexto confirmado abaixo. "
                 "Considere contexto semanticamente equivalente como suficiente para responder. "
                 "Por exemplo, perguntas sobre futuro, objetivos ou proximos 5 anos podem ser respondidas com trechos como 'Visao de longo prazo (5 anos)' ou secoes de objetivos, mesmo que a formulacao nao seja identica. "
+                "Se o contexto trouxer uma secao com 'Resposta direta:', priorize essa resposta e adapte apenas o minimo necessario para soar natural. "
                 'Se a resposta nao estiver claramente no contexto, responda exatamente: "{not_found_response}" '
                 "Nunca invente fatos, nunca fale de documentos internos e nunca se passe pelo Vinicius. "
                 "Se o contexto tiver listas, use essas listas para responder de forma objetiva. "
@@ -612,6 +613,45 @@ def _is_useful_chunk(item: RetrievedDocument) -> bool:
     return True
 
 
+def _extract_direct_answer_from_text(content: str) -> str | None:
+    marker = "Resposta direta:"
+    if marker not in content:
+        return None
+
+    tail = content.split(marker, 1)[1].strip()
+    if not tail:
+        return None
+
+    paragraphs = [paragraph.strip() for paragraph in re.split(r"\n\s*\n", tail) if paragraph.strip()]
+    if not paragraphs:
+        return None
+
+    collected: list[str] = []
+    for paragraph in paragraphs:
+        lowered = paragraph.lower()
+        if lowered.startswith("pergunta frequente:"):
+            break
+        if paragraph.startswith("====="):
+            break
+        if paragraph.endswith(":") and len(paragraph) < 120:
+            break
+        collected.append(paragraph)
+        if len(collected) >= 3:
+            break
+
+    answer = "\n\n".join(collected).strip()
+    return answer or None
+
+
+def _extract_direct_answer(retrieved_docs: list[RetrievedDocument]) -> str | None:
+    for item in retrieved_docs[:4]:
+        answer = _extract_direct_answer_from_text(item.document.page_content)
+        if answer and len(answer) >= 40:
+            return answer
+
+    return None
+
+
 def _retrieve_context(question: str, category_hint: str | None) -> list[RetrievedDocument]:
     global_results = search_documents(question, limit=6)
     if not category_hint:
@@ -623,7 +663,8 @@ def _retrieve_context(question: str, category_hint: str | None) -> list[Retrieve
 
     ordered: list[RetrievedDocument] = []
     seen_ids: set[str] = set()
-    for group in (hinted_filtered, global_filtered):
+    direct_global = [item for item in global_filtered if _extract_direct_answer_from_text(item.document.page_content)]
+    for group in (direct_global, hinted_filtered, global_filtered):
         for item in group:
             doc_id = item.document.metadata.get("id") or item.document.metadata.get("source") or item.document.page_content
             if doc_id in seen_ids:
@@ -677,6 +718,18 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             provider="retrieval",
             category_hint=category_hint,
             rewritten_question=rewritten_question,
+        )
+
+    direct_answer = _extract_direct_answer(retrieved_docs)
+    if direct_answer:
+        history.add_user_message(question)
+        history.add_ai_message(direct_answer)
+        return AnswerResult(
+            answer=direct_answer,
+            provider="rule",
+            category_hint=category_hint,
+            rewritten_question=rewritten_question,
+            retrieved_docs=[item.document for item in retrieved_docs[:3]],
         )
 
     prompt_variables = {

@@ -10,6 +10,7 @@ import { askQuestion, submitContactLead } from "./lib/api";
 import type { ChatMessage, ProviderMetadata, UiLanguage } from "./types";
 
 const SESSION_STORAGE_KEY = "via-session-id";
+const CHAT_STATE_STORAGE_KEY = "via-chat-state";
 const LANGUAGE_STORAGE_KEY = "via-language";
 
 function createId() {
@@ -21,19 +22,47 @@ function createId() {
 }
 
 function getOrCreateUserId() {
-  const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
+  const existing = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
   if (existing) {
     return existing;
   }
 
   const created = `web-${createId()}`;
-  window.localStorage.setItem(SESSION_STORAGE_KEY, created);
+  window.sessionStorage.setItem(SESSION_STORAGE_KEY, created);
   return created;
 }
 
 function getStoredLanguage(): UiLanguage {
   const existing = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
   return existing === "en-US" ? "en-US" : DEFAULT_LANGUAGE;
+}
+
+function getStoredChatState(): {
+  messages: ChatMessage[];
+  lastProvider?: ProviderMetadata;
+} {
+  if (typeof window === "undefined") {
+    return { messages: [] };
+  }
+
+  try {
+    const raw = window.sessionStorage.getItem(CHAT_STATE_STORAGE_KEY);
+    if (!raw) {
+      return { messages: [] };
+    }
+
+    const parsed = JSON.parse(raw) as {
+      messages?: ChatMessage[];
+      lastProvider?: ProviderMetadata;
+    };
+
+    return {
+      messages: Array.isArray(parsed.messages) ? parsed.messages : [],
+      lastProvider: parsed.lastProvider
+    };
+  } catch {
+    return { messages: [] };
+  }
 }
 
 function buildClientErrorMessage(language: UiLanguage, error: unknown) {
@@ -67,7 +96,7 @@ function buildErrorMetadata(language: UiLanguage): ProviderMetadata {
 
 export default function App() {
   const [language, setLanguage] = useState<UiLanguage>(() => getStoredLanguage());
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => getStoredChatState().messages);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -82,7 +111,7 @@ export default function App() {
     source: "linkedin",
     message: ""
   });
-  const [lastProvider, setLastProvider] = useState<ProviderMetadata | undefined>();
+  const [lastProvider, setLastProvider] = useState<ProviderMetadata | undefined>(() => getStoredChatState().lastProvider);
   const userId = useMemo(() => getOrCreateUserId(), []);
   const messageViewportRef = useRef<HTMLDivElement | null>(null);
   const copy = getUiCopy(language);
@@ -93,6 +122,25 @@ export default function App() {
   useEffect(() => {
     window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
   }, [language]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (messages.length === 0 && !lastProvider) {
+      window.sessionStorage.removeItem(CHAT_STATE_STORAGE_KEY);
+      return;
+    }
+
+    window.sessionStorage.setItem(
+      CHAT_STATE_STORAGE_KEY,
+      JSON.stringify({
+        messages,
+        lastProvider
+      })
+    );
+  }, [lastProvider, messages]);
 
   useEffect(() => {
     if (!hasConversation || !messageViewportRef.current) {
