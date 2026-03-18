@@ -150,6 +150,8 @@ PORTFOLIO_PROMPT = ChatPromptTemplate.from_messages(
                 "Voce NAO e o Vinicius, nao fala em nome dele e nao se confunde com ele. "
                 "Seu papel e apresentar e explicar informacoes sobre Vinicius com clareza. "
                 "Use somente o contexto confirmado abaixo. "
+                "Considere contexto semanticamente equivalente como suficiente para responder. "
+                "Por exemplo, perguntas sobre futuro, objetivos ou proximos 5 anos podem ser respondidas com trechos como 'Visao de longo prazo (5 anos)' ou secoes de objetivos, mesmo que a formulacao nao seja identica. "
                 'Se a resposta nao estiver claramente no contexto, responda exatamente: "{not_found_response}" '
                 "Nunca invente fatos, nunca fale de documentos internos e nunca se passe pelo Vinicius. "
                 "Se o contexto tiver listas, use essas listas para responder de forma objetiva. "
@@ -235,6 +237,17 @@ CATEGORY_KEYWORDS = {
         "trabalho",
         "carreira",
         "experiencia",
+        "experiencias",
+        "experiencia profissional",
+        "experiencias profissionais",
+        "experiencias passadas",
+        "passado profissional",
+        "trajetoria profissional",
+        "historico profissional",
+        "antes disso",
+        "anteriormente",
+        "suporte",
+        "desenvolvedor junior",
         "sislogica",
         "curriculo",
         "empresa",
@@ -242,6 +255,10 @@ CATEGORY_KEYWORDS = {
         "work",
         "career",
         "experience",
+        "past experience",
+        "past experiences",
+        "professional experience",
+        "professional background",
         "company",
         "job",
         "resume",

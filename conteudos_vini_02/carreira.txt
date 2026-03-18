@@ -1,5 +1,14 @@
 ===== CARREIRA =====
 
+Pergunta frequente: Me conte sobre experiencias profissionais passadas do Vinicius.
+
+Resposta direta:
+Vinicius iniciou sua trajetoria profissional na area de tecnologia em uma funcao de suporte, onde teve contato com sistemas reais, atendimento a usuarios e resolucao de problemas do dia a dia. Essa etapa foi importante para desenvolver responsabilidade, comunicacao e visao pratica de como a tecnologia e usada na rotina.
+
+Depois, evoluiu para desenvolvimento e passou a trabalhar com tecnologias como C#, SQL Server, JavaScript, HTML, CSS e Python. Nesse contexto, participou da construcao e manutencao de sistemas, integracao com APIs, automacoes, banco de dados e regras de negocio.
+
+Tambem teve envolvimento em projetos com inteligencia artificial, incluindo um assistente com RAG para responder duvidas de usuarios com base em documentos e dados internos. Ao longo dessas experiencias, ganhou pratica tecnica, vivencia em projetos reais e maturidade para trabalhar em equipe e gerar valor com tecnologia.
+
 Vinicius trabalha atualmente na Suno Research.
 
 Atualmente, seu foco profissional está principalmente em:
