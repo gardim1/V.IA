@@ -259,6 +259,10 @@ CATEGORY_KEYWORDS = {
         "quantos anos",
         "sobre voce",
         "apresentacao",
+        "morou fora",
+        "viveu fora",
+        "australia",
+        "australia",
     ],
     "VIDA_PESSOAL": [
         "rotina",
@@ -379,6 +383,12 @@ CATEGORY_KEYWORDS = {
         "technologies",
         "language",
         "languages",
+        "idioma",
+        "idiomas",
+        "ingles",
+        "english",
+        "espanhol",
+        "spanish",
         "tool",
         "tools",
         "library",
@@ -778,9 +788,21 @@ def _extract_explicit_fact_answer(
         keyword in normalized_question
         for keyword in ("formacao", "faculdade", "graduacao", "curso", "degree", "education", "study")
     )
+    language_question = any(
+        keyword in normalized_question
+        for keyword in ("idioma", "idiomas", "ingles", "english", "espanhol", "spanish", "fala espanhol", "fala ingles")
+    )
+    abroad_question = any(
+        keyword in normalized_question
+        for keyword in ("morou fora", "viveu fora", "australia", "australia", "outside brazil", "abroad")
+    )
 
-    if not identity_question and not education_question:
+    if not identity_question and not education_question and not language_question and not abroad_question:
         return None
+
+    language_has_english = False
+    language_has_spanish = False
+    lived_in_australia = False
 
     for item in retrieved_docs[:4]:
         content = item.document.page_content
@@ -805,6 +827,39 @@ def _extract_explicit_fact_answer(
                     return "Vinicius cursa Engenharia de Software na FIAP."
                 if "terceiro ano da graduacao" in normalized_line:
                     return "Vinicius cursa Engenharia de Software na FIAP e está atualmente no terceiro ano da graduação."
+
+        if language_question:
+            normalized_content = _normalize_text(content)
+            language_has_english = language_has_english or (
+                "fluente em ingles" in normalized_content or "ingles fluente" in normalized_content
+            )
+            language_has_spanish = language_has_spanish or (
+                "espanhol em nivel intermediario" in normalized_content
+                or "espanhol intermediario" in normalized_content
+                or "intermediario em espanhol" in normalized_content
+            )
+
+        if abroad_question:
+            normalized_content = _normalize_text(content)
+            if "viveu um ano na australia" in normalized_content:
+                lived_in_australia = True
+
+    if language_question:
+        if "espanhol" in normalized_question and language_has_spanish:
+            return "Sim. Vinicius tem espanhol em nível intermediário."
+        if ("ingles" in normalized_question or "english" in normalized_question) and language_has_english:
+            return "Vinicius é fluente em inglês."
+        if "idioma" in normalized_question or "idiomas" in normalized_question or "language" in normalized_question:
+            parts: list[str] = []
+            if language_has_english:
+                parts.append("inglês fluente")
+            if language_has_spanish:
+                parts.append("espanhol intermediário")
+            if parts:
+                return f"Vinicius fala {', '.join(parts)}."
+
+    if abroad_question and lived_in_australia:
+        return "Sim. Vinicius viveu um ano na Austrália."
 
     return None
 

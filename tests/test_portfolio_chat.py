@@ -243,6 +243,48 @@ def test_formacao_question_can_use_grounded_fact(monkeypatch):
     assert result.response_mode == "grounded_fact"
 
 
+def test_language_question_can_use_grounded_fact(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr(
+        "services.portfolio_chat.search_documents",
+        lambda *args, **kwargs: [
+            _doc(
+                "Vinicius viveu um ano na Australia. Ele e fluente em ingles. Ele tem espanhol em nivel intermediario.",
+                "IDENTIDADE",
+                source="identidade.txt",
+                score=0.01,
+            )
+        ],
+    )
+
+    result = answer_portfolio_question("Ele fala espanhol?", "u1")
+
+    assert "espanhol" in result.answer.lower()
+    assert result.provider == "rule"
+    assert result.response_mode == "grounded_fact"
+
+
+def test_abroad_question_can_use_grounded_fact(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr(
+        "services.portfolio_chat.search_documents",
+        lambda *args, **kwargs: [
+            _doc(
+                "Vinicius viveu um ano na Australia. Ele e fluente em ingles.",
+                "IDENTIDADE",
+                source="identidade.txt",
+                score=0.01,
+            )
+        ],
+    )
+
+    result = answer_portfolio_question("O Vinicius morou fora do Brasil?", "u1")
+
+    assert "Austrália" in result.answer or "Australia" in result.answer
+    assert result.provider == "rule"
+    assert result.response_mode == "grounded_fact"
+
+
 def test_velocidade_question_does_not_match_age_topic(monkeypatch):
     monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
     monkeypatch.setattr(

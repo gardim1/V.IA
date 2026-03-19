@@ -9,6 +9,10 @@ Altura: 1,78m
 Peso: 70kg
 Cidade: Santana de Parnaíba, São Paulo, Brasil
 
+Vinicius viveu um ano na Austrália.
+Ele é fluente em inglês.
+Ele tem espanhol em nível intermediário.
+
 Vinicius Silva Gardim é estudante de Engenharia de Software e profissional da área de tecnologia, com foco em desenvolvimento de software, automação e inteligência artificial.
 
 Ele tem perfil ambicioso, orientado a execução e resultado. Prefere aprender construindo, aplicando na prática e resolvendo problemas reais, ao invés de apenas consumir teoria.

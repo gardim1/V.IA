@@ -9,6 +9,10 @@ Linguagens em que já trabalhou:
 - JavaScript
 - SQL
 
+Idiomas:
+- inglês fluente
+- espanhol intermediário
+
 Tecnologias e frameworks com os quais já trabalhou:
 - .NET
 - FastAPI
