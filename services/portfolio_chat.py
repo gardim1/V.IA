@@ -437,6 +437,18 @@ OFF_TOPIC_PATTERNS = [
     "score of the game",
 ]
 
+EXTERNAL_GENERAL_TECH_PATTERNS = [
+    "claude code",
+    "claude",
+    "chatgpt",
+    "gpt",
+    "gemini",
+    "cursor",
+    "copilot",
+    "windsurf",
+    "deepseek",
+]
+
 
 @dataclass
 class AnswerResult:
@@ -583,6 +595,9 @@ def _is_scope_question(normalized_question: str, previous_user_question: str) ->
     if _classify_question(normalized_question):
         return True
 
+    if _extract_direct_intent(normalized_question):
+        return True
+
     if _looks_like_follow_up(normalized_question) and previous_user_question:
         return True
 
@@ -591,6 +606,46 @@ def _is_scope_question(normalized_question: str, previous_user_question: str) ->
 
 def _is_obviously_off_topic(normalized_question: str) -> bool:
     return any(pattern in normalized_question for pattern in OFF_TOPIC_PATTERNS)
+
+
+def _mentions_portfolio_subject(normalized_question: str, previous_user_question: str) -> bool:
+    if any(name in normalized_question for name in ("vinicius", "gardim", "vinnie", "v ia")):
+        return True
+
+    tokens = set(_strip_for_small_talk(normalized_question).split())
+    if tokens & {"ele", "dele", "seu", "sua", "him", "his"}:
+        return True
+
+    if previous_user_question.strip():
+        return True
+
+    return False
+
+
+def _is_external_general_question(normalized_question: str, previous_user_question: str) -> bool:
+    if not any(pattern in normalized_question for pattern in EXTERNAL_GENERAL_TECH_PATTERNS):
+        return False
+
+    return not _mentions_portfolio_subject(normalized_question, previous_user_question)
+
+
+def _matched_external_general_pattern(normalized_question: str) -> str | None:
+    for pattern in EXTERNAL_GENERAL_TECH_PATTERNS:
+        if pattern in normalized_question:
+            return pattern
+    return None
+
+
+def _context_mentions_external_pattern(retrieved_docs: list[RetrievedDocument], pattern: str) -> bool:
+    if not pattern:
+        return False
+
+    for item in retrieved_docs[:4]:
+        normalized_content = _normalize_text(item.document.page_content)
+        if pattern in normalized_content:
+            return True
+
+    return False
 
 
 def _rewrite_question(question: str, previous_user_question: str) -> str:
@@ -873,7 +928,7 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             rewritten_question=question.strip(),
         )
 
-    if not _is_scope_question(normalized_question, previous_user_question):
+    if _is_external_general_question(normalized_question, previous_user_question):
         history.add_user_message(question)
         history.add_ai_message(copy["out_of_scope"])
         return AnswerResult(
@@ -884,6 +939,7 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
         )
 
     rewritten_question = _rewrite_question(question, previous_user_question)
+    external_pattern = _matched_external_general_pattern(_normalize_text(rewritten_question))
     direct_catalog_answer = _lookup_direct_answer(rewritten_question)
     if direct_catalog_answer:
         history.add_user_message(question)
@@ -907,6 +963,18 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             category_hint=category_hint,
             response_mode="not_found",
             rewritten_question=rewritten_question,
+        )
+
+    if external_pattern and not _context_mentions_external_pattern(retrieved_docs, external_pattern):
+        history.add_user_message(question)
+        history.add_ai_message(copy["not_found"])
+        return AnswerResult(
+            answer=copy["not_found"],
+            provider="retrieval",
+            category_hint=category_hint,
+            response_mode="not_found",
+            rewritten_question=rewritten_question,
+            retrieved_docs=[item.document for item in retrieved_docs[:3]],
         )
 
     direct_answer = _extract_direct_answer(retrieved_docs, rewritten_question)

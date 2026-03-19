@@ -195,6 +195,47 @@ def test_generic_claude_question_is_out_of_scope(monkeypatch):
     assert result.response_mode == "out_of_scope"
 
 
+def test_subject_question_about_external_tool_is_not_blocked_as_out_of_scope(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr("services.portfolio_chat._load_direct_faq_entries", lambda: [])
+    monkeypatch.setattr("services.portfolio_chat.search_documents", lambda *args, **kwargs: [])
+
+    result = answer_portfolio_question("O Vinicius usa Claude Code?", "u1")
+
+    assert result.answer == NOT_FOUND_RESPONSE
+    assert result.provider == "retrieval"
+    assert result.response_mode == "not_found"
+
+
+def test_subject_question_about_external_tool_with_unrelated_context_returns_not_found(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr("services.portfolio_chat._load_direct_faq_entries", lambda: [])
+
+    fake_doc = type(
+        "RetrievedDocument",
+        (),
+        {
+            "document": type(
+                "Document",
+                (),
+                {
+                    "page_content": "Vinicius gosta de backend, automacao e inteligencia artificial aplicada.",
+                    "metadata": {"source": "habilidades.txt", "categoria": "HABILIDADES", "id": "h-1"},
+                },
+            )(),
+            "score": 0.2,
+        },
+    )()
+
+    monkeypatch.setattr("services.portfolio_chat.search_documents", lambda *args, **kwargs: [fake_doc])
+
+    result = answer_portfolio_question("O Vinicius usa Claude Code?", "u1")
+
+    assert result.answer == NOT_FOUND_RESPONSE
+    assert result.provider == "retrieval"
+    assert result.response_mode == "not_found"
+
+
 def test_direct_catalog_answer_handles_short_factual_question(monkeypatch):
     monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
     monkeypatch.setattr(
@@ -207,6 +248,20 @@ def test_direct_catalog_answer_handles_short_factual_question(monkeypatch):
     )
 
     result = answer_portfolio_question("Qual idade dele?", "u1")
+
+    assert result.answer == "Vinicius tem 21 anos."
+    assert result.provider == "rule"
+    assert result.response_mode == "direct_answer"
+
+
+def test_quantos_anos_ele_tem_enters_scope_and_hits_direct_answer(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr(
+        "services.portfolio_chat._load_direct_faq_entries",
+        lambda: [("Qual a idade do Vinicius?", "Vinicius tem 21 anos.")],
+    )
+
+    result = answer_portfolio_question("quantos anos ele tem", "u1")
 
     assert result.answer == "Vinicius tem 21 anos."
     assert result.provider == "rule"
