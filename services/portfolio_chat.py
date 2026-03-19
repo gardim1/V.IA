@@ -790,10 +790,18 @@ def _tokenize_direct_match(text: str) -> set[str]:
     }
 
 
+def _matches_intent_phrase(normalized_text: str, phrase: str) -> bool:
+    normalized_phrase = _normalize_text(phrase)
+    if " " in normalized_phrase:
+        return normalized_phrase in normalized_text
+
+    return bool(re.search(rf"\b{re.escape(normalized_phrase)}\b", normalized_text))
+
+
 def _extract_direct_intent(text: str) -> str | None:
     normalized = _normalize_text(text)
     for intent, phrases in DIRECT_ANSWER_INTENTS.items():
-        if any(phrase in normalized for phrase in phrases):
+        if any(_matches_intent_phrase(normalized, phrase) for phrase in phrases):
             return intent
     return None
 

@@ -268,6 +268,36 @@ def test_quantos_anos_ele_tem_enters_scope_and_hits_direct_answer(monkeypatch):
     assert result.response_mode == "direct_answer"
 
 
+def test_velocidade_question_does_not_match_age_faq(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr(
+        "services.portfolio_chat._load_direct_faq_entries",
+        lambda: [("Qual a idade do Vinicius?", "Vinicius tem 21 anos.")],
+    )
+    monkeypatch.setattr("services.portfolio_chat.search_documents", lambda *args, **kwargs: [])
+
+    result = answer_portfolio_question("Sobre esse calculo de velocidade de bolinhas de pingpong, tem como me mostrar?", "u1")
+
+    assert result.answer != "Vinicius tem 21 anos."
+    assert result.provider == "retrieval"
+    assert result.response_mode == "not_found"
+
+
+def test_estabilidade_question_does_not_match_age_faq(monkeypatch):
+    monkeypatch.setattr("services.portfolio_chat.get_history", lambda user_id: DummyHistory())
+    monkeypatch.setattr(
+        "services.portfolio_chat._load_direct_faq_entries",
+        lambda: [("Qual a idade do Vinicius?", "Vinicius tem 21 anos.")],
+    )
+    monkeypatch.setattr("services.portfolio_chat.search_documents", lambda *args, **kwargs: [])
+
+    result = answer_portfolio_question("Ele prefere estabilidade ou risco?", "u1")
+
+    assert result.answer != "Vinicius tem 21 anos."
+    assert result.provider == "retrieval"
+    assert result.response_mode == "not_found"
+
+
 def test_parse_direct_faq_entries_supports_multiple_entries():
     from services.portfolio_chat import _parse_direct_faq_entries
 
