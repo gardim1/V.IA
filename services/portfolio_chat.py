@@ -3,8 +3,6 @@ from __future__ import annotations
 import re
 import unicodedata
 from dataclasses import dataclass, field
-from functools import lru_cache
-from pathlib import Path
 
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
@@ -139,58 +137,6 @@ SMALL_TALK_ALLOWED_TOKENS = {
     "viu",
 }
 
-DIRECT_ANSWER_STOPWORDS = {
-    "o",
-    "a",
-    "os",
-    "as",
-    "de",
-    "do",
-    "da",
-    "dos",
-    "das",
-    "e",
-    "em",
-    "no",
-    "na",
-    "nos",
-    "nas",
-    "um",
-    "uma",
-    "me",
-    "sobre",
-    "quero",
-    "saber",
-    "mais",
-    "ele",
-    "dele",
-    "dela",
-    "para",
-    "por",
-    "que",
-    "qual",
-    "quais",
-    "como",
-    "onde",
-    "nos",
-    "nas",
-}
-
-DIRECT_ANSWER_INTENTS = {
-    "idade": ("idade", "quantos anos"),
-    "formacao": ("formacao", "faculdade", "curso", "fiap"),
-    "objetivos_5_anos": ("5 anos", "proximos 5 anos"),
-    "experiencias": ("experiencia profissional", "experiencias profissionais", "experiencias passadas", "trajetoria profissional"),
-    "pontos_fortes": ("pontos fortes",),
-    "pontos_melhoria": ("pontos de melhoria",),
-    "trabalhar_empresa": ("trabalhar nesta empresa",),
-    "ultimo_emprego": ("ultimo emprego",),
-    "pressao": ("pressao",),
-    "equipe": ("equipe", "trabalha bem em equipe"),
-    "desafio_tecnico": ("desafio tecnico",),
-    "contratar": ("contratar",),
-}
-
 OUT_OF_SCOPE_RESPONSE = LANGUAGE_COPY[DEFAULT_LANGUAGE]["out_of_scope"]
 NOT_FOUND_RESPONSE = LANGUAGE_COPY[DEFAULT_LANGUAGE]["not_found"]
 BUSY_RESPONSE = LANGUAGE_COPY[DEFAULT_LANGUAGE]["busy"]
@@ -204,12 +150,21 @@ PORTFOLIO_PROMPT = ChatPromptTemplate.from_messages(
                 "Você NÃO é o Vinicius, não fala em nome dele e não se confunde com ele. "
                 "Seu papel é apresentar e explicar informações sobre Vinicius com clareza. "
                 "Use somente o contexto confirmado abaixo. "
-                "Considere contexto semanticamente equivalente como suficiente para responder. "
-                "Por exemplo, perguntas sobre futuro, objetivos ou próximos 5 anos podem ser respondidas com trechos como 'Visão de longo prazo (5 anos)' ou seções de objetivos, mesmo que a formulação não seja idêntica. "
-                "Se o contexto trouxer uma seção com 'Resposta direta:', priorize essa resposta e adapte apenas o mínimo necessário para soar natural. "
+                "Responda ao assunto exato perguntado e não misture temas. "
+                "Se a pergunta for sobre hobbies, não responda com skills; se for sobre projetos, não responda com idade; "
+                "se for sobre objetivos, não responda com uma apresentação geral; se for sobre trabalho em equipe, não responda com hobbies. "
+                "Antes de responder, identifique mentalmente o foco principal da pergunta: skills, projetos, carreira, objetivos, hobbies, "
+                "formação, vida pessoal, trabalho em equipe ou outro. "
+                "Use apenas fatos que estejam realmente ligados ao foco principal da pergunta. "
+                "Se o contexto recuperado falar de outro assunto, ignore esse trecho. "
+                "Se houver contexto parcial, responda apenas com o que estiver sustentado e não complete com suposições. "
                 'Se a resposta não estiver claramente no contexto, responda exatamente: "{not_found_response}" '
                 "Nunca invente fatos, nunca fale de documentos internos e nunca se passe pelo Vinicius. "
+                "Não reutilize uma resposta anterior só porque ela parecia parecida; responda sempre com base na pergunta atual. "
                 "Se o contexto tiver listas, use essas listas para responder de forma objetiva. "
+                "Para skills, prefira listas curtas e organizadas. "
+                "Para projetos, cite nome e uma breve descrição do que foi feito. "
+                "Para hobbies, vida pessoal, objetivos e trabalho em equipe, faça um resumo natural e fiel. "
                 "Quando ajudar a leitura, você pode usar Markdown leve, como títulos curtos, listas e **negrito**. "
                 "Use emoji com moderação, no máximo 1 quando soar natural. "
                 "Um toque leve de humor ou uma piada curta só é permitido quando for claramente conveniente e não atrapalhar o tom profissional."
@@ -228,6 +183,66 @@ PORTFOLIO_PROMPT = ChatPromptTemplate.from_messages(
     ]
 )
 
+QUESTION_STOPWORDS = {
+    "a",
+    "o",
+    "as",
+    "os",
+    "de",
+    "do",
+    "da",
+    "das",
+    "dos",
+    "e",
+    "em",
+    "no",
+    "na",
+    "nos",
+    "nas",
+    "um",
+    "uma",
+    "uns",
+    "umas",
+    "que",
+    "qual",
+    "quais",
+    "como",
+    "sobre",
+    "mais",
+    "ja",
+    "ele",
+    "dele",
+    "ela",
+    "dela",
+    "vinicius",
+    "gardim",
+    "vinnie",
+    "tem",
+    "ser",
+    "esta",
+    "estao",
+    "proximos",
+    "proximo",
+    "anos",
+    "ano",
+    "the",
+    "about",
+    "his",
+    "him",
+    "her",
+    "she",
+    "he",
+    "what",
+    "which",
+    "does",
+    "did",
+    "is",
+    "are",
+    "to",
+    "for",
+    "with",
+}
+
 CATEGORY_KEYWORDS = {
     "IDENTIDADE": [
         "quem e voce",
@@ -241,6 +256,7 @@ CATEGORY_KEYWORDS = {
         "se apresente",
         "seu nome",
         "idade",
+        "quantos anos",
         "sobre voce",
         "apresentacao",
     ],
@@ -303,7 +319,7 @@ CATEGORY_KEYWORDS = {
         "anteriormente",
         "suporte",
         "desenvolvedor junior",
-        "sislogica",
+        "suno",
         "curriculo",
         "empresa",
         "emprego",
@@ -325,12 +341,15 @@ CATEGORY_KEYWORDS = {
         "rag",
         "api",
         "apis",
-        "collaborate",
         "chatbot",
         "automacao",
         "automacoes",
-        "v ia",
-        "vinnie",
+        "blazor",
+        "yolo",
+        "ping pong",
+        "velocidade",
+        "dasa",
+        "mahindra",
         "project",
         "projects",
         "automation",
@@ -346,10 +365,6 @@ CATEGORY_KEYWORDS = {
         "diferenciais",
         "problema que resolve",
         "problemas que resolve",
-        "problemas resolve",
-        "problemas o vinicius resolve",
-        "solve",
-        "solves",
         "linguagem",
         "linguagens",
         "framework",
@@ -387,8 +402,8 @@ CATEGORY_KEYWORDS = {
         "planos",
         "futuro",
         "roadmap",
-        "cto",
-        "ceo",
+        "5 anos",
+        "proximos 5 anos",
         "goal",
         "goals",
         "future",
@@ -406,6 +421,12 @@ CATEGORY_KEYWORDS = {
         "gosto",
         "jeito",
         "como gosta",
+        "racional",
+        "emocional",
+        "motivacao",
+        "motiva",
+        "risco",
+        "estabilidade",
         "prefer",
         "preference",
         "preferences",
@@ -474,26 +495,26 @@ def _get_language_copy(language: str | None) -> dict:
 
 
 def _normalize_text(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text)
+    normalized = unicodedata.normalize("NFKD", text or "")
     normalized = normalized.encode("ascii", "ignore").decode("ascii")
     normalized = normalized.lower()
     normalized = re.sub(r"\s+", " ", normalized).strip()
     return normalized
 
 
-def _strip_for_small_talk(normalized_question: str) -> str:
-    stripped = re.sub(r"[^a-z0-9\s#]", " ", normalized_question)
+def _strip_for_tokens(text: str) -> str:
+    stripped = re.sub(r"[^a-z0-9\s#]", " ", text)
     stripped = re.sub(r"\s+", " ", stripped).strip()
     return stripped
 
 
 def _resolve_small_talk_key(normalized_question: str) -> str | None:
-    stripped = _strip_for_small_talk(normalized_question)
+    stripped = _strip_for_tokens(normalized_question)
     if not stripped:
         return None
 
-    for language in LANGUAGE_COPY:
-        if stripped in LANGUAGE_COPY[language]["small_talk"]:
+    for language in LANGUAGE_COPY.values():
+        if stripped in language["small_talk"]:
             return stripped
 
     alias = SMALL_TALK_ALIASES.get(stripped)
@@ -509,22 +530,16 @@ def _resolve_small_talk_key(normalized_question: str) -> str | None:
 
     if "bom dia" in stripped or "good morning" in stripped:
         return "bom dia"
-
     if "boa tarde" in stripped or "good afternoon" in stripped:
         return "boa tarde"
-
     if "boa noite" in stripped or "good evening" in stripped:
         return "boa noite"
-
     if "tudo bem" in stripped or "tudo bom" in stripped or "como vai" in stripped:
         return "tudo bem"
-
     if any(word in stripped for word in ("obrigad", "valeu", "thanks", "thank you", "obg", "agradecido")):
         return "obrigado"
-
     if any(word in stripped for word in ("tchau", "falou", "ate mais", "ate logo", "bye", "see you", "see ya")):
         return "tchau"
-
     if any(word in stripped for word in ("oi", "ola", "opa", "hi", "hello", "hey", "e ai", "eae")):
         return "oi"
 
@@ -577,31 +592,13 @@ def _classify_question(normalized_question: str) -> str | None:
     if best_category:
         return best_category
 
-    if (
-        "vinicius" in normalized_question
-        or "gardim" in normalized_question
-        or "v ia" in normalized_question
-        or "vinnie" in normalized_question
-    ):
+    if any(name in normalized_question for name in ("vinicius", "gardim", "vinnie", "v ia")):
         return "IDENTIDADE"
 
     if "voce" in normalized_question or "seu " in normalized_question or "sua " in normalized_question:
         return "IDENTIDADE"
 
     return None
-
-
-def _is_scope_question(normalized_question: str, previous_user_question: str) -> bool:
-    if _classify_question(normalized_question):
-        return True
-
-    if _extract_direct_intent(normalized_question):
-        return True
-
-    if _looks_like_follow_up(normalized_question) and previous_user_question:
-        return True
-
-    return False
 
 
 def _is_obviously_off_topic(normalized_question: str) -> bool:
@@ -612,14 +609,11 @@ def _mentions_portfolio_subject(normalized_question: str, previous_user_question
     if any(name in normalized_question for name in ("vinicius", "gardim", "vinnie", "v ia")):
         return True
 
-    tokens = set(_strip_for_small_talk(normalized_question).split())
+    tokens = set(_strip_for_tokens(normalized_question).split())
     if tokens & {"ele", "dele", "seu", "sua", "him", "his"}:
         return True
 
-    if previous_user_question.strip():
-        return True
-
-    return False
+    return bool(previous_user_question.strip())
 
 
 def _is_external_general_question(normalized_question: str, previous_user_question: str) -> bool:
@@ -668,18 +662,18 @@ def _rewrite_question(question: str, previous_user_question: str) -> str:
 
 def _format_chat_history(messages, limit: int = 6) -> str:
     if not messages:
-        return "Sem histórico relevante."
+        return "Sem historico relevante."
 
     selected_messages = messages[-limit:]
     lines: list[str] = []
     for message in selected_messages:
-        role = "Usuário" if getattr(message, "type", "") == "human" else "Vinnie"
+        role = "Usuario" if getattr(message, "type", "") == "human" else "Vinnie"
         content = getattr(message, "content", "")
         lines.append(f"{role}: {content}")
     return "\n".join(lines)
 
 
-def _format_context(retrieved_docs: list[RetrievedDocument], top_k: int = 3) -> str:
+def _format_context(retrieved_docs: list[RetrievedDocument], top_k: int = 4) -> str:
     lines: list[str] = []
     for index, item in enumerate(retrieved_docs[:top_k], start=1):
         source = item.document.metadata.get("source", "desconhecida")
@@ -688,7 +682,7 @@ def _format_context(retrieved_docs: list[RetrievedDocument], top_k: int = 3) -> 
         lines.append(f"[Trecho {index}]")
         lines.append(f"Fonte: {source}")
         lines.append(f"Categoria: {category}")
-        lines.append(f"Score: {score_text}")
+        lines.append(f"Score vetorial: {score_text}")
         lines.append(item.document.page_content.strip())
         lines.append("")
     return "\n".join(lines).strip()
@@ -696,6 +690,7 @@ def _format_context(retrieved_docs: list[RetrievedDocument], top_k: int = 3) -> 
 
 def _merge_results(*groups: list[RetrievedDocument]) -> list[RetrievedDocument]:
     merged: dict[str, RetrievedDocument] = {}
+
     for group in groups:
         for item in group:
             doc_id = item.document.metadata.get("id") or item.document.metadata.get("source") or item.document.page_content
@@ -704,10 +699,12 @@ def _merge_results(*groups: list[RetrievedDocument]) -> list[RetrievedDocument]:
                 merged[doc_id] = item
                 continue
 
-            if previous.score is None or (item.score is not None and item.score < previous.score):
+            previous_score = previous.score if previous.score is not None else 999999
+            current_score = item.score if item.score is not None else 999999
+            if current_score < previous_score:
                 merged[doc_id] = item
 
-    return sorted(merged.values(), key=lambda item: item.score if item.score is not None else 999999)
+    return list(merged.values())
 
 
 def _is_useful_chunk(item: RetrievedDocument) -> bool:
@@ -722,182 +719,94 @@ def _is_useful_chunk(item: RetrievedDocument) -> bool:
     return True
 
 
-def _extract_direct_answer_from_text(content: str) -> str | None:
-    marker = "Resposta direta:"
-    if marker not in content:
-        return None
-
-    tail = content.split(marker, 1)[1].strip()
-    if not tail:
-        return None
-
-    paragraphs = [paragraph.strip() for paragraph in re.split(r"\n\s*\n", tail) if paragraph.strip()]
-    if not paragraphs:
-        return None
-
-    collected: list[str] = []
-    for paragraph in paragraphs:
-        lowered = paragraph.lower()
-        if lowered.startswith("pergunta frequente:"):
-            break
-        if paragraph.startswith("====="):
-            break
-        if paragraph.endswith(":") and len(paragraph) < 120:
-            break
-        collected.append(paragraph)
-        if len(collected) >= 3:
-            break
-
-    answer = "\n\n".join(collected).strip()
-    return answer or None
+def _extract_question_tokens(normalized_question: str) -> list[str]:
+    tokens = _strip_for_tokens(normalized_question).split()
+    return [token for token in tokens if len(token) > 2 and token not in QUESTION_STOPWORDS]
 
 
-def _extract_direct_question_from_text(content: str) -> str | None:
-    marker = "Pergunta frequente:"
-    if marker not in content:
-        return None
+def _lexical_overlap_score(question_tokens: list[str], normalized_content: str) -> float:
+    if not question_tokens:
+        return 0.0
 
-    head = content.split(marker, 1)[1].strip()
-    if not head:
-        return None
-
-    first_line = head.splitlines()[0].strip()
-    return first_line or None
-
-
-def _parse_direct_faq_entries(content: str) -> list[tuple[str, str]]:
-    pattern = re.compile(
-        r"Pergunta frequente:\s*(.+?)\n\s*\nResposta direta:\s*(.+?)(?=\n\s*\nPergunta frequente:|\Z)",
-        re.DOTALL,
-    )
-    entries: list[tuple[str, str]] = []
-
-    for question, answer in pattern.findall(content):
-        cleaned_question = question.strip().splitlines()[0].strip()
-        cleaned_answer = answer.strip()
-        if cleaned_question and cleaned_answer:
-            entries.append((cleaned_question, cleaned_answer))
-
-    return entries
+    content_tokens = set(_strip_for_tokens(normalized_content).split())
+    overlap = 0.0
+    for token in question_tokens:
+        if token in content_tokens:
+            overlap += 1.0
+        elif len(token) > 5 and token[:5] in normalized_content:
+            overlap += 0.5
+    return overlap
 
 
-def _tokenize_direct_match(text: str) -> set[str]:
-    normalized = _normalize_text(text)
-    return {
-        token
-        for token in normalized.split()
-        if len(token) >= 3 and token not in DIRECT_ANSWER_STOPWORDS
-    }
+def _rank_retrieved_item(item: RetrievedDocument, normalized_question: str, category_hint: str | None) -> float:
+    normalized_content = _normalize_text(item.document.page_content)
+    question_tokens = _extract_question_tokens(normalized_question)
+    lexical_score = _lexical_overlap_score(question_tokens, normalized_content)
+    category_score = 4.0 if category_hint and item.document.metadata.get("categoria") == category_hint else 0.0
+    semantic_score = 0.0
 
+    if item.score is not None:
+        semantic_score = max(0.0, 2.5 - float(item.score))
 
-def _matches_intent_phrase(normalized_text: str, phrase: str) -> bool:
-    normalized_phrase = _normalize_text(phrase)
-    if " " in normalized_phrase:
-        return normalized_phrase in normalized_text
+    source_bonus = 0.0
+    normalized_source = _normalize_text(str(item.document.metadata.get("source", "")))
+    if any(token in normalized_source for token in question_tokens if len(token) > 4):
+        source_bonus += 1.0
 
-    return bool(re.search(rf"\b{re.escape(normalized_phrase)}\b", normalized_text))
-
-
-def _extract_direct_intent(text: str) -> str | None:
-    normalized = _normalize_text(text)
-    for intent, phrases in DIRECT_ANSWER_INTENTS.items():
-        if any(_matches_intent_phrase(normalized, phrase) for phrase in phrases):
-            return intent
-    return None
-
-
-def _faq_matches_question(question: str, faq_question: str) -> bool:
-    normalized_question = _normalize_text(question)
-    normalized_faq_question = _normalize_text(faq_question)
-
-    question_intent = _extract_direct_intent(question)
-    faq_intent = _extract_direct_intent(faq_question)
-    if question_intent and faq_intent and question_intent == faq_intent:
-        return True
-
-    if normalized_question == normalized_faq_question:
-        return True
-
-    if len(normalized_question) >= 18 and normalized_question in normalized_faq_question:
-        return True
-
-    if len(normalized_faq_question) >= 18 and normalized_faq_question in normalized_question:
-        return True
-
-    question_tokens = _tokenize_direct_match(question)
-    faq_tokens = _tokenize_direct_match(faq_question)
-    if not question_tokens or not faq_tokens:
-        return False
-
-    shared_tokens = question_tokens & faq_tokens
-    if len(shared_tokens) < 2:
-        return False
-
-    overlap = len(shared_tokens) / min(len(question_tokens), len(faq_tokens))
-    return overlap >= 0.5
-
-
-@lru_cache(maxsize=1)
-def _load_direct_faq_entries() -> list[tuple[str, str]]:
-    faq_dir = Path(__file__).resolve().parent.parent / "conteudos_vini_02"
-    entries: list[tuple[str, str]] = []
-
-    if not faq_dir.exists():
-        return entries
-
-    for path in faq_dir.glob("*.txt"):
-        content = path.read_text(encoding="utf-8")
-        parsed_entries = _parse_direct_faq_entries(content)
-        if parsed_entries:
-            entries.extend(parsed_entries)
-            continue
-
-        for section in content.split("====="):
-            faq_question = _extract_direct_question_from_text(section)
-            answer = _extract_direct_answer_from_text(section)
-            if faq_question and answer and len(answer) >= 20:
-                entries.append((faq_question, answer))
-
-    return entries
-
-
-def _lookup_direct_answer(question: str) -> str | None:
-    for faq_question, answer in _load_direct_faq_entries():
-        if _faq_matches_question(question, faq_question):
-            return answer
-    return None
-
-
-def _extract_direct_answer(retrieved_docs: list[RetrievedDocument], question: str) -> str | None:
-    for item in retrieved_docs[:4]:
-        faq_question = _extract_direct_question_from_text(item.document.page_content)
-        answer = _extract_direct_answer_from_text(item.document.page_content)
-        if faq_question and answer and len(answer) >= 40 and _faq_matches_question(question, faq_question):
-            return answer
-
-    return None
+    return lexical_score * 3.0 + category_score + semantic_score + source_bonus
 
 
 def _retrieve_context(question: str, category_hint: str | None) -> list[RetrievedDocument]:
-    global_results = search_documents(question, limit=6)
-    if not category_hint:
-        return [item for item in global_results if _is_useful_chunk(item)]
+    normalized_question = _normalize_text(question)
+    global_results = search_documents(question, limit=10)
+    hinted_results = search_documents(question, limit=6, filtro=category_hint) if category_hint else []
 
-    hinted_results = search_documents(question, limit=4, filtro=category_hint)
-    hinted_filtered = [item for item in hinted_results if _is_useful_chunk(item)]
-    global_filtered = [item for item in global_results if _is_useful_chunk(item)]
+    merged = _merge_results(hinted_results, global_results)
+    useful = [item for item in merged if _is_useful_chunk(item)]
+    useful.sort(key=lambda item: _rank_retrieved_item(item, normalized_question, category_hint), reverse=True)
+    return useful[:6]
 
-    ordered: list[RetrievedDocument] = []
-    seen_ids: set[str] = set()
-    for group in (hinted_filtered, global_filtered):
-        for item in group:
-            doc_id = item.document.metadata.get("id") or item.document.metadata.get("source") or item.document.page_content
-            if doc_id in seen_ids:
-                continue
-            seen_ids.add(doc_id)
-            ordered.append(item)
 
-    return ordered or _merge_results(hinted_results, global_results)
+def _extract_explicit_fact_answer(
+    normalized_question: str,
+    category_hint: str | None,
+    retrieved_docs: list[RetrievedDocument],
+    language: str,
+) -> str | None:
+    identity_question = any(keyword in normalized_question for keyword in ("idade", "quantos anos", "your age", "age"))
+    education_question = any(
+        keyword in normalized_question
+        for keyword in ("formacao", "faculdade", "graduacao", "curso", "degree", "education", "study")
+    )
+
+    if not identity_question and not education_question:
+        return None
+
+    for item in retrieved_docs[:4]:
+        content = item.document.page_content
+
+        if identity_question and (category_hint in {None, "IDENTIDADE"} or item.document.metadata.get("categoria") == "IDENTIDADE"):
+            age_match = re.search(r"(?i)\bidade\s*:\s*([^\n.]+)", content)
+            if age_match:
+                age_value = age_match.group(1).strip()
+                if language == "en-US":
+                    return f"Vinicius is {age_value}."
+                return f"Vinicius tem {age_value}."
+
+        if education_question and (category_hint in {None, "FORMACAO"} or item.document.metadata.get("categoria") == "FORMACAO"):
+            for raw_line in content.splitlines():
+                line = raw_line.strip()
+                normalized_line = _normalize_text(line)
+                if not line:
+                    continue
+                if normalized_line.startswith("formacao atual:"):
+                    return line.split(":", 1)[1].strip().rstrip(".") + "."
+                if "cursa engenharia de software na fiap" in normalized_line:
+                    return "Vinicius cursa Engenharia de Software na FIAP."
+                if "terceiro ano da graduacao" in normalized_line:
+                    return "Vinicius cursa Engenharia de Software na FIAP e está atualmente no terceiro ano da graduação."
+
+    return None
 
 
 def answer_portfolio_question(question: str, user_id: str, language: str | None = DEFAULT_LANGUAGE) -> AnswerResult:
@@ -947,19 +856,9 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
         )
 
     rewritten_question = _rewrite_question(question, previous_user_question)
-    external_pattern = _matched_external_general_pattern(_normalize_text(rewritten_question))
-    direct_catalog_answer = _lookup_direct_answer(rewritten_question)
-    if direct_catalog_answer:
-        history.add_user_message(question)
-        history.add_ai_message(direct_catalog_answer)
-        return AnswerResult(
-            answer=direct_catalog_answer,
-            provider="rule",
-            response_mode="direct_answer",
-            rewritten_question=rewritten_question,
-        )
-
-    category_hint = _classify_question(_normalize_text(rewritten_question))
+    normalized_rewritten = _normalize_text(rewritten_question)
+    external_pattern = _matched_external_general_pattern(normalized_rewritten)
+    category_hint = _classify_question(normalized_rewritten)
     retrieved_docs = _retrieve_context(rewritten_question, category_hint)
 
     if not retrieved_docs:
@@ -982,34 +881,39 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             category_hint=category_hint,
             response_mode="not_found",
             rewritten_question=rewritten_question,
-            retrieved_docs=[item.document for item in retrieved_docs[:3]],
+            retrieved_docs=[item.document for item in retrieved_docs[:4]],
         )
 
-    direct_answer = _extract_direct_answer(retrieved_docs, rewritten_question)
-    if direct_answer:
+    explicit_fact_answer = _extract_explicit_fact_answer(
+        normalized_question=normalized_rewritten,
+        category_hint=category_hint,
+        retrieved_docs=retrieved_docs,
+        language=normalized_language,
+    )
+    if explicit_fact_answer:
         history.add_user_message(question)
-        history.add_ai_message(direct_answer)
+        history.add_ai_message(explicit_fact_answer)
         return AnswerResult(
-            answer=direct_answer,
+            answer=explicit_fact_answer,
             provider="rule",
             category_hint=category_hint,
-            response_mode="direct_answer",
+            response_mode="grounded_fact",
             rewritten_question=rewritten_question,
-            retrieved_docs=[item.document for item in retrieved_docs[:3]],
+            retrieved_docs=[item.document for item in retrieved_docs[:4]],
         )
 
     prompt_variables = {
         "chat_history": _format_chat_history(history_messages),
         "original_question": question.strip(),
         "rewritten_question": rewritten_question,
-        "context": _format_context(retrieved_docs, top_k=3),
+        "context": _format_context(retrieved_docs, top_k=4),
         "target_language": copy["target_language"],
         "not_found_response": copy["not_found"],
     }
 
     try:
         generation = invoke_with_fallback(PORTFOLIO_PROMPT, prompt_variables, temperature=0.2)
-        answer = generation.text or copy["busy"]
+        answer = (generation.text or "").strip() or copy["busy"]
         history.add_user_message(question)
         history.add_ai_message(answer)
         return AnswerResult(
@@ -1019,7 +923,7 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             response_mode="generated",
             used_fallback=generation.provider != "openai",
             rewritten_question=rewritten_question,
-            retrieved_docs=[item.document for item in retrieved_docs[:3]],
+            retrieved_docs=[item.document for item in retrieved_docs[:4]],
             provider_errors=generation.errors,
         )
     except AllProvidersFailedError as exc:
@@ -1032,6 +936,6 @@ def answer_portfolio_question(question: str, user_id: str, language: str | None 
             response_mode="busy",
             used_fallback=True,
             rewritten_question=rewritten_question,
-            retrieved_docs=[item.document for item in retrieved_docs[:3]],
+            retrieved_docs=[item.document for item in retrieved_docs[:4]],
             provider_errors=exc.errors,
         )

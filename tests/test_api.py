@@ -11,8 +11,8 @@ def test_perguntar_returns_answer(client, monkeypatch):
         "routes.main_api.answer_portfolio_question",
         lambda question, user_id, language=None: AnswerResult(
             answer="Resposta ok",
-            provider="rule",
-            response_mode="direct_answer",
+            provider="openai",
+            response_mode="generated",
         ),
     )
 
@@ -22,7 +22,7 @@ def test_perguntar_returns_answer(client, monkeypatch):
     payload = response.json()
     assert payload["resposta"] == "Resposta ok"
     assert "metadata" in payload
-    assert payload["metadata"]["label"] == "Resposta direta"
+    assert payload["metadata"]["label"] == "OpenAI"
 
 
 def test_contact_route_persists_lead(client, monkeypatch):

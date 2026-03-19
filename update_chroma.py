@@ -14,7 +14,7 @@ def listar_txts(pasta: str):
     return [
         os.path.join(pasta, file_name)
         for file_name in os.listdir(pasta)
-        if file_name.endswith(".txt")
+        if file_name.endswith(".txt") and "faq" not in file_name.lower()
     ]
 
 
