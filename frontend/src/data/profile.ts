@@ -6,29 +6,29 @@ export const DEFAULT_LANGUAGE: UiLanguage = "pt-BR";
 export const UI_COPY = {
   "pt-BR": {
     appTitle: "Portfolio AI",
-    tagline: "Vinnie, o assistente do portfolio de Vinicius Silva Gardim",
+    tagline: "Vinnie, o assistente do portfólio de Vinicius Silva Gardim",
     emptyTitle: "Como posso ajudar?",
     emptySubtitle:
       "Sou o Vinnie, assistente virtual do Vinicius Silva Gardim. Posso responder sobre carreira, projetos, stack, objetivos e como ele trabalha.",
     quickPromptLabel: "Perguntas sugeridas",
     chatTitle: "Nova conversa",
     runtimeHint: "OpenAI primeiro, fallback local",
-    sessionLabel: "Sessao",
+    sessionLabel: "Sessão",
     composerPlaceholder: "Pergunte qualquer coisa sobre o Vinicius...",
     send: "Enviar",
     menu: "Perfil",
     close: "Fechar",
-    footerNote: "O Vinnie responde com base no portfolio e na base documental do Vinicius.",
+    footerNote: "O Vinnie responde com base no portfólio e na base documental do Vinicius.",
     providerLoading: "Pensando",
-    thinkingTitle: "Vinnie esta pensando",
+    thinkingTitle: "Vinnie está pensando",
     thinkingSubtitle: "Buscando contexto, checando a base e montando a resposta final.",
     assistantLabel: "Vinnie",
-    userLabel: "Voce",
+    userLabel: "Você",
     languageToggle: "Idioma",
     sidebarTitle: "Portfolio",
-    factsTitle: "Resumo rapido",
+    factsTitle: "Resumo rápido",
     sidebarIntro:
-      "O Vinnie e o assistente virtual do Vinicius. Ele nao e o Vinicius: ele foi criado para apresentar os projetos, a experiencia e o perfil profissional dele.",
+      "O Vinnie é o assistente virtual do Vinicius. Ele não é o Vinicius: foi criado para apresentar os projetos, a experiência e o perfil profissional dele.",
     highlightsTitle: "Highlights",
     projectsTitle: "Projetos",
     linksTitle: "Links",
@@ -37,30 +37,30 @@ export const UI_COPY = {
     downloadLabel: "Baixar",
     internalLabel: "Projeto interno",
     welcome:
-      "Oi! Eu sou o Vinnie, assistente do portfolio do Vinicius. Pode perguntar sobre skills, projetos, carreira, objetivos, hobbies ou modo de trabalho.",
+      "Oi! Eu sou o Vinnie, assistente do portfólio do Vinicius. Pode perguntar sobre skills, projetos, carreira, objetivos, hobbies ou modo de trabalho.",
     contactTitle: "Contato",
     contactSubtitle: "Preencha seus dados e o Vinicius pode retornar depois.",
     contactNameLabel: "Nome",
     contactCompanyLabel: "Empresa",
     contactEmailLabel: "Email",
-    contactSourceLabel: "Onde voce encontrou o portfolio?",
+    contactSourceLabel: "Onde você encontrou o portfólio?",
     contactMessageLabel: "Mensagem",
     contactSubmitLabel: "Enviar contato",
     contactCancelLabel: "Cancelar",
     contactSuccess: "Contato enviado com sucesso.",
-    contactError: "Nao foi possivel enviar o contato agora.",
+    contactError: "Não foi possível enviar o contato agora.",
     contactSourceOptions: [
       { value: "linkedin", label: "LinkedIn" },
       { value: "github", label: "GitHub" },
-      { value: "recomendacao", label: "Recomendacao" },
+      { value: "recomendacao", label: "Recomendação" },
       { value: "site_vagas", label: "Site de vagas" },
       { value: "outros", label: "Outros" }
     ],
     quickPrompts: [
-      "Quais sao as principais skills tecnicas do Vinicius?",
-      "Quais projetos mais relevantes o Vinicius ja desenvolveu?",
-      "Onde o Vinicius quer chegar nos proximos 5 anos?",
-      "Quais sao os hobbies do Vinicius?",
+      "Quais são as principais skills técnicas do Vinicius?",
+      "Quais projetos mais relevantes o Vinicius já desenvolveu?",
+      "Onde o Vinicius quer chegar nos próximos 5 anos?",
+      "Quais são os hobbies do Vinicius?",
       "Como o Vinicius trabalha em equipe e se comunica?"
     ],
     thinkingSteps: [
@@ -71,9 +71,9 @@ export const UI_COPY = {
       "Escrevendo a resposta final"
     ],
     heroFacts: [
-      "Backend, automacao e IA aplicada",
-      "Experiencia com RAG, APIs e visao computacional",
-      "Foco atual em Python, automacao e IA no contexto financeiro"
+      "Backend, automação e IA aplicada",
+      "Experiência com RAG, APIs e visão computacional",
+      "Foco atual em Python, automação e IA no contexto financeiro"
     ]
   },
   "en-US": {
@@ -162,31 +162,31 @@ export const SIDEBAR_CONTENT: Record<
     highlights: [
       {
         eyebrow: "Foco atual",
-        title: "Python, automacao e IA aplicada",
-        description: "Atuando com automacao e inteligencia artificial aplicada a sistemas e processos."
+        title: "Python, automação e IA aplicada",
+        description: "Atuando com automação e inteligência artificial aplicada a sistemas e processos."
       },
       {
         eyebrow: "Stack",
-        title: "FastAPI, LangChain, SQL e integracoes",
-        description: "Base forte em backend, APIs, banco de dados, automacao e projetos inteligentes com uso real."
+        title: "FastAPI, LangChain, SQL e integrações",
+        description: "Base forte em backend, APIs, banco de dados, automação e projetos inteligentes com uso real."
       },
       {
         eyebrow: "Estilo",
-        title: "Execucao pratica e produto",
-        description: "Interesse em construir coisas uteis que ligam tecnologia, negocio e impacto real."
+        title: "Execução prática e produto",
+        description: "Interesse em construir coisas úteis que ligam tecnologia, negócio e impacto real."
       }
     ],
     projects: [
       {
         eyebrow: "RAG",
         title: "AI para suporte empresarial",
-        description: "Busca vetorial, contexto documental e geracao de respostas com LLM para uso interno.",
+        description: "Busca vetorial, contexto documental e geração de respostas com LLM para uso interno.",
         note: "Projeto interno de empresa"
       },
       {
         eyebrow: "Computer vision",
-        title: "YOLO para medicao de tecidos",
-        description: "Projeto com a DASA para medir tecidos patologicos usando visao computacional.",
+        title: "YOLO para medição de tecidos",
+        description: "Projeto com a DASA para medir tecidos patológicos usando visão computacional.",
         href: "https://github.com/gardim1/stunning-sniffle",
         external: true,
         ctaLabel: "Ver projeto"
@@ -194,13 +194,13 @@ export const SIDEBAR_CONTENT: Record<
       {
         eyebrow: "Interface",
         title: "Chat corporativo com Blazor",
-        description: "Experiencia com interface, fluxo de interacao e logica aplicada a sistema corporativo.",
+        description: "Experiência com interface, fluxo de interação e lógica aplicada a sistema corporativo.",
         note: "Projeto interno de empresa"
       },
       {
         eyebrow: "Computer vision",
-        title: "Calculo de velocidade de bolinhas de ping-pong",
-        description: "Projeto para calcular velocidade de bolinhas de ping-pong com base em visao computacional e analise de deslocamento em video.",
+        title: "Cálculo de velocidade de bolinhas de ping-pong",
+        description: "Projeto para calcular velocidade de bolinhas de ping-pong com base em visão computacional e análise de deslocamento em vídeo.",
         href: "https://youtu.be/o2vsGWBBpwI?si=3_uiNXigwlsYdgCQ",
         external: true,
         ctaLabel: "Ver demo"
@@ -210,26 +210,26 @@ export const SIDEBAR_CONTENT: Record<
       {
         label: "LinkedIn",
         href: "https://www.linkedin.com/in/vinicius-gardim-756085251/",
-        description: "Perfil profissional com experiencia, carreira e formacao.",
+        description: "Perfil profissional com experiência, carreira e formação.",
         external: true
       },
       {
         label: "GitHub",
         href: "https://github.com/gardim1",
-        description: "Repositorios, experimentos e projetos publicos do Vinicius.",
+        description: "Repositórios, experimentos e projetos públicos do Vinicius.",
         external: true
       },
       {
-        label: "Curriculo",
+        label: "Currículo",
         href: "/downloads/CURRICULO_VINICIUS_GARDIMc.pdf",
-        description: "Baixe o curriculo em portugues.",
+        description: "Baixe o currículo em português.",
         download: "CURRICULO_VINICIUS_GARDIMc.pdf",
         ctaLabel: "Baixar"
       },
       {
         label: "Contato",
         href: "#contato",
-        description: "Abra um formulario para o Vinicius retornar o contato.",
+        description: "Abra um formulário para o Vinicius retornar o contato.",
         ctaLabel: "Abrir form",
         kind: "contact"
       }

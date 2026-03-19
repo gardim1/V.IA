@@ -53,7 +53,7 @@ export async function askQuestion(input: {
   });
 
   if (!response.ok) {
-    let detail = "Nao foi possivel enviar a pergunta.";
+    let detail = "Não foi possível enviar a pergunta.";
     try {
       const payload = await response.json();
       detail = payload.detail ?? detail;
@@ -96,7 +96,7 @@ export async function submitContactLead(input: {
   });
 
   if (!response.ok) {
-    let detail = "Nao foi possivel enviar o contato.";
+    let detail = "Não foi possível enviar o contato.";
     try {
       const payload = await response.json();
       detail = payload.detail ?? detail;

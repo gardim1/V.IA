@@ -17,13 +17,13 @@ DEFAULT_LANGUAGE = "pt-BR"
 
 LANGUAGE_COPY = {
     "pt-BR": {
-        "target_language": "portugues brasileiro",
+        "target_language": "português brasileiro",
         "out_of_scope": "Desculpe, eu sou o Vinnie e respondo apenas perguntas sobre Vinicius Silva Gardim.",
-        "not_found": "Desculpe, nao encontrei essa informacao sobre Vinicius Silva Gardim.",
-        "busy": "O Vinnie esta com muita demanda agora. Tente novamente mais tarde.",
+        "not_found": "Desculpe, não encontrei essa informação sobre Vinicius Silva Gardim.",
+        "busy": "O Vinnie está com muita demanda agora. Tente novamente mais tarde.",
         "small_talk": {
             "oi": "Oi! Eu sou o Vinnie, assistente do Vinicius. Pode perguntar qualquer coisa sobre ele. 🙂",
-            "ola": "Ola! Eu sou o Vinnie, assistente do Vinicius. Pode perguntar qualquer coisa sobre ele. 🙂",
+            "ola": "Olá! Eu sou o Vinnie, assistente do Vinicius. Pode perguntar qualquer coisa sobre ele. 🙂",
             "hi": "Oi! Eu sou o Vinnie, assistente do Vinicius. Pode perguntar qualquer coisa sobre ele. 🙂",
             "hello": "Oi! Eu sou o Vinnie, assistente do Vinicius. Pode perguntar qualquer coisa sobre ele. 🙂",
             "bom dia": "Bom dia! Como posso te ajudar sobre o Vinicius hoje? 🙂",
@@ -200,25 +200,25 @@ PORTFOLIO_PROMPT = ChatPromptTemplate.from_messages(
         (
             "system",
             (
-                "Voce e o Vinnie, o assistente virtual criado por Vinicius Silva Gardim. "
-                "Voce NAO e o Vinicius, nao fala em nome dele e nao se confunde com ele. "
-                "Seu papel e apresentar e explicar informacoes sobre Vinicius com clareza. "
+                "Você é o Vinnie, o assistente virtual criado por Vinicius Silva Gardim. "
+                "Você NÃO é o Vinicius, não fala em nome dele e não se confunde com ele. "
+                "Seu papel é apresentar e explicar informações sobre Vinicius com clareza. "
                 "Use somente o contexto confirmado abaixo. "
                 "Considere contexto semanticamente equivalente como suficiente para responder. "
-                "Por exemplo, perguntas sobre futuro, objetivos ou proximos 5 anos podem ser respondidas com trechos como 'Visao de longo prazo (5 anos)' ou secoes de objetivos, mesmo que a formulacao nao seja identica. "
-                "Se o contexto trouxer uma secao com 'Resposta direta:', priorize essa resposta e adapte apenas o minimo necessario para soar natural. "
-                'Se a resposta nao estiver claramente no contexto, responda exatamente: "{not_found_response}" '
+                "Por exemplo, perguntas sobre futuro, objetivos ou próximos 5 anos podem ser respondidas com trechos como 'Visão de longo prazo (5 anos)' ou seções de objetivos, mesmo que a formulação não seja idêntica. "
+                "Se o contexto trouxer uma seção com 'Resposta direta:', priorize essa resposta e adapte apenas o mínimo necessário para soar natural. "
+                'Se a resposta não estiver claramente no contexto, responda exatamente: "{not_found_response}" '
                 "Nunca invente fatos, nunca fale de documentos internos e nunca se passe pelo Vinicius. "
                 "Se o contexto tiver listas, use essas listas para responder de forma objetiva. "
-                "Quando ajudar a leitura, voce pode usar Markdown leve, como titulos curtos, listas e **negrito**. "
-                "Use emoji com moderacao, no maximo 1 quando soar natural. "
-                "Um toque leve de humor ou uma piada curta so e permitido quando for claramente conveniente e nao atrapalhar o tom profissional."
+                "Quando ajudar a leitura, você pode usar Markdown leve, como títulos curtos, listas e **negrito**. "
+                "Use emoji com moderação, no máximo 1 quando soar natural. "
+                "Um toque leve de humor ou uma piada curta só é permitido quando for claramente conveniente e não atrapalhar o tom profissional."
             ),
         ),
         (
             "human",
             (
-                "Historico recente:\n{chat_history}\n\n"
+                "Histórico recente:\n{chat_history}\n\n"
                 "Pergunta original:\n{original_question}\n\n"
                 "Pergunta reescrita para busca:\n{rewritten_question}\n\n"
                 "Contexto confirmado:\n{context}\n\n"
@@ -613,12 +613,12 @@ def _rewrite_question(question: str, previous_user_question: str) -> str:
 
 def _format_chat_history(messages, limit: int = 6) -> str:
     if not messages:
-        return "Sem historico relevante."
+        return "Sem histórico relevante."
 
     selected_messages = messages[-limit:]
     lines: list[str] = []
     for message in selected_messages:
-        role = "Usuario" if getattr(message, "type", "") == "human" else "Vinnie"
+        role = "Usuário" if getattr(message, "type", "") == "human" else "Vinnie"
         content = getattr(message, "content", "")
         lines.append(f"{role}: {content}")
     return "\n".join(lines)

@@ -69,7 +69,7 @@ function buildClientErrorMessage(language: UiLanguage, error: unknown) {
   const fallback =
     language === "en-US"
       ? "I could not reach Vinnie right now."
-      : "Nao foi possivel falar com o Vinnie agora.";
+      : "Não foi possível falar com o Vinnie agora.";
 
   if (!(error instanceof Error)) {
     return fallback;
@@ -78,7 +78,7 @@ function buildClientErrorMessage(language: UiLanguage, error: unknown) {
   if (error.message.includes("Backend route not found")) {
     return language === "en-US"
       ? "Backend route not found. Check the API URL or make sure FastAPI is running on port 8000."
-      : "Rota do backend nao encontrada. Verifique a URL da API ou se o FastAPI esta rodando na porta 8000.";
+      : "Rota do backend não encontrada. Verifique a URL da API ou se o FastAPI está rodando na porta 8000.";
   }
 
   return error.message || fallback;
@@ -88,7 +88,7 @@ function buildErrorMetadata(language: UiLanguage): ProviderMetadata {
   return {
     provider: "fallback_error",
     engine: "fallback",
-    label: language === "en-US" ? "Connection error" : "Erro de conexao",
+    label: language === "en-US" ? "Connection error" : "Erro de conexão",
     model: "network",
     used_fallback: true
   };
